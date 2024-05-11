@@ -1,0 +1,36 @@
+\documentclass[main.tex]{subfiles}
+\graphicspath{{\subfix{img/}}}
+
+\begin{document}
+
+\chapter{Introdução}\label{chap:introducao}
+
+O avanço tecnológico tem transformado significativamente a maneira como realizamos atividades cotidianas, incluindo as operações de entrega de mercadorias. Nesse contexto, os veículos aéreos não tripulados (UAV's - \textit{unmanned aerial vehicles}), popularmente conhecidos como \textit{drones}, têm emergido como uma promissora alternativa para a entrega autônoma de produtos em áreas urbanas e rurais \cite{intro:1}. Entre as diversas configurações de UAV's, os quadricópteros se destacam por sua versatilidade e capacidade de operar em espaços confinados, tornando-os ideais para aplicações em entregas autônomas \cite{intro:2}.
+
+Esse cenário tem gerado uma crescente necessidade de aprimorar os sistemas de logística e transporte, impulsionando a busca por soluções inovadoras. Nesse contexto, a adoção de quadricópteros emerge como uma resposta engenhosa, capaz de transpor obstáculos de infraestrutura e enfrentar congestionamentos urbanos, enquanto simultaneamente reduz de forma substancial os prazos de entrega. Dados atuais exemplificam a demanda expansiva no setor de entregas, como no caso da empresa Amazon que registrou um acréscimo de 45\% \cite{amazon:num_entregas} no número de novos vendedores em 2020, em comparação a 2019. Da mesma forma, a empresa iFood apresentou um aumento de 200\% \cite{ifood:num_entregas} nas entregas mensais, totalizando 40 milhões, em 2021, em relação ao ano anterior. Esses dados demonstram que o expressivo crescimento nas entregas e colaborações decorre da disseminação de tecnologias avançadas, que permitem uma comunicação instantânea entre o vendedor e o cliente, além da influência da pandemia de COVID-19, que restringiu as opções dos usuários, incentivando-os a obter produtos sem sair de casa.
+
+Alguns empreendimentos, como a Zipline, já são exemplos práticos dessa nova aplicação de UAV's, com aeronaves VTOL (\textit{Vertical Take-Off and Landing}, ou, decolagem e aterrisagem verticais) que já efetuaram mais de 5 milhões de entregas \cite{zipline:drone}. Além disso, a Amazon e o iFood já possuem planos de implementação de aeronaves não tripuladas, como o octacóptero MK4 \cite{amazon:drone} e um hexacóptero em colaboração com a empresa Speedbird \cite{ifood:drone}, respectivamente.
+
+Tendo em vista o crescimento expressivo do uso de UAVs em serviços de entrega este trabalho tem como objetivo projetar e desenvolver um controlador eficiente e seguro para quadricópteros utilizados em entregas autônomas. A proposta é explorar as principais técnicas de controle e navegação, aliadas às mais recentes tecnologias em sensores e sistemas de posicionamento, para garantir a eficácia, precisão e confiabilidade nas operações de entrega. A implementação bem-sucedida do controlador exige um estudo aprofundado da dinâmica de voo dessas aeronaves, bem como a integração inteligente de algoritmos de controle e sistemas de navegação. A segurança é uma preocupação primordial, considerando-se a interação dos quadricópteros com o espaço aéreo e com ambientes urbanos densamente povoados. Portanto, este trabalho \textcolor{att}{também} se compromete a abordar as estratégias necessárias para evitar colisões e garantir que as entregas ocorram sem incidentes.
+
+\section{Objetivo Geral}
+
+O objetivo geral dessa tese consiste em desenvolver um controlador para um quadricóptero que utilize um gerador de trajetórias para efetuar entregas autônomas, para isso devem-se considerar suas diferentes configurações e implementações e determinar a mais viável. \textcolor{att}{Procura-se, ao fim deste documento, desenvolver um controlador, testá-lo em um ambiente simulado, e implementá-lo em um sistema real para análise do projeto.}
+
+\section{Objetivos Específicos}
+
+Com a finalidade geral definida, deve-se determinar as etapas necessárias para alcançá-la e quais os objetivos específicos que auxiliarão nesta trajetória. Assim, as etapas intermediárias contam com:
+
+\begin{itemize}
+    \item Modelagem da dinâmica do quadricóptero;
+    \item \textcolor{att}{Pesquisa de controladores comumente utilizados em quadricópteros;}
+    \item Seleção do controlador baseado em características desejáveis;
+    \item \textcolor{att}{Desenvolvimento de um gerador de trajetória que servirá de referência para o controlador;}
+    \item \textcolor{att}{Desenvolvimento de código que integrará o sistema gerador com o controlador;}
+    \item Simulação do quadricóptero controlado;
+    \item Implementação real do controlador em um protótipo.
+\end{itemize}
+
+ Ao final deste trabalho, espera-se oferecer uma base sólida de conhecimento e uma proposta viável de controlador para quadricópteros em entregas autônomas, a fim de impulsionar o avanço e a aplicação dessa tecnologia inovadora no campo logístico, considerando suas potencialidades e as demandas cada vez mais presentes na sociedade contemporânea.
+
+\end{document}

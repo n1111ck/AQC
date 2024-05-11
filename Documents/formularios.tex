@@ -1,0 +1,45 @@
+% Meta-monografia de exemplo genérico de uso da classe delaetex.cls
+% Copyright (C) 2004..2016 Walter Fetter Lages <fetter@ece.ufrgs.br>
+%
+% This file was adapted from:
+% Meta-monografia de exemplo genérico de uso da classe deletex.cls
+% Copyright (C) 2004 Walter Fetter Lages <w.fetter@ieee.org>
+%
+% This is free software, distributed under the GNU GPL; please take
+% a look in `deletex.cls' to see complete information on using, copying
+% and redistributing these files
+%
+\documentclass{ufrgscca}
+\usepackage{ufrgscca-forms}
+
+%
+% demais informações em local.tex
+%
+
+%%%%%%%%%
+%%
+%% informações/campos não informados em local.tex serão substituídos por espaços tracejados (underline)
+%%
+%%%%%%%%%
+
+%%	reqform                 %%% Formulário de requerimento de matrícula em TCC
+%%	coadvisor               %%% Formulário de requerimento/justficativa para co-orientador
+%%	boardsapproval          %%% Formulário de aprovação do Relatório Parcial e Banca Examinadora
+%%	advisorsapproval        %%% Formulário de aprovação do Orientador com parecer do mesmo
+%%	receipts                %%% Formulários de recebimento de cópia impressa do TCC
+%%	examinersforms          %%% Formulários de avaliação e correções para Banca Examinadora
+%%	rectifyapprovalform     %%% Formulário de Aprovação de Correções
+
+%
+% inicio do documento
+%
+\begin{document}
+    \internshipsupervisorgrades{4}{4}{4}{4}{5}
+    \internshipsupervisorgrades{4}{4}{4}{4}{5}
+    \internshiptutorgrades{90}
+    \internshipcoordgrades{90}
+	%%% utilizando informação inserida em local.tex
+\tcforms{reqform,coadvisor,boardsapproval,advisorsapproval,receipts,examinersforms,rectifyapproval}
+    %%% formulários em branco
+%\tcemptyforms{reqform,coadvisor,boardsapproval,advisorsapproval,receipts,examinersforms,rectifyapproval}
+\end{document}

@@ -1,0 +1,92 @@
+\documentclass[main.tex]{subfiles}
+\graphicspath{{\subfix{img/}}}
+
+\begin{document}
+
+\chapter{Algoritmo de voo}\label{cap:controle_voo}
+
+Neste capítulo é determinado quais as referências que as variáveis previamente calculadas devem receber para realizar o \textit{pick-and-place} (pegar e colocar) da carga a ser entregue.
+
+Para tanto, definem-se algumas variáveis que representam a localização da aeronave ao longo do trajeto:
+
+\begin{itemize}
+    \item \textbf{Origem ($X_0,Y_0$)}: ponto o qual a aeronave inicia o trajeto.
+    \item \textbf{Posição atual ($X,Y$)}: ponto o qual a aeronave está localizada em tempo real.
+    \item \textbf{Destino ($X_r,Y_r$)}: ponto o qual a aeronave finaliza o trajeto.
+    \item \textbf{Trajeto completo ($t_c$)}: representa a menor distância entre os pontos de origem e destino encaminhados à aeronave da forma $t_c = \sqrt{(X_r - X_0)^2 + (Y_r - Y_0)^2}$.
+    \item \textbf{Trajeto restante ($t_r$)}: representa quanto a aeronave falta para finalizar a entrega da forma $t_r = \sqrt{(X_r - X)^2 + (Y_r - Y)^2}$.
+\end{itemize}
+
+\section{Altitude}
+
+O algoritmo de voo deve receber uma altitude padrão no estado de decolagem, a fim de atingir essa altitude em função dos integradores instaurados no sistema. Porém, uma vez perto do destino a aeronave deve começar a descender até estar próxima ao solo.
+
+Logo, propõe-se a utilização da referência apresentada na Equação \ref{eq:r_z}, em que $Z_{p}$ representa a altitude padrão de voo e $d_t$ uma distância para iniciar a descendência.
+
+\begin{equation}\label{eq:r_z}
+    r_Z = Z_{p}\left(1 - e^{-4\frac{t_r}{d_t}}\right)
+\end{equation}
+
+Denota-se que no destino o sistema recebe uma referência para altitude zero, porém, a mesma será impedida devido ao sensor \textit{hover} concluindo entrega no solo.
+
+\section{Planejamento da Rota}
+
+O trajeto deve seguir o menor caminho para o objetivo, logo, a rota deve ser a reta entre a origem e destino de distância $t_c$. Em seguida, definem-se formas de alterar a atitude em função de alcançar o objetivo:
+
+\begin{enumerate}
+    \item \textbf{Referência Norte}: a aeronave deve sempre estar orientada com seu ângulo de guinada para o norte, a arfagem altera a longitude e a rolamento altera a latitude.
+    \item \textbf{Referência Destino}: a aeronave deve sempre estar orientada com seu ângulo de guinada para o destino, a arfagem altera a distância ao objetivo e a rolamento altera o desvio da rota.
+\end{enumerate}
+
+Conclui-se que a Referência Destino é a opção mais plausível por delimitar o número mínimo de sensores anti-colisão, dado que um determinado obstáculo sempre estará à frente do UAV.
+
+\subsection{Orientação ($\psi$)}
+
+Para orientação o cálculo é realizado conforme a Equação \ref{eq:r_psi}, a qual obtido os dados de origem e destino calcula a orientação $\psi$ com relação à latitude.
+
+\begin{equation}\label{eq:r_psi}
+    r_\psi = \arctan{\left(\frac{Y_r - Y_0}{X_r - X_0}\right)}
+\end{equation}
+
+Cabe a observação de que a função $\arctan$ deve englobar ângulos de $-\pi$ à $\pi$, implementado em código como a função \textit{atan2}.
+
+\subsection{Avanço ($\theta$)}
+
+O avanço, da mesma forma que para a altitude deve garantir uma referência constante até atingir o destino. Porém, o mesmo deve ser ponderado por duas condições:
+
+\begin{itemize}
+    \item \textbf{guinada ($\psi$)}: o avanço deve ocorrer apenas quando orientado no sentido do destino a fim de evitar colisões.
+    \item \textbf{Altitude ($Z$)}: o avanço deve ocorrer apenas quando em alta altitude a fim de evitar colisões.
+\end{itemize}
+
+Portanto, a referência para arfagem $\theta$, que implica no avanço da aeronave é apresentada na Equação \ref{eq:r_theta}, $\theta_p$ representa um ângulo de avanço padrão:
+
+\begin{equation}\label{eq:r_theta}
+    r_\theta = \theta_{p}\frac{\psi}{r_\psi}\frac{Z}{Z_p}\left(1 - e^{-4\frac{t_r}{d_t}}\right)
+\end{equation}
+
+\subsection{Correção ($\phi$)}
+
+Já para a correção da rota deve-se equacionar o trajeto planar, conforme a Equação \ref{eq:y_prev}:
+
+\begin{equation}\label{eq:y_prev}
+    Y_{previsto} = \frac{Y_r - Y_0}{X_r - X_0}X + Y_0
+\end{equation}
+
+Em seguida deve-se determinar a distância entre o ponto real e o previsto na rota $\Delta t$, apresentado na Equação \ref{eq:delta_t} como a menor distância da localização atual da aeronave com a rota determinada.
+
+\begin{equation}\label{eq:delta_t}
+    \Delta t = \sqrt{\frac{(X_r - X_0)^2}{(Y_r - Y_0)^2 + (X_r - X_0)^2}}\left(\frac{Y_r - Y_0}{X_r - X_0}X + (Y - Y_0)\right)
+\end{equation}
+
+Dessa maneira $\Delta t$ informa se o erro está à direita ou à esquerda do objetivo, logo, deve ser utilizado como base para referência de rolamento com seu valor invertido, observado que uma mudança em rolamento positiva ocasiona num deslocamento negativo em seu eixo. Também pondera-se essa ação pela altitude e guinada, além de considerar um ganho $\xi$ que será ajustado heuristicamente. Ainda, denota-se a existência de uma saturação da referência para impedir giros além do planejado. A Equação \ref{eq:r_phi} representa a referência ao ângulo de rolamento.
+
+\begin{equation}\label{eq:r_phi}
+    r_\phi = -\xi\frac{\psi}{r_\psi}\frac{Z}{Z_p}\sqrt{\frac{(X_r - X_0)^2}{(Y_r - Y_0)^2 + (X_r - X_0)^2}}\left(\frac{Y_r - Y_0}{X_r - X_0}X + (Y - Y_0)\right)
+\end{equation}
+
+\subsection{Anti-Colisão}
+
+
+
+\end{document}

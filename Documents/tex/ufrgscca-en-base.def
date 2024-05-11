@@ -1,0 +1,64 @@
+%%%==============================================================================
+%% Copyright 2022-23 by Alceu Frigeri
+%%
+%% This work may be distributed and/or modified under the conditions of
+%%
+%% * The [LaTeX Project Public License](http://www.latex-project.org/lppl.txt),
+%%   version 1.3c (or later), and/or
+%% * The [GNU Affero General Public License](https://www.gnu.org/licenses/agpl-3.0.html),
+%%   version 3 (or later)
+%%
+%% This work has the LPPL maintenance status *maintained*.
+%%
+%% The Current Maintainer of this work is Alceu Frigeri
+%%
+%% This is version 1.9 (2023/05/08)
+%%
+%% The list of files that compose this work can be found in the README.md file at
+%% https://ctan.org/pkg/ufrgscca
+%%
+%%%==============================================================================
+%% UFRGS stands for "Federal University of Rio Grande do Sul" in south Brazil
+%% EE    stands for "Engineering School"
+%% CCA   stands for "Control and Automation Engineering Course" (Portuguese acronym)
+%%%==============================================================================
+\makeatletter
+\def\tc@tmp@packname{ufrgscca-en-base}
+\def\tc@tmp@altpackname{ufrgsccaenbase}
+\def\tc@tmp@packdesc{UFRGS/CCA English base defs}
+\def\tc@tmp@packdate{2023/05/08}
+\def\tc@tmp@packversion{1.9}
+\let\@exp\expandafter
+\@exp\edef\csname\tc@tmp@altpackname version\endcsname{\tc@tmp@packversion}
+
+%%%%%
+%%
+%% those are loaded, on the fly, when selecting, or switching, to english (\@namedef{captionsenglish} vis-à-viz \begin{otherlanguage}{})
+%%
+%%%%%
+
+%	\def\bibname{References}% deprecated by biber
+%	\def\refname{\bibname}
+	\def\abstractname{Abstract}%
+	\def\englishabstractname{Abstract}%
+	\def\contentsname{Contents}%
+	\def\listfigurename{List of Figures}%
+	\def\listtablename{List of Tables}%
+	\def\figurename{Figure}%
+	\def\tablename{Table}%
+	\def\byname{by}%
+	\def\keywordsname{Keywords}%
+
+	\def\listabbrvname{List of Abbreviations}%
+	\def\listsymbolname{List of Symbols}%
+
+	\def\listingname{Listing}
+  	\def\listlistingname{List of Listings}
+
+	\def\defappendixname{Appendix}%
+	\def\defappendixpagename{Appendices}%
+	\def\defannexname{Annex}%
+	\def\defannexpagename{Annexe}%
+	\def\sourcename{Source:}
+	\def\notename{Note}%%
+

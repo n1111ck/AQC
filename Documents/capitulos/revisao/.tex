@@ -1,0 +1,91 @@
+\documentclass[main.tex]{subfiles}
+\graphicspath{{\subfix{img/}}}
+
+\begin{document}
+
+\chapter{Revisão Bibliográfica}
+\label{chap:revisao}
+
+Este capítulo abrange as atualidades sobre o emprego de UAV's em diversas áreas e um breve estudo de como essas aeronaves podem ser controladas, baseado em artigos redigidos por outros pesquisadores. Além dessa exposição na Seção \ref{sec:estado_arte}, explica-se o material teórico que será necessário para implementação do controlador alvo na Seção \ref{sec:fund_teo}. 
+
+\section{Estado da arte}\label{sec:estado_arte}
+
+% % 1. Como está a tecnologia de drones hoje em dia?
+
+% Os quadricopteros com controlador remoto tem sido amplamente utilizados na ultima decada, com aplicacoes que abrangem tanto o ambito profissional quanto o do lazer. Nesse contexto a empresa DJI domina o mercado com 76\% do volume de vendas em diversas areas de atuacao, a exemplo de:
+
+% \begin{itemize}
+%     \item \textbf{fotografias aereas:} sao utilizadas tanto como venda de servico privado, quanto em aplicacoes no meio publico, como no inspencionamento de redes eletricas, a exemplo da implementacao pela companhia energetica de minas gerais
+%     \item \textbf{agricultura:} utilizados principalmente na pulverizacao de plantacoes para elevar a produtividade da colheita, a exemplo do modelo T40 disponibilizado pela dji
+%     \item \textbf{telemetria:} ainda, os drones sao utilizados na telemetria do terreno, a exemplo de implementacoes como por ARTIGO
+% \end{itemize}
+
+% Observada a vasta implementacao de drones, explora-se a seguir como seu controle pode ser efetuado. 
+
+% [IMAGEM ILUSTRATIVA]
+
+% O movimento de aeronaves e composto por 6 graus de liberdades, correspondidos por rotacoes e translacoes em todos os eixos. Porem, quadricopteros possuem 4 graus de liberdade linearmente independentes, visto que o movimento planar e redigido por mudanca nas orientacoes que giram os eixos horizontais.
+
+% Uma implemetacao de controle
+
+% %, a exemplo de aplicacoes de conserto quanto para lazer, , nas ultimas decadas  % CEMIG
+
+% % Aplicacao 1 - fotos/filmagem - resgate por bombeiro, inspecao por empresa de energia
+
+
+% % Aplicacao 2 - agricultura
+
+% % Aplicacao 3 - telemetria
+
+% % 2. Qual o melhor fornecedor e serviços fornecidos?
+
+% % 3-5. Como o drone é capaz de realizar esses serviços?
+
+% % 6-7. Como um drone pode se orientar autonomamente?
+
+% % 8. Quais exemplos existem hoje no mercado dessa aplicação
+
+% \section{Fundamentação teórica}\label{sec:fund_teo}
+
+% % TODO: aqui talvez fosse bom explicar como o motor relaciona tensão com thrust e momento
+
+% \subsection{Modelagem de sistemas mecânicos}
+
+% A modelagem de sistemas mecânicos relaciona como as variáveis de saída, constituídas por posição e suas derivações, relacionam com as variáveis de entrada, forças atuadoras. Para tanto, são utilizadas os balanços de força e de momento na relação, indicado pela Equação \ref{eq:revisao_balancos_basicos} na qual F representa a força, M o momento, m a massa do sistema, I o momento de inércia e $\omega$ a velocidade angular.
+
+% \begin{equation}\label{eq:revisao_balancos_basicos}
+%     \begin{matrix}
+%         \Sigma F_x = m\ddot{x}             & , & \Sigma F_y = m\ddot{y}            & , & \Sigma F_z = m\ddot{z}\\
+%         \Sigma M_x = I_{xx}\dot{\omega_x}  & , & \Sigma M_y = I_{yy}\dot{\omega_y} & , & \Sigma M_z = I_{zz}\dot{\omega_z}\\
+%     \end{matrix}
+% \end{equation}
+
+% No entanto, para sistemas com referência não inercial o balanço de momento anterior torna-se incorreto, ocasionado pelo fenômeno clássico nomeado Efeito Coriolis \cite{classica:livro} que está presente na aeronáutica como um todo. Portanto, ao se considerar um sistema não inercial determina-se a Equação \ref{eq:revisao_coriolis}:
+
+% \begin{equation}\label{eq:revisao_coriolis}
+%     \boldsymbol{I}\dot{\boldsymbol{\omega}} + \boldsymbol{\omega}\times(\boldsymbol{I}\boldsymbol{\omega}) = \Sigma \boldsymbol{M}
+% \end{equation}
+
+% Ainda, descreve-se a equação anterior na forma escalar, apresentada na Equação \ref{eq:revisao_coriolis_escalar}, explicitado que os termos rotativos tendem a torcer o eixo referente.
+
+% \begin{align}\label{eq:revisao_coriolis_escalar}
+%     \begin{split}
+%         I_{xx}\dot{\omega_x} + (I_{zz} - I_{yy})\omega_y\omega_z &= \Sigma M_x\\
+%         I_{yy}\dot{\omega_y} + (I_{xx} - I_{zz})\omega_z\omega_x &= \Sigma M_y\\
+%         I_{zz}\dot{\omega_z} + (I_{yy} - I_{xx})\omega_x\omega_y &= \Sigma M_z
+%     \end{split}
+% \end{align}
+
+% \subsection{Modelagem de atuadores rotativos}
+
+% \subsection{Controle de sistemas}
+
+% \subsubsection{Realimentação da saída}
+
+% \subsubsection{Realimentação de estados}
+
+% \subsubsection{Realimentação linearizada de estados}
+
+% \subsubsection{Alocação de polos}
+
+\end{document}

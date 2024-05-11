@@ -1,0 +1,132 @@
+\documentclass[main.tex]{subfiles}
+\graphicspath{{\subfix{img/}}}
+
+\begin{document}
+
+\chapter{Modelagem do quadricóptero}
+\label{chap:modelagem}
+
+%\textcolor{anotacao}{// Explicar objetivo da seção (vai conter uma parte de modelagem matemática e outra computacional)}
+
+A fim de controlar um quadricóptero, independente de seu fim, é necessário conhecer sua dinâmica e ser capaz de descrevê-la em termos matemáticos. Assim, nessa seção são apresentados os equacionamentos para o sistema além da apresentação de um ambiente de simulação composto por cálculo numérico e visualização gráfica.
+
+\section{Referenciais}
+
+%\textcolor{anotacao}{// Explicar as duas referências possíveis e explicar porquê que para o ângulo é de um jeito e pra deslocamento outro}
+
+Com o objetivo de obter um equacionamento que descreva a modelagem dinâmica, as relações entre forças e momentos de atuadores com os deslocamentos e velocidades correspondentes do veículo devem ser encontradas. Essas relações podem ser interpretadas em diferentes sistemas de coordenadas a fim de facilitar sua modelagem. 
+
+\textcolor{corrigir}{COLOCAR IMAGEM DOS REFERENCIAIS}
+
+Na Figura \ref{} são apresentados os sistemas de coordenadas utilizados neste trabalho, que correspondem a:
+
+\begin{enumerate}
+    \item \textbf{Referencial inercial (ou \textit{inertial frame}):} sua orientação e posição são sempre fixos. A orientação é equivalente ao referencial magnético global, assim, $X$, $Y$ e $Z$ correspondem respectivamente às direções Leste, Norte, Cima, enquanto a posição será determinada nula ao iniciar o dispositivo por motivos de facilidade de cálculo.
+    \item \textbf{Referencial não-inercial (ou \textit{body frame}):} sua orientação e posição acompanham o veículo, informações essas que podem ser traduzidas ao referencial inercial.
+\end{enumerate}
+
+Ambos os referenciais são importantes ao projeto e serão utilizados no cálculo da dinâmica de translação e de rotação a seguir.
+
+\section{Dinâmica de translação}
+
+Para a dinâmica de translação, parte-se de um referencial não-inercial, conforme apresentado na Figura \ref{fig:ref_frame} e atuação dos motores conforme a Equação \ref{eq:forca_body}.
+
+\begin{figure}[!h]
+    \centering
+    \caption{Comparação da força dos propulsores do referencial não-inercial X'Y'Z' com o referencial inercial XYZ com eixos orientados x, y e z em vermelho, verde e azul respectivamente além da força em laranja.}
+    \includegraphics[width=0.85\textwidth]{capitulos/modelagem/imgs/ref_frame.png}
+    \label{fig:ref_frame}
+\end{figure}
+
+\begin{equation}\label{eq:forca_body}
+    F_b = \begin{bmatrix}
+        0\\
+        0\\
+        \Sigma T_i
+    \end{bmatrix}
+\end{equation}
+
+Porém, como o sistema de coordenadas não-inercial está sob constante rotação, sua informação dinâmica não revela de maneira clara a posição global do veículo. Logo, é necessário traduzir a dinâmica para o sistema de coordenadas inercial. Este procedimento é realizado por meio da matriz de rotação conforme a Equação \ref{eq:rotational_matrix_raw} \cite{robotica}.
+
+\begin{equation}\label{eq:rotational_matrix_raw}
+    \boldsymbol{^iR_b} = 
+     \begin{bmatrix}
+        \cos(\psi)  &   -\sin(\psi) &   0\\
+        \sin(\psi)  &   \cos(\psi)  &   0\\
+        0           &   0           &   1
+    \end{bmatrix}_z
+    \begin{bmatrix}
+        \cos(\theta)    &   0             &   \sin(\theta)  \\
+        0               &   1               &   0           \\
+        -\sin(\theta)   &   0             &   \cos(\theta)
+    \end{bmatrix}_y
+   \begin{bmatrix}
+        1           &   0           &   0               \\
+        0           &   \cos(\phi)  &   -\sin(\phi)   \\
+        0           &   \sin(\phi)  &   \cos(\phi)
+    \end{bmatrix}_x
+\end{equation}
+
+\textcolor{anotacao}{// Tem que checar se seria essa matriz ou a transversa, e se precisar ser a transversa acho que cabe ao menos citar a explicação do porque a inversa é igual a transversa nesse caso}
+
+Obtidos o vetor de atuação dos motores e a matriz de rotação, realiza-se o somatório de forças do sistema conforme a Equação \ref{eq:dinamica_translacao_balanco}.
+
+\begin{equation}\label{eq:dinamica_translacao_balanco}
+    m \begin{bmatrix}
+        \Ddot{x}\\
+        \Ddot{y}\\
+        \Ddot{z}
+    \end{bmatrix} = \boldsymbol{^iR_b}
+    \begin{bmatrix}
+        0\\
+        0\\
+        \Sigma T_i 
+    \end{bmatrix} + m
+    \begin{bmatrix}
+        0\\
+        0\\
+        -g
+    \end{bmatrix}
+\end{equation}
+
+Por fim, a dinâmica de translação é descrita na Equação \ref{eq:dinamica_translacao} ao isolar as acelerações obtidas na Equação \ref{eq:dinamica_translacao_balanco}.
+
+\begin{equation}\label{eq:dinamica_translacao}
+    \begin{split}
+        \ddot{x} &= (\sin{(\psi)}\sin{(\phi)} + \cos{(\psi)}\sin{(\theta)}\cos{(\phi)})\frac{\Sigma T_i}{m}\\
+        \ddot{y} &= (-\cos{(\psi)}\sin{(\phi)} + \sin{(\psi)}\sin{(\theta)}\cos{(\phi)})\frac{\Sigma T_i}{m}\\
+        \ddot{z} &= -g + \cos{(\theta)}\cos{(\phi)}\frac{\Sigma T_i}{m}\\
+    \end{split}
+\end{equation}
+
+\section{Dinâmica de rotação}
+
+\textcolor{anotacao}{// Começar apenas com somatório de momentos}
+
+\textcolor{anotacao}{// Introduzir o efeito giroscópico}
+
+\textcolor{anotacao}{// Introduzir a conversão do sistema não inercial para o inercial}
+
+\section{Dinâmica dos atuadores}
+
+\textcolor{anotacao}{// Explicar dinâmica de volts para rotação}
+
+\textcolor{anotacao}{// Explicar relação de volts com thrust}
+
+\textcolor{anotacao}{// Explicar relação de volts com momento}
+
+
+\section{Sistema completo}
+
+\textcolor{anotacao}{// Introduzir as variáveis U e a relação delas}
+
+
+%\section{Simulação}
+
+%\textcolor{anotacao}{// Mostrar o ambiente base de simulação MATLAB}
+
+%\textcolor{anotacao}{// Introduzir comunicação UDP}
+
+%\textcolor{anotacao}{// Mostrar o ambiente simulação Unreal Engine}
+
+\end{document}

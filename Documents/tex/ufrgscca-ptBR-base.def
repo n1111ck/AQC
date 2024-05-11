@@ -1,0 +1,62 @@
+%%%==============================================================================
+%% Copyright 2022-23 by Alceu Frigeri
+%%
+%% This work may be distributed and/or modified under the conditions of
+%%
+%% * The [LaTeX Project Public License](http://www.latex-project.org/lppl.txt),
+%%   version 1.3c (or later), and/or
+%% * The [GNU Affero General Public License](https://www.gnu.org/licenses/agpl-3.0.html),
+%%   version 3 (or later)
+%%
+%% This work has the LPPL maintenance status *maintained*.
+%%
+%% The Current Maintainer of this work is Alceu Frigeri
+%%
+%% This is version 1.9 (2023/05/08)
+%%
+%% The list of files that compose this work can be found in the README.md file at
+%% https://ctan.org/pkg/ufrgscca
+%%
+%%%==============================================================================
+%% UFRGS stands for "Federal University of Rio Grande do Sul" in south Brazil
+%% EE    stands for "Engineering School"
+%% CCA   stands for "Control and Automation Engineering Course" (Portuguese acronym)
+%%%==============================================================================
+\makeatletter
+\def\tc@tmp@packname{ufrgscca-ptBR-base}
+\def\tc@tmp@altpackname{ufrgsccaptbrbase}
+\def\tc@tmp@packdesc{UFRGS/CCA Portuguese base defs}
+\def\tc@tmp@packdate{2023/05/08}
+\def\tc@tmp@packversion{1.9}
+\let\@exp\expandafter
+\@exp\edef\csname\tc@tmp@altpackname version\endcsname{\tc@tmp@packversion}
+
+%%%
+%%
+%% those are loaded, on the fly, when selecting, or switching, to portuguese (\@namedef{captionsbrazilian}  vis-à-viz \begin{otherlanguage}{})
+%%
+%%%%%
+
+	\def\abstractname{Resumo}%
+	\def\englishabstractname{Abstract}%
+	\def\contentsname{Sum{\'{a}}rio}%
+	\def\listfigurename{Lista de Ilustra\c{c}\~oes}%
+	\def\listtablename{Lista de Tabelas}%
+	\def\figurename{Figura}%
+	\def\tablename{Tabela}%
+	\def\byname{por}%
+	\def\keywordsname{Palavras-chave}%
+
+	\def\listabbrvname{Lista de Abreviaturas}%
+	\def\listsymbolname{Lista de S{\'{\i}}mbolos}%
+
+	\def\listingname{Listagem}
+	\def\listlistingname{Lista de Listagens}
+
+	\def\defappendixname{Ap{\^{e}}ndice}%
+	\def\defappendixpagename{Ap{\^{e}}ndices}%
+	\def\defannexname{Anexo}%
+	\def\defannexpagename{Anexos}%
+	\def\sourcename{Fonte:}
+	\def\notename{Nota}%%
+

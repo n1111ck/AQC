@@ -1,0 +1,80 @@
+\documentclass[main.tex]{subfiles}
+\graphicspath{{\subfix{img/}}}
+
+\begin{document}
+
+\chapter{Descrição do sistema}\label{cap:descricao}
+
+\textcolor{estranho}{// Trocar essa primeira frase porque está desconexo com o restante do parágrafo}
+A dinâmica de voo de um quadricóptero é uma área essencial de estudo para garantir sua estabilidade, controle preciso e segurança durante a operação. Este capítulo do trabalho visa fornecer uma visão geral da dinâmica de voo de um quadricóptero, destacando os principais conceitos e fatores que influenciam o seu comportamento durante o voo.
+
+\section{Movimentação}
+
+Os quadricópteros são um tipo específico de veículo aéreo de múltiplos rotores, composto por quatro motores dispostos em configuração cruzada, cada um acoplado a uma hélice, conforme exemplificado pela Figura \ref{fig:mini2}. 
+
+\begin{figure}[!h]
+    \centering
+    \caption{Quadricóptero Mini 2 da empresa DJI.}
+    \includegraphics[width=0.6\textwidth]{capitulos/descricao/imgs/mini2.png}
+    \begin{flushleft}
+        \small{Fonte: \cite{dji}}
+	\end{flushleft}
+    \label{fig:mini2}
+\end{figure}
+
+A modelagem em geral é feita em duas configurações possíveis, nomeadas como segue:
+
+\begin{itemize}
+    \item \textbf{Configuração X}: o UAV avança em um ângulo de 45$^\circ$ com relação a um de seus braços, aparentando formar um "X" em relação à trajetória percorrida. Dois motores estão na parte dianteira e dois na parte traseira. Essa configuração é a mais comum e oferece uma boa combinação de estabilidade, manobrabilidade e resistência a falhas dos motores \cite{configuracoes}.
+    \item \textbf{Configuração} $\boldsymbol{+}$: o UAV avança colinear a um de seus braços, formando uma cruz em relação à trajetória. Um motor está na parte dianteira, um na traseira e os outros dois nos lados esquerdo e direito. Essa configuração também é popular e oferece boa estabilidade e eficiência energética.
+\end{itemize}
+
+Ambas as configurações têm suas próprias vantagens e desvantagens, e a escolha entre elas depende do uso pretendido do \textit{drone} e das preferências do piloto. Neste trabalho será utilizada a configuração $+$ por possuir melhor eficiência energética.
+
+Através do controle independente das rotações das hélices, o quadricóptero gera forças de sustentação, propulsão e torque, permitindo o ajuste de sua \textbf{atitude}, a qual refere-se à orientação espacial ou posição relativa da aeronave em relação a um sistema de coordenadas fixo, e movimento no espaço tridimensional. Existem quatro manobras básicas que realizam essa movimentação:
+
+\begin{itemize}
+    \item \textbf{Ascendência/Descendência:} alteração da altitude do quadricóptero. O controle desse movimento é obtido variando as velocidades de rotação em todos rotores.
+    \item \textbf{Arfagem (\textit{pitch}):} \textcolor{att}{o ato de inclinar para frente ou para trás, que colateralmente avança ou recua o quadricóptero. Seu controle é obtido variando as velocidades de rotação entre os rotores traseiro e dianteiro.}
+    \item \textcolor{att}{\textbf{Rolamento (\textit{roll}):} o ato de inclinar para esquerda ou para direita, que colateralmente desloca o quadricóptero lateralmente. Seu controle é obtido variando as velocidades de rotação entre os rotores esquerdo e direito.}
+    \item \textcolor{att}{\textbf{Guinada (\textit{yaw}):}} movimento ao longo do eixo vertical do quadricóptero, mudando sua orientação no plano horizontal. O controle desse movimento é obtido variando as velocidades de rotação entre os rotores adjacentes.
+\end{itemize}
+
+A estabilidade destes movimentos é mantida através de sensores como giroscópios e acelerômetros, cujas informações alimentam um controlador de voo que ajusta automaticamente as velocidades dos rotores para responder às mudanças nas condições de voo. A Tabela \ref{tab:angulos} apresenta a convenção dos movimentos angulares utilizados neste trabalho.
+
+\begin{table}[!h]
+    \centering
+    \caption{Simbologia da atitude do sistema}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \textbf{Nome}       & \textbf{Posição Angular}  & \textbf{Velocidade Angular}   & \textbf{Aceleração Angular}  \\\hline
+        Arfagem             & $\theta$                  & $q$                           & $\dot{q}$\\\hline
+        Rolamento           & $\phi$                    & $p$                           & $\dot{p}$ \\\hline
+        Guinada             & $\psi$                    & $r$                           & $\dot{r}$ \\\hline
+        \end{tabular}
+    \label{tab:angulos}
+\end{table}
+
+\section{Componentes}
+
+Os principais componentes de um quadricóptero são apresentados a seguir e estão representados na Figura \ref{fig:componentes}:
+
+\begin{itemize}
+    \item \textbf{Placa controladora de voo:} \textcolor{att}{recebe os comandos do operador ou do sistema de controle automático e os traduz em ajustes nos motores para controlar a orientação e a velocidade do \textit{drone}.}
+    \item \textbf{Motores e Hélices:} os quatro motores fornecem a potência para as hélices, que geram a sustentação e o empuxo necessário para o voo.
+    \item \textbf{Bateria:} fornece a energia necessária para alimentar os motores e outros componentes eletrônicos.
+    \item \textbf{Sensores de Atitude:} os sensores, como acelerômetros, giroscópios, magnetômetros, fornecem informações em tempo real sobre a atitude, velocidade angular, posição do quadricóptero.
+    \item \textbf{Sensores de Colisão:} os sensores infravermelhos ou ultrassônicos posicionados estrategicamente no UAV a fim de detectar um obstáculo.
+\end{itemize}
+
+\begin{figure}[!h]
+    \centering
+    \caption{Componentes de um quadricóptero.}
+    \includegraphics[width=0.6\textwidth]{capitulos/descricao/imgs/componentes.png}
+    \label{fig:componentes}
+    \begin{flushleft}
+        \small{Fonte: \cite{componentes}}
+	\end{flushleft}
+\end{figure}
+
+\end{document}
