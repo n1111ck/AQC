@@ -25,7 +25,6 @@ class GPS : ISensor
 
 		Void Simulacao(Modelo& modelo);
 	private:
-		Modelo* mpModelo;
 		Float mLatitude;
 		Float mLongitude;
 };

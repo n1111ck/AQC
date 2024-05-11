@@ -1,12 +1,11 @@
 #include "IMU.h"
 
 IMU::IMU() :
-	mpModelo(nullptr),
 	mRotacao({}),
 	mVelocidadeAngular({}),
 	mVelocidadeLinear({})
 {
-
+	ISensor::mpModelo = nullptr;
 }
 
 IMU::~IMU()
@@ -17,7 +16,7 @@ IMU::~IMU()
 Void
 IMU::Simulacao(Modelo& modelo)
 {
-	mpModelo = &modelo;
+	ISensor::mpModelo = &modelo;
 }
 
 Int32
@@ -25,7 +24,7 @@ IMU::Iniciar()
 {
 	Int32 resultado = -1000;
 
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
@@ -41,7 +40,7 @@ IMU::Iniciar()
 Void
 IMU::Calibrar()
 {
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
@@ -54,16 +53,16 @@ IMU::Calibrar()
 Void
 IMU::Capturar()
 {
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
 	else
 	{
 		// Implementacao simulada
-		mRotacao = mpModelo->Rotacao();
-		mVelocidadeAngular = mpModelo->VelocidadeAngular();
-		mVelocidadeLinear = mpModelo->VelocidadeLinear();
+		mRotacao = ISensor::mpModelo->Rotacao();
+		mVelocidadeAngular = ISensor::mpModelo->VelocidadeAngular();
+		mVelocidadeLinear = ISensor::mpModelo->VelocidadeLinear();
 	}
 }
 

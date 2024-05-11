@@ -1,10 +1,9 @@
 #include "Barometro.h"
 
 Barometro::Barometro() :
-	mpModelo(nullptr),
 	mAltitude(0.0)
 {
-
+	ISensor::mpModelo = nullptr;
 }
 
 Barometro::~Barometro()
@@ -15,7 +14,7 @@ Barometro::~Barometro()
 Void
 Barometro::Simulacao(Modelo& modelo)
 {
-	mpModelo = &modelo;
+	ISensor::mpModelo = &modelo;
 }
 
 Int32
@@ -23,7 +22,7 @@ Barometro::Iniciar()
 {
 	Int32 resultado = -1;
 
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
@@ -39,7 +38,7 @@ Barometro::Iniciar()
 Void
 Barometro::Calibrar()
 {
-	if (mpModelo == nullptr)
+	if (ISensor::ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
@@ -52,14 +51,14 @@ Barometro::Calibrar()
 Void
 Barometro::Capturar()
 {
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
 	else
 	{
 		// Implementacao simulada
-		mAltitude = mpModelo->Posicao().mZ;
+		mAltitude = ISensor::mpModelo->Posicao().mZ;
 	}
 }
 

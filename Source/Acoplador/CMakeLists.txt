@@ -1,5 +1,5 @@
 # Add library
-add_library(Acoplador "")
+add_library(Acoplador)
 
 # Include directory
 target_include_directories(Acoplador 

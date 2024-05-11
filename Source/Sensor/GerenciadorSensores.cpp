@@ -25,6 +25,18 @@ GerenciadorSensores::~GerenciadorSensores()
 
 }
 
+Void
+GerenciadorSensores::Simulacao(Modelo& modelo)
+{
+	mBarometro.Simulacao(modelo);
+	mBussola.Simulacao(modelo);
+	mGPS.Simulacao(modelo);
+	mIMU.Simulacao(modelo);
+	mSensorDistanciaBaixo.Simulacao(modelo);
+	mSensorDistanciaFrente.Simulacao(modelo);
+}
+
+
 Int32
 GerenciadorSensores::Iniciar()
 {

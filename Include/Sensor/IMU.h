@@ -26,7 +26,6 @@ class IMU : ISensor
 
 		Void Simulacao(Modelo& modelo);
 	private:
-		Modelo* mpModelo;
 		Vetor3D mRotacao;
 		Vetor3D mVelocidadeAngular;
 		Vetor3D mVelocidadeLinear;

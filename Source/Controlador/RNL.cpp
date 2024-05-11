@@ -1,6 +1,9 @@
 #include "RNL.h"
 
-RNL::RNL():
+RNL::RNL(
+	GerenciadorAcopladores& gerAcopladores,
+	GerenciadorSensores& gerSensores
+):
 	mInercia({}),
 	mMassa(0),
 	mRaio(0),
@@ -9,7 +12,8 @@ RNL::RNL():
 	mVelocidadeLinear({}),
 	mVelocidadeAngular({})
 {
-
+	IControlador::mpGerenciadorAcopladores = &gerAcopladores;
+	IControlador::mpGerenciadorSensores = &gerSensores;
 }
 
 RNL::~RNL()
@@ -17,33 +21,24 @@ RNL::~RNL()
 
 }
 
-Vetor4D 
-RNL::Calcular()
+Void 
+RNL::Controlar(const Vetor4D& referencia)
 {
-	// TODO
-	return Vetor4D();
+	Vetor4D sinal;
+	Capturar();
+
+	// Implementacao do controlador
+
+	IControlador::mpGerenciadorAcopladores->Aplicar(sinal);
 }
 
 Void 
-RNL::Posicao(const Vetor3D& posicao)
+RNL::Capturar()
 {
-	mPosicao = posicao;
-}
-
-Void 
-RNL::Rotacao(const Vetor3D& rotacao)
-{
-	mRotacao = rotacao;
-}
-
-Void 
-RNL::VelocidadeAngular(const Vetor3D& velocidadeAngular)
-{
-	mVelocidadeAngular = velocidadeAngular;
-}
-
-Void 
-RNL::VelocidadeLinear(const Vetor3D& velocidadeLinear)
-{
-	mVelocidadeLinear = velocidadeLinear;
+	mPosicao = IControlador::mpGerenciadorSensores->Posicao();
+	mVelocidadeLinear = IControlador::mpGerenciadorSensores->VelocidadeLinear();
+	mRotacao = IControlador::mpGerenciadorSensores->Rotacao();
+	mVelocidadeAngular = IControlador::mpGerenciadorSensores->VelocidadeAngular();
+	mDistanciaBaixo = IControlador::mpGerenciadorSensores->Baixo();
+	mDistanciaFrente = IControlador::mpGerenciadorSensores->Frente();
 }

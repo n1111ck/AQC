@@ -19,5 +19,7 @@ target_sources(Controlador
 # Incluir Bibliotecas
 target_link_libraries(Controlador
   PUBLIC
+    Acoplador
+    Sensor
     Utils
 )

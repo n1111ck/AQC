@@ -10,7 +10,8 @@ class Modelo
 		Modelo(const ParametrosModelo& parametros);
 		~Modelo();
 
-		Void Simular(const Vetor4D& sinal);
+		Void Aplicar(const Vetor4D& sinal);
+		Void Simular();
 
 		Vetor3D Posicao() const;
 		Vetor3D VelocidadeLinear() const;
@@ -18,6 +19,7 @@ class Modelo
 		Vetor3D VelocidadeAngular() const;
 	private:
 		ParametrosModelo mParametros;
+		Vetor4D mUltimoSinal;
 		Float mTempo;
 
 		Vetor3D mPosicao;

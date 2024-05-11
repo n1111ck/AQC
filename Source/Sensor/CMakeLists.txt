@@ -1,5 +1,5 @@
 # Add library
-add_library(Sensor "")
+add_library(Sensor)
 
 # Include directory
 target_include_directories(Sensor 

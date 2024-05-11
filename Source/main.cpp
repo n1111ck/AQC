@@ -35,7 +35,7 @@ int main()
 
 
 	// Criar controlaador e gerenciadores
-	RNL rnlControlador;
+	//RNL rnlControlador;
 	GerenciadorAcopladores gerAcopladores(
 		parametros.mRelacaoVelocidade,
 		parametros.mRelacaoForca,
@@ -65,6 +65,7 @@ int main()
 		{
 			gerAcopladores.Aplicar({ 0, 0, 0, 0 });
 		}
+		modelo.Simular();
 
 		std::cout << modelo.VelocidadeLinear().mZ << std::endl;
 	}

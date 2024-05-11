@@ -38,10 +38,10 @@ GerenciadorAcopladores::Aplicar(const Vetor4D& entrada) const
 {
 	Vetor4D velocidadeRotor;
 
-	velocidadeRotor.mW = (mpAcoplador[0].Calcular(entrada));
-	velocidadeRotor.mX = (mpAcoplador[1].Calcular(entrada));
-	velocidadeRotor.mY = (mpAcoplador[2].Calcular(entrada));
-	velocidadeRotor.mZ = (mpAcoplador[3].Calcular(entrada));
+	velocidadeRotor.mW = mpAcoplador[0].Calcular(entrada);
+	velocidadeRotor.mX = mpAcoplador[1].Calcular(entrada);
+	velocidadeRotor.mY = mpAcoplador[2].Calcular(entrada);
+	velocidadeRotor.mZ = mpAcoplador[3].Calcular(entrada);
 
 	velocidadeRotor.Saturar(0);
 	velocidadeRotor.Raiz();
@@ -54,6 +54,6 @@ GerenciadorAcopladores::Aplicar(const Vetor4D& entrada) const
 	else
 	{
 		// Implementacao simulada
-		mpModelo->Simular(velocidadeRotor);
+		mpModelo->Aplicar(velocidadeRotor);
 	}
 }

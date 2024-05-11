@@ -13,3 +13,12 @@ project (AQC-code)
 
 # Source subdirectories
 add_subdirectory (Source)
+
+# Set Build output
+set_target_properties( 
+    AQC
+    PROPERTIES
+        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Library"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Library"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Binary"
+)

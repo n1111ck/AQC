@@ -1,10 +1,9 @@
 #include "Bussola.h"
 
 Bussola::Bussola() :
-	mpModelo(nullptr),
 	mAngulo(0.0)
 {
-
+	ISensor::mpModelo = nullptr;
 }
 
 Bussola::~Bussola()
@@ -15,7 +14,7 @@ Bussola::~Bussola()
 Void
 Bussola::Simulacao(Modelo& modelo)
 {
-	mpModelo = &modelo;
+	ISensor::mpModelo = &modelo;
 }
 
 Int32 
@@ -23,7 +22,7 @@ Bussola::Iniciar()
 {
 	Int32 resultado = -10;
 
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
@@ -39,7 +38,7 @@ Bussola::Iniciar()
 Void 
 Bussola::Calibrar()
 {
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
@@ -52,14 +51,14 @@ Bussola::Calibrar()
 Void 
 Bussola::Capturar()
 {
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
 	else
 	{
 		// Implementacao simulada
-		mAngulo = mpModelo->Rotacao().mZ;
+		mAngulo = ISensor::mpModelo->Rotacao().mZ;
 	}
 }
 

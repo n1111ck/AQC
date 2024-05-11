@@ -18,7 +18,7 @@ Modelo::~Modelo()
 }
 
 Void 
-Modelo::Simular(const Vetor4D& sinal)
+Modelo::Simular()
 {
 	// Variaveis para calculo
 	Float k[4] = {};
@@ -34,10 +34,10 @@ Modelo::Simular(const Vetor4D& sinal)
 	// Simular Motor
 	for (UInt8 motorIndex = 0; motorIndex < 4; motorIndex++)
 	{
-		k[0] = TensaoAplicada(mParametros.mConstanteTempo, sinal.Element(motorIndex), sinalMotor[motorIndex]);
-		k[1] = TensaoAplicada(mParametros.mConstanteTempo, sinal.Element(motorIndex) + mParametros.mPasso / 2 * k[0], sinalMotor[motorIndex]);
-		k[2] = TensaoAplicada(mParametros.mConstanteTempo, sinal.Element(motorIndex) + mParametros.mPasso / 2 * k[1], sinalMotor[motorIndex]);
-		k[3] = TensaoAplicada(mParametros.mConstanteTempo, sinal.Element(motorIndex) + mParametros.mPasso * k[2], sinalMotor[motorIndex]);
+		k[0] = TensaoAplicada(mParametros.mConstanteTempo, mUltimoSinal.Element(motorIndex), sinalMotor[motorIndex]);
+		k[1] = TensaoAplicada(mParametros.mConstanteTempo, mUltimoSinal.Element(motorIndex) + mParametros.mPasso / 2 * k[0], sinalMotor[motorIndex]);
+		k[2] = TensaoAplicada(mParametros.mConstanteTempo, mUltimoSinal.Element(motorIndex) + mParametros.mPasso / 2 * k[1], sinalMotor[motorIndex]);
+		k[3] = TensaoAplicada(mParametros.mConstanteTempo, mUltimoSinal.Element(motorIndex) + mParametros.mPasso * k[2], sinalMotor[motorIndex]);
 		mSinalMotor[motorIndex] += mParametros.mPasso / 6 * (k[0] + 2 * k[1] + 2 * k[2] + k[3]);
 	}
 
@@ -125,6 +125,12 @@ Modelo::Simular(const Vetor4D& sinal)
 	mTempo += mParametros.mPasso;
 }
 
+Void
+Modelo::Aplicar(const Vetor4D& sinal)
+{
+	mUltimoSinal = sinal;
+}
+
 Float
 Modelo::TensaoAplicada(
 	const Float& constanteTempo, 
@@ -187,6 +193,8 @@ Modelo::AceleracaoGuinada(const Float& U4) const
 		mParametros.mRaio * U4
 	);
 }
+
+// TODO: todos getters tem que retornar valores que os sensores reais retornariam
 
 Vetor3D 
 Modelo::Posicao() const

@@ -1,5 +1,5 @@
 # Add library
-add_library(Utils "")
+add_library(Utils)
 
 # Include directory
 target_include_directories(Utils 

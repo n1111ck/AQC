@@ -24,7 +24,6 @@ class Bussola : ISensor
 
 		Void Simulacao(Modelo& modelo);
 	private:
-		Modelo* mpModelo;
 		Float mAngulo;
 };
 

@@ -1,24 +1,28 @@
 #ifndef _RNL_H_
 #define _RNL_H_
 
+// Incluir Acoplador
+#include "GerenciadorAcopladores.h"
+
 // Incluir Controlador
 #include "IControlador.h"
+
+// Incluir Sensor
+#include "GerenciadorSensores.h"
 
 // Incluir Utils
 #include "Tipos.h"
 
-class RNL : IControlador
+class RNL : public IControlador
 {
 	public:
-		RNL();
+		RNL(
+			GerenciadorAcopladores& gerAcopladores,
+			GerenciadorSensores& gerSensores
+		);
 		~RNL();
 
-		Vetor4D Calcular();
-		Void Posicao(const Vetor3D& posicao);
-		Void Rotacao(const Vetor3D& rotacao);
-		Void VelocidadeAngular(const Vetor3D& velocidadeAngular);
-		Void VelocidadeLinear(const Vetor3D& velocidadeLinear);
-
+		Void Controlar(const Vetor4D& referencia);
 	private:
 		Float mMassa;
 		Float mRaio;
@@ -28,6 +32,10 @@ class RNL : IControlador
 		Vetor3D mRotacao;
 		Vetor3D mVelocidadeLinear;
 		Vetor3D mVelocidadeAngular;
+		Float mDistanciaBaixo;
+		Float mDistanciaFrente;
+
+		Void Capturar();
 };
 
 #endif //_RNL_H_

@@ -1,5 +1,5 @@
 # Add library
-add_library(Modelo "")
+add_library(Modelo)
 
 # Include directory
 target_include_directories(Modelo 

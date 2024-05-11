@@ -24,7 +24,6 @@ class SensorDistancia : ISensor
 
 		Void Simulacao(Modelo& modelo);
 	private:
-		Modelo* mpModelo;
 		Float mDistancia;
 };
 

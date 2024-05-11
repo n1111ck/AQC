@@ -1,11 +1,10 @@
 #include "GPS.h"
 
 GPS::GPS() :
-	mpModelo(nullptr),
 	mLatitude(0.0),
 	mLongitude(0.0)
 {
-
+	ISensor::ISensor::mpModelo = nullptr;
 }
 
 GPS::~GPS()
@@ -16,7 +15,7 @@ GPS::~GPS()
 Void
 GPS::Simulacao(Modelo& modelo)
 {
-	mpModelo = &modelo;
+	ISensor::mpModelo = &modelo;
 }
 
 Int32
@@ -24,7 +23,7 @@ GPS::Iniciar()
 {
 	Int32 resultado = -100;
 
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
@@ -40,22 +39,22 @@ GPS::Iniciar()
 Void
 GPS::Calibrar()
 {
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
 	else
 	{
 		// Implementacao simulada
-		mLatitude = mpModelo->Posicao().mX;
-		mLongitude = mpModelo->Posicao().mY;
+		mLatitude = ISensor::mpModelo->Posicao().mX;
+		mLongitude = ISensor::mpModelo->Posicao().mY;
 	}
 }
 
 Void
 GPS::Capturar()
 {
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}

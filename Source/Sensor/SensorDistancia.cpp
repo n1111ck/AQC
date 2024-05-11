@@ -1,10 +1,9 @@
 #include "SensorDistancia.h"
 
 SensorDistancia::SensorDistancia() :
-	mpModelo(nullptr),
 	mDistancia(0.0)
 {
-
+	ISensor::mpModelo = nullptr;
 }
 
 SensorDistancia::~SensorDistancia()
@@ -15,7 +14,7 @@ SensorDistancia::~SensorDistancia()
 Void
 SensorDistancia::Simulacao(Modelo& modelo)
 {
-	mpModelo = &modelo;
+	ISensor::mpModelo = &modelo;
 }
 
 Int32
@@ -23,7 +22,7 @@ SensorDistancia::Iniciar()
 {
 	Int32 resultado = -10000;
 
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
@@ -39,7 +38,7 @@ SensorDistancia::Iniciar()
 Void
 SensorDistancia::Calibrar()
 {
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
@@ -52,7 +51,7 @@ SensorDistancia::Calibrar()
 Void
 SensorDistancia::Capturar()
 {
-	if (mpModelo == nullptr)
+	if (ISensor::mpModelo == nullptr)
 	{
 		// Implementacao real
 	}
