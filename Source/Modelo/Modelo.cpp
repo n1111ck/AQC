@@ -8,7 +8,9 @@ Modelo::Modelo(const ParametrosModelo& parametros):
 	mRotacao({}),
 	mVelocidadeAngular({}),
 	mTempo(0.0),
-	mSinalMotor{0.0, 0.0, 0.0, 0.0}
+	mUltimoSinal({}),
+	mSinalMotor{0.0, 0.0, 0.0, 0.0},
+	mChao(true)
 {
 }
 
@@ -21,7 +23,7 @@ Void
 Modelo::Simular()
 {
 	// Variaveis para calculo
-	Float idMultiplicador[4] = {0.0, 0.5, 0.5, 1.0};
+	const Float idMultiplicador[4] = {0.0, 0.5, 0.5, 1.0};
 	Float kMotor[4][4] = {};
 	Float kVelocidadeAltitude[4] = {};
 	Float kVelocidadeRolamento[4] = {};
@@ -43,6 +45,8 @@ Modelo::Simular()
 	Float kU3;
 	Float kU4;
 	Float kRotacaoResultante;
+	Vetor3D kRotacao;
+	Vetor3D kVelocidadeAngular;
 
 	for (UInt8 kIteration = 0; kIteration < 4; kIteration++)
 	{
@@ -60,7 +64,6 @@ Modelo::Simular()
 		for (UInt8 motorIndex = 0; motorIndex < 4; motorIndex++)
 		{
 			kMotor[motorIndex][kIteration] = TensaoAplicada(
-				mParametros.mConstanteTempo, 
 				mUltimoSinal.Element(motorIndex) + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[motorIndex][kId - 1],
 				mSinalMotor[motorIndex] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[motorIndex][kId - 1]
 			);
@@ -68,93 +71,79 @@ Modelo::Simular()
 
 		// Calcular variaveis auxiliares
 		kU1 = mParametros.mRelacaoForca * (
-			pow(mParametros.mRelacaoVelocidade * mSinalMotor[0] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[0][kId - 1], 2) +
-			pow(mParametros.mRelacaoVelocidade * mSinalMotor[1] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[1][kId - 1], 2) +
-			pow(mParametros.mRelacaoVelocidade * mSinalMotor[2] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1], 2) +
-			pow(mParametros.mRelacaoVelocidade * mSinalMotor[3] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[3][kId - 1], 2)
+			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[0] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[0][kId - 1]), 2) +
+			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[1] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[1][kId - 1]), 2) +
+			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[2] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1]), 2) +
+			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[3] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[3][kId - 1]), 2)
 		);
 		kU2 = mParametros.mRelacaoForca * mParametros.mRaio * (
-			pow(mParametros.mRelacaoVelocidade * mSinalMotor[1] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[1][kId - 1], 2) -
-			pow(mParametros.mRelacaoVelocidade * mSinalMotor[3] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[3][kId - 1], 2)
+			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[1] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[1][kId - 1]), 2) -
+			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[3] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[3][kId - 1]), 2)
 		);
 		kU3 = mParametros.mRelacaoForca * mParametros.mRaio * (
-			pow(mParametros.mRelacaoVelocidade * mSinalMotor[0] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[0][kId - 1], 2) -
-			pow(mParametros.mRelacaoVelocidade * mSinalMotor[2] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1], 2)
+			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[0] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[0][kId - 1]), 2) -
+			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[2] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1]), 2)
 		);
 		kU4 = mParametros.mRelacaoTorque * (
-			- pow(mParametros.mRelacaoVelocidade * mSinalMotor[0] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[0][kId - 1], 2)
-			+ pow(mParametros.mRelacaoVelocidade * mSinalMotor[1] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[1][kId - 1], 2)
-			- pow(mParametros.mRelacaoVelocidade * mSinalMotor[2] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1], 2)
-			+ pow(mParametros.mRelacaoVelocidade * mSinalMotor[3] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1], 2)
+			- pow(mParametros.mRelacaoVelocidade * (mSinalMotor[0] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[0][kId - 1]), 2)
+			+ pow(mParametros.mRelacaoVelocidade * (mSinalMotor[1] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[1][kId - 1]), 2)
+			- pow(mParametros.mRelacaoVelocidade * (mSinalMotor[2] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1]), 2)
+			+ pow(mParametros.mRelacaoVelocidade * (mSinalMotor[3] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1]), 2)
 		);
 		kRotacaoResultante = (
-			- mParametros.mRelacaoVelocidade * mSinalMotor[0] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[0][kId - 1]
-			+ mParametros.mRelacaoVelocidade * mSinalMotor[1] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[1][kId - 1]
-			- mParametros.mRelacaoVelocidade * mSinalMotor[2] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1]
-			+ mParametros.mRelacaoVelocidade * mSinalMotor[3] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1]
+			- mParametros.mRelacaoVelocidade * (mSinalMotor[0] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[0][kId - 1])
+			+ mParametros.mRelacaoVelocidade * (mSinalMotor[1] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[1][kId - 1])
+			- mParametros.mRelacaoVelocidade * (mSinalMotor[2] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1])
+			+ mParametros.mRelacaoVelocidade * (mSinalMotor[3] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1])
 		);
+		kRotacao = {
+				mRotacao.mX + idMultiplicador[kIteration] * mParametros.mPasso * kRolamento[kId - 1],
+				mRotacao.mY + idMultiplicador[kIteration] * mParametros.mPasso * kArfagem[kId - 1],
+				mRotacao.mZ + idMultiplicador[kIteration] * mParametros.mPasso * kGuinada[kId - 1]
+		};
+		kVelocidadeAngular = {
+				mVelocidadeAngular.mX + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeRolamento[kId - 1],
+				mVelocidadeAngular.mY + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeArfagem[kId - 1],
+				mVelocidadeAngular.mZ + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeGuinada[kId - 1]
+		};
+
 
 		// Velocidade Latitude
 		kVelocidadeLatitude[kIteration] = AceleracaoLatitude(
 			kU1,
-			{
-				mRotacao.mX + idMultiplicador[kIteration] * mParametros.mPasso * kRolamento[kId - 1],
-				mRotacao.mY + idMultiplicador[kIteration] * mParametros.mPasso * kArfagem[kId - 1],
-				mRotacao.mZ + idMultiplicador[kIteration] * mParametros.mPasso * kGuinada[kId - 1]
-			}
+			kRotacao
 		);
 
 		// Velocidade Longitude
 		kVelocidadeLatitude[kIteration] = AceleracaoLongitude(
 			kU1, 
-			{
-				mRotacao.mX + idMultiplicador[kIteration] * mParametros.mPasso * kRolamento[kId - 1],
-				mRotacao.mY + idMultiplicador[kIteration] * mParametros.mPasso * kArfagem[kId - 1],
-				mRotacao.mZ + idMultiplicador[kIteration] * mParametros.mPasso * kGuinada[kId - 1]
-			}
+			kRotacao
 		);
 
 		// Velocidade Altitude
 		kVelocidadeAltitude[kIteration] = AceleracaoAltitude(
 			kU1,
-			{
-				mRotacao.mX + idMultiplicador[kIteration] * mParametros.mPasso * kRolamento[kId - 1],
-				mRotacao.mY + idMultiplicador[kIteration] * mParametros.mPasso * kArfagem[kId - 1],
-				mRotacao.mZ + idMultiplicador[kIteration] * mParametros.mPasso * kGuinada[kId - 1]
-			}
+			kRotacao
 		);
 
 		// Velocidade Rolamento
 		kVelocidadeRolamento[kIteration] = AceleracaoRolamento(
 			kU2,
-			{
-				mVelocidadeAngular.mX + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeRolamento[kId - 1],
-				mVelocidadeAngular.mY + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeArfagem[kId - 1],
-				mVelocidadeAngular.mZ + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeGuinada[kId - 1]
-			},
+			kVelocidadeAngular,
 			kRotacaoResultante
 		);
 
 		// Velocidade Arfagem
-		kVelocidadeRolamento[kIteration] = AceleracaoRolamento(
+		kVelocidadeArfagem[kIteration] = AceleracaoArfagem(
 			kU3,
-			{
-				mVelocidadeAngular.mX + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeRolamento[kId - 1],
-				mVelocidadeAngular.mY + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeArfagem[kId - 1],
-				mVelocidadeAngular.mZ + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeGuinada[kId - 1]
-			},
+			kVelocidadeAngular,
 			kRotacaoResultante
 		);
 
 		// Velocidade Guinada
-		kVelocidadeRolamento[kIteration] = AceleracaoRolamento(
+		kVelocidadeGuinada[kIteration] = AceleracaoGuinada(
 			kU4,
-			{
-				mVelocidadeAngular.mX + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeRolamento[kId - 1],
-				mVelocidadeAngular.mY + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeArfagem[kId - 1],
-				mVelocidadeAngular.mZ + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeGuinada[kId - 1]
-			},
-			kRotacaoResultante
+			kVelocidadeAngular
 		);
 
 		// Posicao
@@ -198,16 +187,15 @@ Modelo::Aplicar(const Vetor4D& sinal)
 
 Float
 Modelo::TensaoAplicada(
-	const Float& constanteTempo, 
 	const Float& tensaoEntradaAtual, 
 	const Float& tensaoSaidaAtual
 ) const
 {
-	return 1 / constanteTempo * (tensaoEntradaAtual - tensaoSaidaAtual);
+	return 1 / mParametros.mConstanteTempo * (tensaoEntradaAtual - tensaoSaidaAtual);
 }
 
 Float
-Modelo::AceleracaoLatitude(const Float& U1, const Vetor4D& rotacao) const
+Modelo::AceleracaoLatitude(const Float& U1, const Vetor3D& rotacao) const
 {
 	return U1 / mParametros.mMassa * (
 		sin(rotacao.mZ) * sin(rotacao.mX) +
@@ -216,7 +204,7 @@ Modelo::AceleracaoLatitude(const Float& U1, const Vetor4D& rotacao) const
 }
 
 Float
-Modelo::AceleracaoLongitude(const Float& U1, const Vetor4D& rotacao) const
+Modelo::AceleracaoLongitude(const Float& U1, const Vetor3D& rotacao) const
 {
 	return U1 / mParametros.mMassa * (
 		- cos(rotacao.mZ) * sin(rotacao.mX)
@@ -225,37 +213,44 @@ Modelo::AceleracaoLongitude(const Float& U1, const Vetor4D& rotacao) const
 }
 
 Float
-Modelo::AceleracaoAltitude(const Float& U1, const Vetor4D& rotacao) const
+Modelo::AceleracaoAltitude(const Float& U1, const Vetor3D& rotacao) const
 {
-	return -mParametros.mGravidade + cos(rotacao.mX) * cos(rotacao.mY) * U1 / mParametros.mMassa;
+	Float resultado = -mParametros.mGravidade + cos(rotacao.mX) * cos(rotacao.mY) * U1 / mParametros.mMassa;
+
+	if ((mPosicao.mZ < 0.0 && resultado < 0.0) && mChao)
+	{
+		resultado = 0.0;
+	}
+
+	return resultado;
 }
 
 Float
-Modelo::AceleracaoRolamento(const Float& U2, const Vetor4D& velocidadeAngular, const Float& rotacaoRotorResultante) const
+Modelo::AceleracaoRolamento(const Float& U2, const Vetor3D& velocidadeAngular, const Float& rotacaoRotorResultante) const
 {
 	return 1 / mParametros.mInercia.mX * (
 		(mParametros.mInercia.mZ - mParametros.mInercia.mY) * velocidadeAngular.mY * velocidadeAngular.mZ +
 		mParametros.mInerciaRotacao * rotacaoRotorResultante * velocidadeAngular.mY +
-		mParametros.mRaio * U2
+		U2
 	);
 }
 
 Float
-Modelo::AceleracaoArfagem(const Float& U3, const Vetor4D& velocidadeAngular, const Float& rotacaoRotorResultante) const
+Modelo::AceleracaoArfagem(const Float& U3, const Vetor3D& velocidadeAngular, const Float& rotacaoRotorResultante) const
 {
 	return 1 / mParametros.mInercia.mY * (
 		(mParametros.mInercia.mX - mParametros.mInercia.mZ) * velocidadeAngular.mX * velocidadeAngular.mZ -
 		mParametros.mInerciaRotacao * rotacaoRotorResultante * velocidadeAngular.mX +
-		mParametros.mRaio * U3
+		U3
 	);
 }
 
 Float
-Modelo::AceleracaoGuinada(const Float& U4, const Vetor4D& velocidadeAngular) const
+Modelo::AceleracaoGuinada(const Float& U4, const Vetor3D& velocidadeAngular) const
 {
 	return 1 / mParametros.mInercia.mZ * (
 		(mParametros.mInercia.mY - mParametros.mInercia.mX) * velocidadeAngular.mX * velocidadeAngular.mY +
-		mParametros.mRaio * U4
+		U4
 	);
 }
 
@@ -296,3 +291,8 @@ Modelo::TensaoRotores() const
 	};
 }
 
+Void
+Modelo::Chao(const Boolean& valor)
+{
+	mChao = valor;
+}

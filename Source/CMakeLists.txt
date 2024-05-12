@@ -5,6 +5,7 @@ add_executable(AQC-Main main.cpp)
   
 # Source subdirectories
 add_subdirectory(Acoplador)
+add_subdirectory(Algoritmo)
 add_subdirectory(Controlador)
 add_subdirectory(Modelo)
 add_subdirectory(Sensor)
@@ -13,6 +14,7 @@ add_subdirectory(Utils)
 # Incluir Bibliotecas
 link_directories(
     Acoplador/
+    Algoritmo/
     Controlador/
     Modelo/
     Sensor/
@@ -23,6 +25,7 @@ link_directories(
 target_link_libraries(AQC-Main
   PUBLIC
     Acoplador
+    Algoritmo
     Controlador
     Modelo
     Sensor
@@ -48,6 +51,7 @@ target_sources(AQC-Main
 #
 add_library(AQC 
     AQC.cpp
+    Algoritmo/Algoritmo.cpp
     Acoplador/Acoplador.cpp
     Acoplador/GerenciadorAcopladores.cpp
     Controlador/RNL.cpp
@@ -66,6 +70,7 @@ add_library(AQC
 target_link_libraries(AQC
   PUBLIC
     Acoplador
+    Algoritmo
     Controlador
     Modelo
     Sensor

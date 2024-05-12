@@ -11,7 +11,7 @@ target_include_directories(Acoplador
 target_sources(Acoplador
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/Acoplador.cpp
-        "GerenciadorAcopladores.cpp"
+        ${CMAKE_CURRENT_LIST_DIR}/GerenciadorAcopladores.cpp
     PUBLIC
         ${CMAKE_SOURCE_DIR}/Include/Acoplador/Acoplador.h
         ${CMAKE_SOURCE_DIR}/Include/Acoplador/GerenciadorAcopladores.h

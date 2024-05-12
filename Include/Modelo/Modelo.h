@@ -18,10 +18,13 @@ class Modelo
 		Vetor3D Rotacao() const;
 		Vetor3D VelocidadeAngular() const;
 		Vetor4D TensaoRotores() const;
+
+		Void Chao(const Boolean& valor);
 	private:
 		ParametrosModelo mParametros;
 		Vetor4D mUltimoSinal;
 		Float mTempo;
+		Boolean mChao;
 
 		Vetor3D mPosicao;
 		Vetor3D mVelocidadeLinear;
@@ -31,17 +34,16 @@ class Modelo
 		Float mSinalMotor[4];
 
 		Float TensaoAplicada(
-			const Float& constanteTempo,
 			const Float& tensaoEntradaAtual,
 			const Float& tensaoSaidaAtual
 		) const;
 
-		Float AceleracaoLatitude(const Float& U1, const Vetor4D& rotacao) const;
-		Float AceleracaoLongitude(const Float& U1, const Vetor4D& rotacao) const;
-		Float AceleracaoAltitude(const Float& U1, const Vetor4D& rotacao) const;
-		Float AceleracaoRolamento(const Float& U2, const Vetor4D& velocidadeAngular, const Float& rotacaoRotorResultante) const;
-		Float AceleracaoArfagem(const Float& U2, const Vetor4D& velocidadeAngular, const Float& rotacaoRotorResultante) const;
-		Float AceleracaoGuinada(const Float& U2, const Vetor4D& velocidadeAngular) const;
+		Float AceleracaoLatitude(const Float& U1, const Vetor3D& rotacao) const;
+		Float AceleracaoLongitude(const Float& U1, const Vetor3D& rotacao) const;
+		Float AceleracaoAltitude(const Float& U1, const Vetor3D& rotacao) const;
+		Float AceleracaoRolamento(const Float& U2, const Vetor3D& velocidadeAngular, const Float& rotacaoRotorResultante) const;
+		Float AceleracaoArfagem(const Float& U2, const Vetor3D& velocidadeAngular, const Float& rotacaoRotorResultante) const;
+		Float AceleracaoGuinada(const Float& U2, const Vetor3D& velocidadeAngular) const;
 };
 
 #endif // _MODELO_H_

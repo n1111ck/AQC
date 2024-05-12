@@ -141,14 +141,14 @@ RNL::RealimentacaoNaoLinear()
 	}
 
 	resultado.mX = (
-		mRotacao.mY * mRotacao.mZ * (mInercia.mY - mInercia.mZ) -
-		mRotacao.mY * somatorioRotores * mInerciaRotacao
+		mVelocidadeAngular.mY * mVelocidadeAngular.mZ * (mInercia.mY - mInercia.mZ) -
+		mVelocidadeAngular.mY * somatorioRotores * mInerciaRotacao
 	);
 	resultado.mY = (
-		mRotacao.mX * mRotacao.mZ * (mInercia.mZ - mInercia.mX) +
-		mRotacao.mX * somatorioRotores * mInerciaRotacao
+		mVelocidadeAngular.mX * mVelocidadeAngular.mZ * (mInercia.mZ - mInercia.mX) +
+		mVelocidadeAngular.mX * somatorioRotores * mInerciaRotacao
 	);
-	resultado.mZ = mRotacao.mX * mRotacao.mY * (mInercia.mX - mInercia.mY);
+	resultado.mZ = mVelocidadeAngular.mX * mVelocidadeAngular.mY * (mInercia.mX - mInercia.mY);
 
 	return resultado;
 }

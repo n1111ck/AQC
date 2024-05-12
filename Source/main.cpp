@@ -25,17 +25,15 @@ int main()
 	ParametrosModelo parametros;
 
 	parametros.mMassa = 1.023;
-	parametros.mRaio = 3.000e-1;
-	parametros.mInercia = { 9.500e-3, 9.500e-3, 1.860e-2 };
+	parametros.mRaio = 0.22225;
+	parametros.mInercia = { 0.0094999, 0.0094999, 0.018576 };
 	parametros.mPasso = 1.000e-3;
 	parametros.mGravidade = 9.810;
-	parametros.mInerciaRotacao = 3.788e-6;
-	parametros.mRelacaoVelocidade = 7.885e+1;
-	parametros.mRelacaoForca = 1.356e-05;
-	parametros.mRelacaoTorque = 2.667e-07;
+	parametros.mInerciaRotacao = 3.788222486039875e-06;
+	parametros.mRelacaoVelocidade = 78.841758300339833;
+	parametros.mRelacaoForca = 1.355525455359016e-05;
+	parametros.mRelacaoTorque = 2.667280159384542e-07;
 	parametros.mConstanteTempo = 7.600e-2;
-
-
 
 	// Criar controlaador e gerenciadores
 	//RNL rnlControlador;
@@ -64,25 +62,27 @@ int main()
 	csvExport << "Tempo[s],X[m],Y[m],Z[m],Roll[graus],Pitch[graus],Yaw[graus],M1[V],M2[V],M3[V],M4[V]" << std::endl;
 
 	Vetor4D sinal = {};
-	for (UInt32 i = 0; i < 30000; i++)
+
+	// Aplicacao de chao
+	modelo.Chao(false);
+
+	for (UInt32 i = 0; i < 5000; i++)
 	{
-		if (i > 5000)
-		{
-			controlador.Aplicar({ 100.0, 0, 0, 0 });
-		}
-		else
-		{
-			controlador.Aplicar({ 0, 0, 0, 0 });
-		}
+		modelo.Aplicar({ 
+			6.649218051073475,
+			6.650823390974534,
+			6.649218051073475,
+			6.647612711172417
+		});
 		modelo.Simular();
 
 		csvExport << i * parametros.mPasso << ",";
-		csvExport << modelo.VelocidadeLinear().mX << ",";
-		csvExport << modelo.VelocidadeLinear().mY << ",";
-		csvExport << modelo.VelocidadeLinear().mZ << ",";
-		csvExport << modelo.Posicao().mX << ",";
-		csvExport << modelo.Posicao().mY << ",";
-		csvExport << modelo.Posicao().mZ << ",";
+		csvExport << modelo.VelocidadeAngular().mX << ",";
+		csvExport << modelo.VelocidadeAngular().mY << ",";
+		csvExport << modelo.VelocidadeAngular().mZ << ",";
+		csvExport << modelo.Rotacao().mX << ",";
+		csvExport << modelo.Rotacao().mY << ",";
+		csvExport << modelo.Rotacao().mZ << ",";
 		csvExport << modelo.TensaoRotores().mW << ",";
 		csvExport << modelo.TensaoRotores().mX << ",";
 		csvExport << modelo.TensaoRotores().mY << ",";
