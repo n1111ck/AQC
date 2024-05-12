@@ -17,6 +17,7 @@ class Modelo
 		Vetor3D VelocidadeLinear() const;
 		Vetor3D Rotacao() const;
 		Vetor3D VelocidadeAngular() const;
+		Vetor4D TensaoRotores() const;
 	private:
 		ParametrosModelo mParametros;
 		Vetor4D mUltimoSinal;
@@ -35,12 +36,12 @@ class Modelo
 			const Float& tensaoSaidaAtual
 		) const;
 
-		Float AceleracaoLatitude(const Float& U1) const;
-		Float AceleracaoLongitude(const Float& U1) const;
-		Float AceleracaoAltitude(const Float& U1) const;
-		Float AceleracaoRolamento(const Float& U2, const Float& rotacaoRotorResultante) const;
-		Float AceleracaoArfagem(const Float& U3, const Float& rotacaoRotorResultante) const;
-		Float AceleracaoGuinada(const Float& U4) const;
+		Float AceleracaoLatitude(const Float& U1, const Vetor4D& rotacao) const;
+		Float AceleracaoLongitude(const Float& U1, const Vetor4D& rotacao) const;
+		Float AceleracaoAltitude(const Float& U1, const Vetor4D& rotacao) const;
+		Float AceleracaoRolamento(const Float& U2, const Vetor4D& velocidadeAngular, const Float& rotacaoRotorResultante) const;
+		Float AceleracaoArfagem(const Float& U2, const Vetor4D& velocidadeAngular, const Float& rotacaoRotorResultante) const;
+		Float AceleracaoGuinada(const Float& U2, const Vetor4D& velocidadeAngular) const;
 };
 
 #endif // _MODELO_H_

@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <fstream>
 
 // Incluir AQC
 #include "AQC.h"
@@ -19,6 +20,8 @@
 // Main file
 int main()
 {
+	std::ofstream csvExport("Data.csv");
+
 	ParametrosModelo parametros;
 
 	parametros.mMassa = 1.023;
@@ -27,20 +30,20 @@ int main()
 	parametros.mPasso = 1.000e-3;
 	parametros.mGravidade = 9.810;
 	parametros.mInerciaRotacao = 3.788e-6;
-	parametros.mRelacaoVelocidade = 2.827e+2;
-	parametros.mRelacaoForca = 1.065e-5;
-	parametros.mRelacaoTorque = 1.065e-7;
-	parametros.mConstanteTempo = 1.316e+1;
+	parametros.mRelacaoVelocidade = 7.885e+1;
+	parametros.mRelacaoForca = 1.356e-05;
+	parametros.mRelacaoTorque = 2.667e-07;
+	parametros.mConstanteTempo = 7.600e-2;
 
 
 
 	// Criar controlaador e gerenciadores
 	//RNL rnlControlador;
 	GerenciadorAcopladores gerAcopladores(
+		12.0,
 		parametros.mRelacaoVelocidade,
 		parametros.mRelacaoForca,
 		parametros.mRelacaoTorque,
-		parametros.mConstanteTempo,
 		parametros.mRaio
 	);
 	GerenciadorSensores gerSensores;
@@ -49,24 +52,42 @@ int main()
 	Modelo modelo(parametros);
 
 	gerAcopladores.Simulacao(modelo);
-	//gerSensores.Simulacao(modelo);
+	gerSensores.Simulacao(modelo);
 #endif
 
-	//AQC<RNL> aqc(rnlControlador, gerAtuadores, gerSensores);
+	RNL controlador(
+		gerAcopladores,
+		gerSensores,
+		parametros
+	);
+
+	csvExport << "Tempo[s],X[m],Y[m],Z[m],Roll[graus],Pitch[graus],Yaw[graus],M1[V],M2[V],M3[V],M4[V]" << std::endl;
 
 	Vetor4D sinal = {};
-	for (UInt32 i = 0; i < 10000; i++)
+	for (UInt32 i = 0; i < 30000; i++)
 	{
-		if (i > 0)
+		if (i > 5000)
 		{
-			gerAcopladores.Aplicar({ parametros.mMassa * parametros.mGravidade, 0, 0, 0 });
+			controlador.Aplicar({ 100.0, 0, 0, 0 });
 		}
 		else
 		{
-			gerAcopladores.Aplicar({ 0, 0, 0, 0 });
+			controlador.Aplicar({ 0, 0, 0, 0 });
 		}
 		modelo.Simular();
 
-		std::cout << modelo.VelocidadeLinear().mZ << std::endl;
+		csvExport << i * parametros.mPasso << ",";
+		csvExport << modelo.VelocidadeLinear().mX << ",";
+		csvExport << modelo.VelocidadeLinear().mY << ",";
+		csvExport << modelo.VelocidadeLinear().mZ << ",";
+		csvExport << modelo.Posicao().mX << ",";
+		csvExport << modelo.Posicao().mY << ",";
+		csvExport << modelo.Posicao().mZ << ",";
+		csvExport << modelo.TensaoRotores().mW << ",";
+		csvExport << modelo.TensaoRotores().mX << ",";
+		csvExport << modelo.TensaoRotores().mY << ",";
+		csvExport << modelo.TensaoRotores().mZ << std::endl;
 	}
+
+	csvExport.close();
 }

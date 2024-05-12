@@ -13,7 +13,7 @@
 class IControlador
 {
 	public:
-		virtual Void Controlar(const Vetor4D& referencia) = 0;
+		virtual Void Aplicar(const Vetor4D& referencia) = 0;
 		virtual Void Capturar() = 0;
 	protected:
 		GerenciadorAcopladores* mpGerenciadorAcopladores;

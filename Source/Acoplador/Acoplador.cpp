@@ -9,13 +9,11 @@ Acoplador::Acoplador(
 	const Float& relacaoVelocidade,
 	const Float& relacaoForca,
 	const Float& relacaoTorque,
-	const Float& constanteTempo,
 	const Float& raio
 ):
 	mRelacaoVelocidade(relacaoVelocidade),
 	mRelacaoForca(relacaoForca),
 	mRelacaoTorque(relacaoTorque),
-	mConstanteTempo(constanteTempo),
 	mRaio(raio),
 	mLinhaConversao({})
 {

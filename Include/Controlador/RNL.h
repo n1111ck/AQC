@@ -18,15 +18,18 @@ class RNL : public IControlador
 	public:
 		RNL(
 			GerenciadorAcopladores& gerAcopladores,
-			GerenciadorSensores& gerSensores
+			GerenciadorSensores& gerSensores,
+			const ParametrosModelo& parametros
 		);
 		~RNL();
 
-		Void Controlar(const Vetor4D& referencia);
+		Void Aplicar(const Vetor4D& referencia);
 	private:
 		Float mMassa;
+		Float mGravidade;
 		Float mRaio;
 		Vetor3D mInercia;
+		Float mInerciaRotacao;
 
 		Vetor3D mPosicao;
 		Vetor3D mRotacao;
@@ -35,7 +38,13 @@ class RNL : public IControlador
 		Float mDistanciaBaixo;
 		Float mDistanciaFrente;
 
+		Vetor4D mProporcionalVelocidade;
+		Vetor4D mProporcionalPosicao;
+
 		Void Capturar();
+		Vetor4D ProporcionalPosicao(const Float& constanteTempo);
+		Vetor4D ProporcionalVelocidade(const Vetor4D& ganhoEstaticoInvertido, const Float& constanteTempo);
+		Vetor4D RealimentacaoNaoLinear();
 };
 
 #endif //_RNL_H_

@@ -62,6 +62,46 @@ Vetor4D::Saturar(const Float& inferior)
 	}
 }
 
+Void
+Vetor4D::Saturar(const Float& inferior, const Float& superior)
+{
+	if (mW < inferior)
+	{
+		mW = inferior;
+	}
+	else if (mW > superior)
+	{
+		mW = superior;
+	}
+
+	if (mX < inferior)
+	{
+		mX = inferior;
+	}
+	else if (mX > superior)
+	{
+		mX = superior;
+	}
+
+	if (mY < inferior)
+	{
+		mY = inferior;
+	}
+	else if (mY > superior)
+	{
+		mY = superior;
+	}
+
+	if (mZ < inferior)
+	{
+		mZ = inferior;
+	}
+	else if (mZ > superior)
+	{
+		mZ = superior;
+	}
+}
+
 Void 
 Vetor4D::Raiz()
 {
@@ -83,6 +123,61 @@ Vetor4D::operator*(const Float& valor) const
 
 	return resultado;
 }
+
+Vetor4D 
+Vetor4D::operator-(const Vetor4D& vetor) const
+{
+	Vetor4D resultado = *this;
+
+	resultado.mW -= vetor.mW;
+	resultado.mX -= vetor.mX;
+	resultado.mY -= vetor.mY;
+	resultado.mZ -= vetor.mZ;
+
+	return resultado;
+}
+
+Vetor4D
+Vetor4D::operator*(const Vetor4D& vetor) const
+{
+	Vetor4D resultado = *this;
+
+	resultado.mW *= vetor.mW;
+	resultado.mX *= vetor.mX;
+	resultado.mY *= vetor.mY;
+	resultado.mZ *= vetor.mZ;
+
+	return resultado;
+}
+
+Vetor4D
+Vetor4D::operator+=(const Vetor4D& vetor)
+{
+	mW += vetor.mW;
+	mX += vetor.mX;
+	mY += vetor.mY;
+	mZ += vetor.mZ;
+
+	return *this;
+}
+
+Vetor4D
+Vetor4D::operator+=(const Float& valor)
+{
+	mW += valor;
+	mX += valor;
+	mY += valor;
+	mZ += valor;
+
+	return *this;
+}
+
+Vetor4D 
+Vetor4D::operator-=(const Float& valor)
+{
+	return operator+=(-valor);
+}
+
 
 Float
 Linha4D::Element(const UInt8& index) const
@@ -142,6 +237,46 @@ Linha4D::Saturar(const Float& inferior)
 	if (mZ < inferior)
 	{
 		mZ = inferior;
+	}
+}
+
+Void
+Linha4D::Saturar(const Float& inferior, const Float& superior)
+{
+	if (mW < inferior)
+	{
+		mW = inferior;
+	}
+	else if (mW > superior)
+	{
+		mW = superior;
+	}
+
+	if (mX < inferior)
+	{
+		mX = inferior;
+	}
+	else if (mX > superior)
+	{
+		mX = superior;
+	}
+
+	if (mY < inferior)
+	{
+		mY = inferior;
+	}
+	else if (mY > superior)
+	{
+		mY = superior;
+	}
+
+	if (mZ < inferior)
+	{
+		mZ = inferior;
+	}
+	else if (mZ > superior)
+	{
+		mZ = superior;
 	}
 }
 

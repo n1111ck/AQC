@@ -14,22 +14,25 @@ class GerenciadorAcopladores
 {
 	public:
 		GerenciadorAcopladores(
+			const Float& limiteTensao,
 			const Float& relacaoVelocidade,
 			const Float& relacaoForca,
 			const Float& relacaoTorque,
-			const Float& constanteTempo,
 			const Float& raio
 		);
 		~GerenciadorAcopladores();
 
 		Void Simulacao(Modelo& modelo);
 
-		Void Aplicar(const Vetor4D& entrada) const;
+		Float SomatorioRotacao() const;
+		Void Aplicar(const Vetor4D& entrada);
 	private:
 		Acoplador mpAcoplador[4];
 		Modelo* mpModelo;
 
 		Float mRelacaoVelocidade;
+		Vetor4D mUltimaVelocidade;
+		Float mLimiteTensao;
 };
 
 #endif // _GERENCIADOR_ACOPLADORES_H_

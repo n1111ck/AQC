@@ -13,7 +13,6 @@ class Acoplador
 			const Float& relacaoVelocidade,
 			const Float& relacaoForca,
 			const Float& relacaoTorque,
-			const Float& constanteTempo,
 			const Float& raio
 		);
 		~Acoplador();
@@ -23,7 +22,6 @@ class Acoplador
 		Float mRelacaoVelocidade;
 		Float mRelacaoForca;
 		Float mRelacaoTorque;
-		Float mConstanteTempo;
 		Float mRaio;
 
 		Linha4D mLinhaConversao;

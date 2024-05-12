@@ -1,14 +1,16 @@
 #include "GerenciadorAcopladores.h"
 
 GerenciadorAcopladores::GerenciadorAcopladores(
+	const Float& limiteTensao,
 	const Float& relacaoVelocidade,
 	const Float& relacaoForca,
 	const Float& relacaoTorque,
-	const Float& constanteTempo,
 	const Float& raio
 ):
 	mpModelo(nullptr),
-	mRelacaoVelocidade(relacaoVelocidade)
+	mRelacaoVelocidade(relacaoVelocidade),
+	mLimiteTensao(limiteTensao),
+	mUltimaVelocidade({})
 {
 	for (UInt8 motorIndex = 0; motorIndex < 4; motorIndex++)
 	{
@@ -16,7 +18,6 @@ GerenciadorAcopladores::GerenciadorAcopladores(
 			relacaoVelocidade, 
 			relacaoForca,
 			relacaoTorque,
-			constanteTempo,
 			raio
 		);
 	}
@@ -34,18 +35,21 @@ GerenciadorAcopladores::Simulacao(Modelo& modelo)
 }
 
 Void 
-GerenciadorAcopladores::Aplicar(const Vetor4D& entrada) const
+GerenciadorAcopladores::Aplicar(const Vetor4D& entrada)
 {
-	Vetor4D velocidadeRotor;
+	Vetor4D tensaoRotor;
 
-	velocidadeRotor.mW = mpAcoplador[0].Calcular(entrada);
-	velocidadeRotor.mX = mpAcoplador[1].Calcular(entrada);
-	velocidadeRotor.mY = mpAcoplador[2].Calcular(entrada);
-	velocidadeRotor.mZ = mpAcoplador[3].Calcular(entrada);
+	tensaoRotor.mW = mpAcoplador[0].Calcular(entrada);
+	tensaoRotor.mX = mpAcoplador[1].Calcular(entrada);
+	tensaoRotor.mY = mpAcoplador[2].Calcular(entrada);
+	tensaoRotor.mZ = mpAcoplador[3].Calcular(entrada);
 
-	velocidadeRotor.Saturar(0);
-	velocidadeRotor.Raiz();
-	velocidadeRotor = velocidadeRotor * (1 / mRelacaoVelocidade);
+	tensaoRotor.Saturar(0);
+	tensaoRotor.Raiz();
+
+	mUltimaVelocidade = tensaoRotor;
+	tensaoRotor = tensaoRotor * (1 / mRelacaoVelocidade);
+	tensaoRotor.Saturar(0, mLimiteTensao);
 
 	if (mpModelo == nullptr)
 	{
@@ -54,6 +58,17 @@ GerenciadorAcopladores::Aplicar(const Vetor4D& entrada) const
 	else
 	{
 		// Implementacao simulada
-		mpModelo->Aplicar(velocidadeRotor);
+		mpModelo->Aplicar(tensaoRotor);
 	}
+}
+
+Float 
+GerenciadorAcopladores::SomatorioRotacao() const
+{
+	return (
+		- mUltimaVelocidade.mW
+		+ mUltimaVelocidade.mX
+		- mUltimaVelocidade.mY
+		+ mUltimaVelocidade.mZ
+	);
 }
