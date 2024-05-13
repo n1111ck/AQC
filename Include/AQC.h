@@ -1,9 +1,6 @@
 #ifndef _AQC_H_
 #define _AQC_H_
 
-// Incluir Controlador
-#include "IControlador.h"
-
 // Incluir Sensor
 #include "GerenciadorSensores.h"
 

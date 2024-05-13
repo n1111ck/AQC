@@ -18,5 +18,7 @@ target_sources(Algoritmo
 # Incluir Bibliotecas
 target_link_libraries(Algoritmo
   PUBLIC
+    Controlador
+    Sensor
     Utils
 )
