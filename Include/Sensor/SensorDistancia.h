@@ -2,13 +2,13 @@
 #define _SENSOR_DISTANCIA_H_
 
 // Incluir Modelo
-#include "Modelo.h"
+#include "Modelo/Modelo.h"
 
 // Incluir Sensor
-#include "ISensor.h"
+#include "Sensor/ISensor.h"
 
 // Incluir Utils
-#include "Tipos.h"
+#include "Utils/Tipos.h"
 
 namespace AQC
 {

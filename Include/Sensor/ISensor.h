@@ -2,9 +2,10 @@
 #define _ISENSOR_H_
 
 // Incluir Modelo
+#include "Modelo/Modelo.h"
 
 // Incluir Utils
-#include "Tipos.h"
+#include "Utils/Tipos.h"
 
 namespace AQC
 {

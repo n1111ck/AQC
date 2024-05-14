@@ -2,13 +2,13 @@
 #define _GERENCIADOR_ACOPLADORES_H_
 
 // Incluir Acoplador
-#include "Acoplador.h"
+#include "Acoplador/Acoplador.h"
 
 // Incluir Modelo
-#include "Modelo.h"
+#include "Modelo/Modelo.h"
 
 // Incluir Utils
-#include "Tipos.h"
+#include "Utils/Tipos.h"
 
 namespace AQC
 {

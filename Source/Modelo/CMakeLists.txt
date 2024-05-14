@@ -4,7 +4,7 @@ add_library(Modelo)
 # Include directory
 target_include_directories(Modelo 
     PUBLIC 
-        ${CMAKE_SOURCE_DIR}/Include/Modelo/
+        ${CMAKE_SOURCE_DIR}/Include/
 )
 
 # Include Files

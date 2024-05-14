@@ -2,13 +2,14 @@
 #define _ICONTROLADOR_H_
 
 // Incluir Acoplador
-#include "GerenciadorAcopladores.h"
+#include "Acoplador/GerenciadorAcopladores.h"
 
 // Incluir Sensor
-#include "GerenciadorSensores.h"
+#include "Sensor/GerenciadorSensores.h"
 
 // Incluir Utils
-#include "Tipos.h"
+#include "Utils/Tipos.h"
+
 namespace AQC
 {
 	class IControlador

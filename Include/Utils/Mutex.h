@@ -2,7 +2,7 @@
 #define _MUTEX_H_
 
 // Incluir Utils
-#include "Tipos.h"
+#include "Utils/Tipos.h"
 
 namespace AQC
 {

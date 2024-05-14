@@ -1,4 +1,4 @@
-#include "GPS.h"
+#include "Sensor/GPS.h"
 
 namespace AQC
 {

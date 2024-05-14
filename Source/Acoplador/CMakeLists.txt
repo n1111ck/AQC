@@ -4,7 +4,7 @@ add_library(Acoplador)
 # Include directory
 target_include_directories(Acoplador 
     PUBLIC 
-        ${CMAKE_SOURCE_DIR}/Include/Acoplador/
+        ${CMAKE_SOURCE_DIR}/Include/
 )
 
 # Include Files

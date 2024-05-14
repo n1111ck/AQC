@@ -1,4 +1,4 @@
-#include "GerenciadorSensores.h"
+#include "Sensor/GerenciadorSensores.h"
 
 namespace AQC
 {

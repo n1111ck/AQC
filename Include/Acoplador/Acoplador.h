@@ -2,7 +2,7 @@
 #define _ACOPLADOR_H_
 
 // Incluir Utils
-#include "Tipos.h"
+#include "Utils/Tipos.h"
 namespace AQC
 {
 	class Acoplador

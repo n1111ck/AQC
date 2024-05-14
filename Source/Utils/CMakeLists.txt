@@ -4,7 +4,7 @@ add_library(Utils)
 # Include directory
 target_include_directories(Utils 
     PUBLIC 
-        ${CMAKE_SOURCE_DIR}/Include/Utils/
+        ${CMAKE_SOURCE_DIR}/Include/
 )
 
 # Include Files

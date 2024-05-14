@@ -1,4 +1,4 @@
-#include "Bussola.h"
+#include "Sensor/Bussola.h"
 
 namespace AQC
 {

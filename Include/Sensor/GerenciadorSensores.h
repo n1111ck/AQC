@@ -2,17 +2,17 @@
 #define _GERENCIADOR_SENSORES_H_
 
 // Incluir Modelo
-#include "Modelo.h"
+#include "Modelo/Modelo.h"
 
 // Incluir Sensor
-#include "Barometro.h"
-#include "Bussola.h"
-#include "GPS.h"
-#include "IMU.h"
-#include "SensorDistancia.h"
+#include "Sensor/Barometro.h"
+#include "Sensor/Bussola.h"
+#include "Sensor/GPS.h"
+#include "Sensor/IMU.h"
+#include "Sensor/SensorDistancia.h"
 
 // Incluir Utils
-#include "Tipos.h"
+#include "Utils/Tipos.h"
 
 namespace AQC
 {

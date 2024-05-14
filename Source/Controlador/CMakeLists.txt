@@ -4,7 +4,7 @@ add_library(Controlador "")
 # Include directory
 target_include_directories(Controlador 
     PUBLIC 
-        ${CMAKE_SOURCE_DIR}/Include/Controlador/
+        ${CMAKE_SOURCE_DIR}/Include/
 )
 
 # Include Files

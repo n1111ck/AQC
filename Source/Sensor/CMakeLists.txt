@@ -4,7 +4,7 @@ add_library(Sensor)
 # Include directory
 target_include_directories(Sensor 
     PUBLIC 
-        ${CMAKE_SOURCE_DIR}/Include/Sensor/
+        ${CMAKE_SOURCE_DIR}/Include/
 )
 
 # Include Files

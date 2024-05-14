@@ -1,8 +1,8 @@
-#include "Algoritmo.h"
+#include "Algoritmo/Algoritmo.h"
 #include <math.h>
 
 // Incluir Controlador
-#include "RNL.h"
+#include "Controlador/RNL.h"
 
 namespace AQC
 {
@@ -26,7 +26,8 @@ namespace AQC
 		mLatitudeDestino(0.0),
 		mLongitudeDestino(0.0),
 		mToleranciaColisao(3.0),
-		mConstanteEquilibrio(0.1)
+		mConstanteEquilibrio(0.1),
+		mReferencia({})
 	{
 
 	}

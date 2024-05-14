@@ -1,4 +1,4 @@
-#include "RNL.h"
+#include "Controlador/RNL.h"
 #include "math.h"
 
 namespace AQC

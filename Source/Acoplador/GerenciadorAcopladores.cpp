@@ -1,4 +1,4 @@
-#include "GerenciadorAcopladores.h"
+#include "Acoplador/GerenciadorAcopladores.h"
 
 namespace AQC
 {

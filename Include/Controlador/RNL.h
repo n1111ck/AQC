@@ -2,16 +2,16 @@
 #define _RNL_H_
 
 // Incluir Acoplador
-#include "GerenciadorAcopladores.h"
+#include "Acoplador/GerenciadorAcopladores.h"
 
 // Incluir Controlador
-#include "IControlador.h"
+#include "Controlador/IControlador.h"
 
 // Incluir Sensor
-#include "GerenciadorSensores.h"
+#include "Sensor/GerenciadorSensores.h"
 
 // Incluir Utils
-#include "Tipos.h"
+#include "Utils/Tipos.h"
 
 namespace AQC
 {

@@ -2,20 +2,20 @@
 #include <fstream>
 
 // Incluir Algoritmo
-#include "Algoritmo.h"
+#include "Algoritmo/Algoritmo.h"
 
 // Incluir Acoplador
-#include "GerenciadorAcopladores.h"	
+#include "Acoplador/GerenciadorAcopladores.h"	
 
 // Incluir Controlador
-#include "RNL.h"
-#include "IControlador.h"
+#include "Controlador/RNL.h"
+#include "Controlador/IControlador.h"
 
 // Incluir Modelo
-#include "Modelo.h"
+#include "Modelo/Modelo.h"
 
 // Incluir Sensor
-#include "GerenciadorSensores.h"		
+#include "Sensor/GerenciadorSensores.h"		
 
 // Main file
 int main()

@@ -4,7 +4,7 @@ add_library(Algoritmo)
 # Include directory
 target_include_directories(Algoritmo 
     PUBLIC 
-        ${CMAKE_SOURCE_DIR}/Include/Algoritmo/
+        ${CMAKE_SOURCE_DIR}/Include/
 )
 
 # Include Files

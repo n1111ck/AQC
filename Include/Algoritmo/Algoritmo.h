@@ -2,10 +2,10 @@
 #define _ALGORITMO_H_
 
 // Incluir Sensor
-#include "GerenciadorSensores.h"
+#include "Sensor/GerenciadorSensores.h"
 
 // Incluir Utils
-#include "Tipos.h"
+#include "Utils/Tipos.h"
 
 namespace AQC
 {
