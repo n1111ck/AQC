@@ -53,6 +53,7 @@ RNL::Aplicar(const Vetor4D& referencia)
 	};
 	erro = referencia - sensor;
 	sinal = mProporcionalPosicao * erro;
+	sinal.Saturar({-1.0, -10.0, -10.0, -10.0}, {5.0, 10.0, 10.0, 10.0});
 
 	// Loop velocidade
 	sensor = {

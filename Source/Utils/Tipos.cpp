@@ -102,6 +102,46 @@ Vetor4D::Saturar(const Float& inferior, const Float& superior)
 	}
 }
 
+Void
+Vetor4D::Saturar(const Vetor4D& inferior, const Vetor4D& superior)
+{
+	if (mW < inferior.mW)
+	{
+		mW = inferior.mW;
+	}
+	else if (mW > superior.mW)
+	{
+		mW = superior.mW;
+	}
+
+	if (mX < inferior.mX)
+	{
+		mX = inferior.mX;
+	}
+	else if (mX > superior.mX)
+	{
+		mX = superior.mX;
+	}
+
+	if (mY < inferior.mY)
+	{
+		mY = inferior.mY;
+	}
+	else if (mY > superior.mY)
+	{
+		mY = superior.mY;
+	}
+
+	if (mZ < inferior.mZ)
+	{
+		mZ = inferior.mZ;
+	}
+	else if (mZ > superior.mZ)
+	{
+		mZ = superior.mZ;
+	}
+}
+
 Void 
 Vetor4D::Raiz()
 {

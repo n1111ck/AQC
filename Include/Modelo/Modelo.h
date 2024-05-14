@@ -20,11 +20,14 @@ class Modelo
 		Vetor4D TensaoRotores() const;
 
 		Void Chao(const Boolean& valor);
+		Void Arrasto(const Vetor3D& arrasto);
+
 	private:
 		ParametrosModelo mParametros;
 		Vetor4D mUltimoSinal;
 		Float mTempo;
 		Boolean mChao;
+		Vetor3D mArrasto;
 
 		Vetor3D mPosicao;
 		Vetor3D mVelocidadeLinear;
@@ -38,9 +41,9 @@ class Modelo
 			const Float& tensaoSaidaAtual
 		) const;
 
-		Float AceleracaoLatitude(const Float& U1, const Vetor3D& rotacao) const;
-		Float AceleracaoLongitude(const Float& U1, const Vetor3D& rotacao) const;
-		Float AceleracaoAltitude(const Float& U1, const Vetor3D& rotacao) const;
+		Float AceleracaoLatitude(const Float& U1, const Vetor3D& rotacao, const Vetor3D& velocidadeLinear) const;
+		Float AceleracaoLongitude(const Float& U1, const Vetor3D& rotacao, const Vetor3D& velocidadeLinear) const;
+		Float AceleracaoAltitude(const Float& U1, const Vetor3D& rotacao, const Vetor3D& velocidadeLinear) const;
 		Float AceleracaoRolamento(const Float& U2, const Vetor3D& velocidadeAngular, const Float& rotacaoRotorResultante) const;
 		Float AceleracaoArfagem(const Float& U2, const Vetor3D& velocidadeAngular, const Float& rotacaoRotorResultante) const;
 		Float AceleracaoGuinada(const Float& U2, const Vetor3D& velocidadeAngular) const;

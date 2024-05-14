@@ -1,7 +1,7 @@
 #include "SensorDistancia.h"
 
 SensorDistancia::SensorDistancia() :
-	mDistancia(0.0)
+	mDistancia(4.0)
 {
 	ISensor::mpModelo = nullptr;
 }

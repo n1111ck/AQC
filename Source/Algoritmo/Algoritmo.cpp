@@ -22,7 +22,9 @@ Algoritmo<Controlador>::Algoritmo(
 	mToleranciaEntrega(10.0),
 	mToleranciaPouso(2.0),
 	mLatitudeDestino(0.0),
-	mLongitudeDestino(0.0)
+	mLongitudeDestino(0.0),
+	mToleranciaColisao(3.0),
+	mConstanteEquilibrio(0.1)
 {
 
 }
@@ -96,6 +98,7 @@ template<typename Controlador>
 Void
 Algoritmo<Controlador>::TarefaInoperante()
 {
+	Vetor3D posicao = mpGerenciadorSensores->Posicao();
 	// Tarefa executada
 	// Inoperante
 
@@ -104,8 +107,8 @@ Algoritmo<Controlador>::TarefaInoperante()
 	{
 		mIniciar = false;
 		mEstadoAtual = eDecolagem;
-		mLatitudeBase = mpGerenciadorSensores->Posicao().mX;
-		mLongitudeBase = mpGerenciadorSensores->Posicao().mY;
+		mLatitudeBase = posicao.mX;
+		mLongitudeBase = posicao.mY;
 	}
 }
 
@@ -113,17 +116,16 @@ template<typename Controlador>
 Void
 Algoritmo<Controlador>::TarefaDecolagem()
 {
-	// Tarefa executada
-	mpControlador->Aplicar({
-		mAltitudeVoo,
-		0.0,
-		0.0,
-		atan2f(
-			mLongitudeDestino - mpGerenciadorSensores->Posicao().mX,
-			mLatitudeDestino - mpGerenciadorSensores->Posicao().mY
-		)
-	});
+	Vetor3D posicao = mpGerenciadorSensores->Posicao();
 
+	// Tarefa executada
+	mReferencia.mW = mAltitudeVoo;
+	mReferencia.mX = 0.0;
+	mReferencia.mY = 0.0;
+	mReferencia.mZ = atan2f(
+		mLongitudeDestino - posicao.mY,
+		mLatitudeDestino - posicao.mX
+	);
 
 	// Condicao de transicao
 	if (!(mpGerenciadorSensores->Posicao().mZ < 0.9 * mAltitudeVoo))
@@ -136,24 +138,43 @@ template<typename Controlador>
 Void
 Algoritmo<Controlador>::TarefaEmRota()
 {
-	// TODO: fazer a correcao por rolamento
+	Vetor3D posicao = mpGerenciadorSensores->Posicao();
+	Float distanciaAoDestino;
+	
+	if (
+		fabs(mLatitudeDestino - mLatitudeBase) > fabs(posicao.mX - mLatitudeBase) ||
+		fabs(mLongitudeDestino - mLongitudeBase) > fabs(posicao.mY - mLongitudeBase)
+	)
+	{
+		distanciaAoDestino = pow(pow(mLongitudeDestino - posicao.mY, 2) +
+			pow(mLatitudeDestino - posicao.mX, 2), 0.5);
+	}
+	else
+	{
+		distanciaAoDestino = -pow(pow(mLongitudeDestino - posicao.mY, 2) +
+			pow(mLatitudeDestino - posicao.mX, 2), 0.5);
+	}
 
+	// TODO: fazer a correcao por rolamento
+	// 
 	// Tarefa executada
-	mpControlador->Aplicar({
-		mAltitudeVoo,
-		0.0,
-		mArfagemAvanco,
-		atan2f(
-			mLongitudeDestino - mpGerenciadorSensores->Posicao().mX,
-			mLatitudeDestino - mpGerenciadorSensores->Posicao().mY
-		)
-	});
+	mReferencia.mX = 0.0;
+	mReferencia.mY = mArfagemAvanco * Equilibrio(distanciaAoDestino);
+	mReferencia.mZ = atan2f(
+		mLongitudeDestino - posicao.mY,
+		mLatitudeDestino - posicao.mX
+	);;
+
+	
 
 	// Condicao de transicao
-	if (pow(pow(mLongitudeDestino - mpGerenciadorSensores->Posicao().mX, 2) +
-		pow(mLatitudeDestino - mpGerenciadorSensores->Posicao().mY, 2), 0.5) < mToleranciaEntrega)
+	if (distanciaAoDestino < mToleranciaEntrega)
 	{
 		mEstadoAtual = ePouso;
+	}
+	else if (mpGerenciadorSensores->Frente() < mToleranciaColisao)
+	{
+		mEstadoAtual = ePrevencaoColisao;
 	}
 }
 
@@ -161,17 +182,34 @@ template<typename Controlador>
 Void
 Algoritmo<Controlador>::TarefaPouso()
 {
+	Vetor3D posicao = mpGerenciadorSensores->Posicao();
+	Float distanciaAoDestino;
+
+	if (
+		fabs(mLatitudeDestino - mLatitudeBase) > fabs(posicao.mX - mLatitudeBase) ||
+		fabs(mLongitudeDestino - mLongitudeBase) > fabs(posicao.mY - mLongitudeBase)
+		)
+	{
+		distanciaAoDestino = pow(pow(mLongitudeDestino - posicao.mY, 2) +
+			pow(mLatitudeDestino - posicao.mX, 2), 0.5);
+	}
+	else
+	{
+		distanciaAoDestino = -pow(pow(mLongitudeDestino - posicao.mY, 2) +
+			pow(mLatitudeDestino - posicao.mX, 2), 0.5);
+	}
+
 	// Tarefa executada
-	mpControlador->Aplicar({
-		0.0,
-		0.0,
-		0.0,
-		mpGerenciadorSensores->Rotacao().mZ
-	});
+	mReferencia.mW = 0.0;
+	mReferencia.mX = 0.0;
+	mReferencia.mY = mArfagemAvanco * Equilibrio(distanciaAoDestino);
 
 	// Condicao de transicao
-	if (!(mpGerenciadorSensores->Baixo() > mToleranciaPouso))
+	if (mpGerenciadorSensores->Baixo() < mToleranciaPouso)
 	{
+		// Atualizar altitude para hover
+		mReferencia.mW = mpGerenciadorSensores->Posicao().mZ;
+
 		if (!mEntregue)
 		{
 			// Efetua entrega e prepara retorno base
@@ -193,12 +231,6 @@ Algoritmo<Controlador>::TarefaEntrega()
 	Float latitudeAtual = mLatitudeDestino, longitudeAtual = mLongitudeDestino;
 
 	// Tarefa executada
-	mpControlador->Aplicar({
-		mpGerenciadorSensores->Posicao().mZ,
-		0.0,
-		0.0,
-		mpGerenciadorSensores->Rotacao().mZ
-	});
 	mEntregue = true;
 	mLatitudeDestino = mLatitudeBase;
 	mLongitudeDestino = mLongitudeBase;
@@ -217,12 +249,6 @@ Void
 Algoritmo<Controlador>::TarefaDesligamento()
 {
 	// Tarefa executada
-	mpControlador->Aplicar({
-		mpGerenciadorSensores->Posicao().mZ,
-		0.0,
-		0.0,
-		mpGerenciadorSensores->Rotacao().mZ
-	});
 	Resetar();
 
 	// Fim de Operacao
@@ -232,7 +258,14 @@ template<typename Controlador>
 Void
 Algoritmo<Controlador>::TarefaPrevencaoColisao()
 {
+	// Tarefa executada
 	// TODO: pensar num algoritmo
+
+	// Condicao de transicao
+	if (!(mpGerenciadorSensores->Frente() < mToleranciaColisao))
+	{
+		mEstadoAtual = eEmRota;
+	}
 }
 
 template<typename Controlador>
@@ -240,6 +273,14 @@ Void
 Algoritmo<Controlador>::Atualizar()
 {
 	MaquinaEstados();
+	mpControlador->Aplicar(mReferencia);
+}
+
+template<typename Controlador>
+Float
+Algoritmo<Controlador>::Equilibrio(const Float& valor) const
+{
+	return atan(mConstanteEquilibrio * valor) / (atan(1) * 2);
 }
 
 template class Algoritmo<RNL>;

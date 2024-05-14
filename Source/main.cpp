@@ -4,6 +4,8 @@
 // Incluir AQC
 #include "AQC.h"
 
+#include "Algoritmo.h"
+
 // Incluir Acoplador
 #include "GerenciadorAcopladores.h"	
 
@@ -59,30 +61,32 @@ int main()
 		parametros
 	);
 
+	Algoritmo<RNL> algoritmo(
+		controlador,
+		gerSensores
+	);
+
 	csvExport << "Tempo[s],X[m],Y[m],Z[m],Roll[graus],Pitch[graus],Yaw[graus],M1[V],M2[V],M3[V],M4[V]" << std::endl;
 
-	Vetor4D sinal = {};
+	Vetor4D sinal = {};	
 
 	// Aplicacao de chao
 	modelo.Chao(false);
+	modelo.Arrasto({1.0, 1.0, 0.5});
+	algoritmo.NovaEntrega(-100.0, -200.0);
 
-	for (UInt32 i = 0; i < 5000; i++)
+	for (UInt32 i = 0; i < 1000000; i++)
 	{
-		modelo.Aplicar({ 
-			6.650823390974534, 
-			6.649218051073475, 
-			6.647612711172417, 
-			6.649218051073475
-		});
+		algoritmo.Atualizar();
 		modelo.Simular();
 
 		csvExport << i * parametros.mPasso << ",";
-		csvExport << modelo.VelocidadeAngular().mX << ",";
-		csvExport << modelo.VelocidadeAngular().mY << ",";
-		csvExport << modelo.VelocidadeAngular().mZ << ",";
-		csvExport << modelo.Rotacao().mX << ",";
-		csvExport << modelo.Rotacao().mY << ",";
-		csvExport << modelo.Rotacao().mZ << ",";
+		csvExport << modelo.VelocidadeLinear().mX << ",";
+		csvExport << modelo.VelocidadeLinear().mY << ",";
+		csvExport << modelo.VelocidadeLinear().mZ << ",";
+		csvExport << modelo.Posicao().mX << ",";
+		csvExport << modelo.Posicao().mY << ",";
+		csvExport << modelo.Posicao().mZ << ",";
 		csvExport << modelo.TensaoRotores().mW << ",";
 		csvExport << modelo.TensaoRotores().mX << ",";
 		csvExport << modelo.TensaoRotores().mY << ",";

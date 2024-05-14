@@ -46,8 +46,6 @@ GPS::Calibrar()
 	else
 	{
 		// Implementacao simulada
-		mLatitude = ISensor::mpModelo->Posicao().mX;
-		mLongitude = ISensor::mpModelo->Posicao().mY;
 	}
 }
 
@@ -61,6 +59,8 @@ GPS::Capturar()
 	else
 	{
 		// Implementacao simulada
+		mLatitude = ISensor::mpModelo->Posicao().mX;
+		mLongitude = ISensor::mpModelo->Posicao().mY;
 	}
 }
 

@@ -33,6 +33,7 @@ struct Vetor4D
 	Float Element(const UInt8& index) const;
 	Void Saturar(const Float& inferior);
 	Void Saturar(const Float& inferior, const Float& superior);
+	Void Saturar(const Vetor4D& inferior, const Vetor4D& superior);
 	Void Raiz();
 	Float operator*(const Linha4D& linha) const;
 	Vetor4D operator*(const Float& valor) const;

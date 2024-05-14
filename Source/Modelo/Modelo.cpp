@@ -10,7 +10,8 @@ Modelo::Modelo(const ParametrosModelo& parametros):
 	mTempo(0.0),
 	mUltimoSinal({}),
 	mSinalMotor{0.0, 0.0, 0.0, 0.0},
-	mChao(true)
+	mChao(true),
+	mArrasto({})
 {
 }
 
@@ -40,13 +41,14 @@ Modelo::Simular()
 	UInt8 kId;
 
 	// Variaveis auxiliares
-	Float kU1;
-	Float kU2;
-	Float kU3;
-	Float kU4;
-	Float kRotacaoResultante;
-	Vetor3D kRotacao;
-	Vetor3D kVelocidadeAngular;
+	Float aU1;
+	Float aU2;
+	Float aU3;
+	Float aU4;
+	Float aRotacaoResultante;
+	Vetor3D aRotacao;
+	Vetor3D aVelocidadeAngular;
+	Vetor3D aVelocidadeLinear;
 
 	for (UInt8 kIteration = 0; kIteration < 4; kIteration++)
 	{
@@ -70,80 +72,88 @@ Modelo::Simular()
 		}
 
 		// Calcular variaveis auxiliares
-		kU1 = mParametros.mRelacaoForca * (
+		aU1 = mParametros.mRelacaoForca * (
 			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[0] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[0][kId - 1]), 2) +
 			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[1] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[1][kId - 1]), 2) +
 			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[2] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1]), 2) +
 			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[3] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[3][kId - 1]), 2)
 		);
-		kU2 = mParametros.mRelacaoForca * mParametros.mRaio * (
+		aU2 = mParametros.mRelacaoForca * mParametros.mRaio * (
 			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[1] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[1][kId - 1]), 2) -
 			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[3] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[3][kId - 1]), 2)
 		);
-		kU3 = mParametros.mRelacaoForca * mParametros.mRaio * (
+		aU3 = mParametros.mRelacaoForca * mParametros.mRaio * (
 			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[2] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1]), 2) -
 			pow(mParametros.mRelacaoVelocidade * (mSinalMotor[0] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[0][kId - 1]), 2)
 		);
-		kU4 = mParametros.mRelacaoTorque * (
+		aU4 = mParametros.mRelacaoTorque * (
 			- pow(mParametros.mRelacaoVelocidade * (mSinalMotor[0] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[0][kId - 1]), 2)
 			+ pow(mParametros.mRelacaoVelocidade * (mSinalMotor[1] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[1][kId - 1]), 2)
 			- pow(mParametros.mRelacaoVelocidade * (mSinalMotor[2] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1]), 2)
 			+ pow(mParametros.mRelacaoVelocidade * (mSinalMotor[3] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[3][kId - 1]), 2)
 		);
-		kRotacaoResultante = (
+		aRotacaoResultante = (
 			- mParametros.mRelacaoVelocidade * (mSinalMotor[0] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[0][kId - 1])
 			+ mParametros.mRelacaoVelocidade * (mSinalMotor[1] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[1][kId - 1])
 			- mParametros.mRelacaoVelocidade * (mSinalMotor[2] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[2][kId - 1])
 			+ mParametros.mRelacaoVelocidade * (mSinalMotor[3] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[3][kId - 1])
 		);
-		kRotacao = {
+		aRotacao = {
 				mRotacao.mX + idMultiplicador[kIteration] * mParametros.mPasso * kRolamento[kId - 1],
 				mRotacao.mY + idMultiplicador[kIteration] * mParametros.mPasso * kArfagem[kId - 1],
 				mRotacao.mZ + idMultiplicador[kIteration] * mParametros.mPasso * kGuinada[kId - 1]
 		};
-		kVelocidadeAngular = {
+		aVelocidadeAngular = {
 				mVelocidadeAngular.mX + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeRolamento[kId - 1],
 				mVelocidadeAngular.mY + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeArfagem[kId - 1],
 				mVelocidadeAngular.mZ + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeGuinada[kId - 1]
+		};
+		aVelocidadeLinear = {
+				mVelocidadeLinear.mX + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeLatitude[kId - 1],
+				mVelocidadeLinear.mY + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeLongitude[kId - 1],
+				mVelocidadeLinear.mZ + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeAltitude[kId - 1]
 		};
 
 
 		// Velocidade Latitude
 		kVelocidadeLatitude[kIteration] = AceleracaoLatitude(
-			kU1,
-			kRotacao
+			aU1,
+			aRotacao,
+			aVelocidadeLinear
 		);
 
 		// Velocidade Longitude
-		kVelocidadeLatitude[kIteration] = AceleracaoLongitude(
-			kU1, 
-			kRotacao
+		kVelocidadeLongitude[kIteration] = AceleracaoLongitude(
+			aU1, 
+			aRotacao,
+			aVelocidadeLinear
 		);
 
 		// Velocidade Altitude
 		kVelocidadeAltitude[kIteration] = AceleracaoAltitude(
-			kU1,
-			kRotacao
+			aU1,
+			aRotacao,
+			aVelocidadeLinear
 		);
 
 		// Velocidade Rolamento
 		kVelocidadeRolamento[kIteration] = AceleracaoRolamento(
-			kU2,
-			kVelocidadeAngular,
-			kRotacaoResultante
+			aU2,
+			aVelocidadeAngular,
+			aRotacaoResultante
 		);
 
 		// Velocidade Arfagem
 		kVelocidadeArfagem[kIteration] = AceleracaoArfagem(
-			kU3,
-			kVelocidadeAngular,
-			kRotacaoResultante
+			aU3,
+			aVelocidadeAngular,
+			aRotacaoResultante
 		);
 
 		// Velocidade Guinada
 		kVelocidadeGuinada[kIteration] = AceleracaoGuinada(
-			kU4,
-			kVelocidadeAngular
+			aU4,
+			aVelocidadeAngular
 		);
 
 		// Posicao
@@ -195,27 +205,29 @@ Modelo::TensaoAplicada(
 }
 
 Float
-Modelo::AceleracaoLatitude(const Float& U1, const Vetor3D& rotacao) const
+Modelo::AceleracaoLatitude(const Float& U1, const Vetor3D& rotacao, const Vetor3D& velocidadeLinear) const
 {
 	return U1 / mParametros.mMassa * (
 		sin(rotacao.mZ) * sin(rotacao.mX) +
 		cos(rotacao.mZ) * sin(rotacao.mY) * cos(rotacao.mX)
-	);
+	) - mArrasto.mX * velocidadeLinear.mX;
 }
 
 Float
-Modelo::AceleracaoLongitude(const Float& U1, const Vetor3D& rotacao) const
+Modelo::AceleracaoLongitude(const Float& U1, const Vetor3D& rotacao, const Vetor3D& velocidadeLinear) const
 {
 	return U1 / mParametros.mMassa * (
 		- cos(rotacao.mZ) * sin(rotacao.mX)
 		+ sin(rotacao.mZ) * sin(rotacao.mY) * cos(rotacao.mX)
-	);
+	) - mArrasto.mY * velocidadeLinear.mY;
 }
 
 Float
-Modelo::AceleracaoAltitude(const Float& U1, const Vetor3D& rotacao) const
+Modelo::AceleracaoAltitude(const Float& U1, const Vetor3D& rotacao, const Vetor3D& velocidadeLinear) const
 {
-	Float resultado = -mParametros.mGravidade + cos(rotacao.mX) * cos(rotacao.mY) * U1 / mParametros.mMassa;
+	Float resultado = - mParametros.mGravidade
+		+ cos(rotacao.mX) * cos(rotacao.mY) * U1 / mParametros.mMassa
+		- mArrasto.mZ * velocidadeLinear.mZ;
 
 	if ((mPosicao.mZ < 0.0 && resultado < 0.0) && mChao)
 	{
@@ -295,4 +307,10 @@ Void
 Modelo::Chao(const Boolean& valor)
 {
 	mChao = valor;
+}
+
+Void 
+Modelo::Arrasto(const Vetor3D& arrasto)
+{
+	mArrasto = arrasto;
 }

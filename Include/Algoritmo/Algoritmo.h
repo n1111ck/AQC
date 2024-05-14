@@ -51,8 +51,13 @@ class Algoritmo
 		Float mArfagemAvanco;
 		Float mToleranciaEntrega;
 		Float mToleranciaPouso;
+		Float mToleranciaColisao;
+		Float mConstanteEquilibrio;
+
+		Vetor4D mReferencia;
 
 		Void MaquinaEstados();
+		Float Equilibrio(const Float& valor) const;
 
 		Void TarefaInoperante();
 		Void TarefaDecolagem();
