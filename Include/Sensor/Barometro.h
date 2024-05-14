@@ -10,8 +10,10 @@
 // Incluir Utils
 #include "Tipos.h"
 
-class Barometro : ISensor
+namespace AQC
 {
+	class Barometro : ISensor
+	{
 	public:
 		Barometro();
 		~Barometro();
@@ -25,6 +27,7 @@ class Barometro : ISensor
 		Void Simulacao(Modelo& modelo);
 	private:
 		Float mAltitude;
-};
+	};
+}
 
 #endif //_BAROMETRO_H_

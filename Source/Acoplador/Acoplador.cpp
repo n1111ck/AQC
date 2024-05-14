@@ -1,24 +1,26 @@
 #include "Acoplador.h"
 
-Acoplador::Acoplador()
+namespace AQC
 {
-
-}
-
-Acoplador::Acoplador(
-	const Float& relacaoVelocidade,
-	const Float& relacaoForca,
-	const Float& relacaoTorque,
-	const Float& raio
-):
-	mRelacaoVelocidade(relacaoVelocidade),
-	mRelacaoForca(relacaoForca),
-	mRelacaoTorque(relacaoTorque),
-	mRaio(raio),
-	mLinhaConversao({})
-{
-	switch (sMotorCounter)
+	Acoplador::Acoplador()
 	{
+
+	}
+
+	Acoplador::Acoplador(
+		const Float& relacaoVelocidade,
+		const Float& relacaoForca,
+		const Float& relacaoTorque,
+		const Float& raio
+	) :
+		mRelacaoVelocidade(relacaoVelocidade),
+		mRelacaoForca(relacaoForca),
+		mRelacaoTorque(relacaoTorque),
+		mRaio(raio),
+		mLinhaConversao({})
+	{
+		switch (sMotorCounter)
+		{
 		case 0:
 			mLinhaConversao = {
 				1 / (4 * mRelacaoForca),
@@ -51,20 +53,21 @@ Acoplador::Acoplador(
 				1 / (4 * mRelacaoTorque)
 			};
 			break;
+		}
+
+		sMotorCounter++;
 	}
 
-	sMotorCounter++;
+	Acoplador::~Acoplador()
+	{
+
+	}
+
+	Float
+	Acoplador::Calcular(const Vetor4D& entrada) const
+	{
+		return mLinhaConversao * entrada;
+	}
+
+	UInt8 Acoplador::sMotorCounter = 0;
 }
-
-Acoplador::~Acoplador()
-{
-
-}
-
-Float
-Acoplador::Calcular(const Vetor4D& entrada) const
-{
-	return mLinhaConversao * entrada;
-}
-
-UInt8 Acoplador::sMotorCounter = 0;

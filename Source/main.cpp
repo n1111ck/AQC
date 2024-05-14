@@ -1,9 +1,7 @@
 ﻿#include <iostream>
 #include <fstream>
 
-// Incluir AQC
-#include "AQC.h"
-
+// Incluir Algoritmo
 #include "Algoritmo.h"
 
 // Incluir Acoplador
@@ -24,7 +22,7 @@ int main()
 {
 	std::ofstream csvExport("Data.csv");
 
-	ParametrosModelo parametros;
+	AQC::ParametrosModelo parametros;
 
 	parametros.mMassa = 1.023;
 	parametros.mRaio = 0.22225;
@@ -39,43 +37,43 @@ int main()
 
 	// Criar controlaador e gerenciadores
 	//RNL rnlControlador;
-	GerenciadorAcopladores gerAcopladores(
+	AQC::GerenciadorAcopladores gerAcopladores(
 		12.0,
 		parametros.mRelacaoVelocidade,
 		parametros.mRelacaoForca,
 		parametros.mRelacaoTorque,
 		parametros.mRaio
 	);
-	GerenciadorSensores gerSensores;
+	AQC::GerenciadorSensores gerSensores;
 
 #if _WIN32
-	Modelo modelo(parametros);
+	AQC::Modelo modelo(parametros);
 
 	gerAcopladores.Simulacao(modelo);
 	gerSensores.Simulacao(modelo);
 #endif
 
-	RNL controlador(
+	AQC::RNL controlador(
 		gerAcopladores,
 		gerSensores,
 		parametros
 	);
 
-	Algoritmo<RNL> algoritmo(
+	AQC::Algoritmo<AQC::RNL> algoritmo(
 		controlador,
 		gerSensores
 	);
 
 	csvExport << "Tempo[s],X[m],Y[m],Z[m],Roll[graus],Pitch[graus],Yaw[graus],M1[V],M2[V],M3[V],M4[V]" << std::endl;
 
-	Vetor4D sinal = {};	
+	AQC::Vetor4D sinal = {};
 
 	// Aplicacao de chao
 	modelo.Chao(false);
 	modelo.Arrasto({1.0, 1.0, 0.5});
 	algoritmo.NovaEntrega(-100.0, -200.0);
 
-	for (UInt32 i = 0; i < 1000000; i++)
+	for (AQC::UInt32 i = 0; i < 1000000; i++)
 	{
 		algoritmo.Atualizar();
 		modelo.Simular();

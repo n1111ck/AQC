@@ -1,85 +1,88 @@
 #include "IMU.h"
 
-IMU::IMU() :
-	mRotacao({}),
-	mVelocidadeAngular({}),
-	mVelocidadeLinear({})
+namespace AQC
 {
-	ISensor::mpModelo = nullptr;
-}
-
-IMU::~IMU()
-{
-
-}
-
-Void
-IMU::Simulacao(Modelo& modelo)
-{
-	ISensor::mpModelo = &modelo;
-}
-
-Int32
-IMU::Iniciar()
-{
-	Int32 resultado = -1000;
-
-	if (ISensor::mpModelo == nullptr)
+	IMU::IMU() :
+		mRotacao({}),
+		mVelocidadeAngular({}),
+		mVelocidadeLinear({})
 	{
-		// Implementacao real
-	}
-	else
-	{
-		// Implementacao simulada
-		resultado = 0;
+		ISensor::mpModelo = nullptr;
 	}
 
-	return resultado;
-}
-
-Void
-IMU::Calibrar()
-{
-	if (ISensor::mpModelo == nullptr)
+	IMU::~IMU()
 	{
-		// Implementacao real
+
 	}
-	else
+
+	Void
+	IMU::Simulacao(Modelo& modelo)
 	{
-		// Implementacao simulada
+		ISensor::mpModelo = &modelo;
 	}
-}
 
-Void
-IMU::Capturar()
-{
-	if (ISensor::mpModelo == nullptr)
+	Int32
+	IMU::Iniciar()
 	{
-		// Implementacao real
+		Int32 resultado = -1000;
+
+		if (ISensor::mpModelo == nullptr)
+		{
+			// Implementacao real
+		}
+		else
+		{
+			// Implementacao simulada
+			resultado = 0;
+		}
+
+		return resultado;
 	}
-	else
+
+	Void
+	IMU::Calibrar()
 	{
-		// Implementacao simulada
-		mRotacao = ISensor::mpModelo->Rotacao();
-		mVelocidadeAngular = ISensor::mpModelo->VelocidadeAngular();
-		mVelocidadeLinear = ISensor::mpModelo->VelocidadeLinear();
+		if (ISensor::mpModelo == nullptr)
+		{
+			// Implementacao real
+		}
+		else
+		{
+			// Implementacao simulada
+		}
 	}
-}
 
-Vetor3D
-IMU::Rotacao() const
-{
-	return mRotacao;
-}
+	Void
+	IMU::Capturar()
+	{
+		if (ISensor::mpModelo == nullptr)
+		{
+			// Implementacao real
+		}
+		else
+		{
+			// Implementacao simulada
+			mRotacao = ISensor::mpModelo->Rotacao();
+			mVelocidadeAngular = ISensor::mpModelo->VelocidadeAngular();
+			mVelocidadeLinear = ISensor::mpModelo->VelocidadeLinear();
+		}
+	}
 
-Vetor3D
-IMU::VelocidadeAngular() const
-{
-	return mVelocidadeAngular;
-}
+	Vetor3D
+	IMU::Rotacao() const
+	{
+		return mRotacao;
+	}
 
-Vetor3D
-IMU::VelocidadeLinear() const
-{
-	return mVelocidadeLinear;
+	Vetor3D
+	IMU::VelocidadeAngular() const
+	{
+		return mVelocidadeAngular;
+	}
+
+	Vetor3D
+	IMU::VelocidadeLinear() const
+	{
+		return mVelocidadeLinear;
+	}
 }

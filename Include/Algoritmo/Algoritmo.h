@@ -7,9 +7,11 @@
 // Incluir Utils
 #include "Tipos.h"
 
-template<typename Controlador>
-class Algoritmo
+namespace AQC
 {
+	template<typename Controlador>
+	class Algoritmo
+	{
 	public:
 
 		enum eEstado
@@ -66,6 +68,7 @@ class Algoritmo
 		Void TarefaEntrega();
 		Void TarefaDesligamento();
 		Void TarefaPrevencaoColisao();
-};
+	};
+}
 
 #endif // _ALGORITMO_H_

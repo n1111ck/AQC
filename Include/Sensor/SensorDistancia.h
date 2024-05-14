@@ -10,8 +10,10 @@
 // Incluir Utils
 #include "Tipos.h"
 
-class SensorDistancia : ISensor
+namespace AQC
 {
+	class SensorDistancia : ISensor
+	{
 	public:
 		SensorDistancia();
 		~SensorDistancia();
@@ -25,6 +27,7 @@ class SensorDistancia : ISensor
 		Void Simulacao(Modelo& modelo);
 	private:
 		Float mDistancia;
-};
+	};
+}
 
 #endif //_SENSOR_DISTANCIA_H_

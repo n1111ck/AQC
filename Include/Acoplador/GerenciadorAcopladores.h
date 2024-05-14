@@ -10,8 +10,10 @@
 // Incluir Utils
 #include "Tipos.h"
 
-class GerenciadorAcopladores
+namespace AQC
 {
+	class GerenciadorAcopladores
+	{
 	public:
 		GerenciadorAcopladores(
 			const Float& limiteTensao,
@@ -33,6 +35,7 @@ class GerenciadorAcopladores
 		Float mRelacaoVelocidade;
 		Vetor4D mUltimaVelocidade;
 		Float mLimiteTensao;
-};
+	};
+}
 
 #endif // _GERENCIADOR_ACOPLADORES_H_

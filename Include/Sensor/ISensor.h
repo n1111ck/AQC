@@ -6,8 +6,10 @@
 // Incluir Utils
 #include "Tipos.h"
 
-class ISensor
+namespace AQC
 {
+	class ISensor
+	{
 	public:
 		virtual Int32 Iniciar() = 0;
 		virtual Void Calibrar() = 0;
@@ -15,6 +17,7 @@ class ISensor
 		virtual Void Simulacao(Modelo& modelo) = 0;
 	protected:
 		Modelo* mpModelo;
-};
+	};
+}
 
 #endif //_ISENSOR_H_

@@ -3,9 +3,10 @@
 
 // Incluir Utils
 #include "Tipos.h"
-
-class Acoplador
+namespace AQC
 {
+	class Acoplador
+	{
 	public:
 		Acoplador();
 
@@ -27,6 +28,7 @@ class Acoplador
 		Linha4D mLinhaConversao;
 
 		static UInt8 sMotorCounter;
-};
+	};
+}
 
 #endif // _ACOPLADOR_H_

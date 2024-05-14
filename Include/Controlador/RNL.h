@@ -13,8 +13,10 @@
 // Incluir Utils
 #include "Tipos.h"
 
-class RNL : public IControlador
+namespace AQC
 {
+	class RNL : public IControlador
+	{
 	public:
 		RNL(
 			GerenciadorAcopladores& gerAcopladores,
@@ -45,6 +47,7 @@ class RNL : public IControlador
 		Vetor4D ProporcionalPosicao(const Float& constanteTempo);
 		Vetor4D ProporcionalVelocidade(const Vetor4D& ganhoEstaticoInvertido, const Float& constanteTempo);
 		Vetor4D RealimentacaoNaoLinear();
-};
+	};
+}
 
 #endif //_RNL_H_

@@ -4,8 +4,10 @@
 // Incluir Utils
 #include "Tipos.h"
 
-class Mutex
+namespace AQC
 {
+	class Mutex
+	{
 	public:
 		Mutex();
 		~Mutex();
@@ -21,6 +23,7 @@ class Mutex
 		};
 
 		Estado mEstado;
-};
+	};
+}
 
 #endif //_MUTEX_H_

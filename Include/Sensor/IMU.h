@@ -10,8 +10,10 @@
 // Incluir Utils
 #include "Tipos.h"
 
-class IMU : ISensor
+namespace AQC
 {
+	class IMU : ISensor
+	{
 	public:
 		IMU();
 		~IMU();
@@ -29,6 +31,7 @@ class IMU : ISensor
 		Vetor3D mRotacao;
 		Vetor3D mVelocidadeAngular;
 		Vetor3D mVelocidadeLinear;
-};
+	};
+}
 
 #endif //_IMU_H_

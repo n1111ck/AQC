@@ -4,8 +4,10 @@
 // Incluir Utils
 #include "Tipos.h"
 
-class Modelo
+namespace AQC
 {
+	class Modelo
+	{
 	public:
 		Modelo(const ParametrosModelo& parametros);
 		~Modelo();
@@ -47,6 +49,7 @@ class Modelo
 		Float AceleracaoRolamento(const Float& U2, const Vetor3D& velocidadeAngular, const Float& rotacaoRotorResultante) const;
 		Float AceleracaoArfagem(const Float& U2, const Vetor3D& velocidadeAngular, const Float& rotacaoRotorResultante) const;
 		Float AceleracaoGuinada(const Float& U2, const Vetor3D& velocidadeAngular) const;
-};
+	};
+}
 
 #endif // _MODELO_H_

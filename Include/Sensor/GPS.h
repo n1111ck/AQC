@@ -10,8 +10,10 @@
 // Incluir Utils
 #include "Tipos.h"
 
-class GPS : ISensor
+namespace AQC
 {
+	class GPS : ISensor
+	{
 	public:
 		GPS();
 		~GPS();
@@ -27,6 +29,7 @@ class GPS : ISensor
 	private:
 		Float mLatitude;
 		Float mLongitude;
-};
+	};
+}
 
 #endif //_GPS_H_

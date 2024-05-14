@@ -10,8 +10,10 @@
 // Incluir Utils
 #include "Tipos.h"
 
-class Bussola : ISensor
+namespace AQC
 {
+	class Bussola : ISensor
+	{
 	public:
 		Bussola();
 		~Bussola();
@@ -25,6 +27,7 @@ class Bussola : ISensor
 		Void Simulacao(Modelo& modelo);
 	private:
 		Float mAngulo;
-};
+	};
+}
 
 #endif //_BUSSOLA_H_

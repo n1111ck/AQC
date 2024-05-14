@@ -1,68 +1,71 @@
 #include "SensorDistancia.h"
 
-SensorDistancia::SensorDistancia() :
-	mDistancia(4.0)
+namespace AQC
 {
-	ISensor::mpModelo = nullptr;
-}
-
-SensorDistancia::~SensorDistancia()
-{
-
-}
-
-Void
-SensorDistancia::Simulacao(Modelo& modelo)
-{
-	ISensor::mpModelo = &modelo;
-}
-
-Int32
-SensorDistancia::Iniciar()
-{
-	Int32 resultado = -10000;
-
-	if (ISensor::mpModelo == nullptr)
+	SensorDistancia::SensorDistancia() :
+		mDistancia(4.0)
 	{
-		// Implementacao real
-	}
-	else
-	{
-		// Implementacao simulada
-		resultado = 0;
+		ISensor::mpModelo = nullptr;
 	}
 
-	return resultado;
-}
+	SensorDistancia::~SensorDistancia()
+	{
 
-Void
-SensorDistancia::Calibrar()
-{
-	if (ISensor::mpModelo == nullptr)
-	{
-		// Implementacao real
 	}
-	else
-	{
-		// Implementacao simulada
-	}
-}
 
-Void
-SensorDistancia::Capturar()
-{
-	if (ISensor::mpModelo == nullptr)
+	Void
+	SensorDistancia::Simulacao(Modelo& modelo)
 	{
-		// Implementacao real
+		ISensor::mpModelo = &modelo;
 	}
-	else
-	{
-		// Implementacao simulada
-	}
-}
 
-Float 
-SensorDistancia::Distancia() const
-{
-	return mDistancia;
+	Int32
+	SensorDistancia::Iniciar()
+	{
+		Int32 resultado = -10000;
+
+		if (ISensor::mpModelo == nullptr)
+		{
+			// Implementacao real
+		}
+		else
+		{
+			// Implementacao simulada
+			resultado = 0;
+		}
+
+		return resultado;
+	}
+
+	Void
+	SensorDistancia::Calibrar()
+	{
+		if (ISensor::mpModelo == nullptr)
+		{
+			// Implementacao real
+		}
+		else
+		{
+			// Implementacao simulada
+		}
+	}
+
+	Void
+	SensorDistancia::Capturar()
+	{
+		if (ISensor::mpModelo == nullptr)
+		{
+			// Implementacao real
+		}
+		else
+		{
+			// Implementacao simulada
+		}
+	}
+
+	Float
+	SensorDistancia::Distancia() const
+	{
+		return mDistancia;
+	}
 }

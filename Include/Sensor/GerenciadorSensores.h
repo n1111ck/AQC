@@ -14,8 +14,10 @@
 // Incluir Utils
 #include "Tipos.h"
 
-class GerenciadorSensores
+namespace AQC
 {
+	class GerenciadorSensores
+	{
 	public:
 		GerenciadorSensores();
 		~GerenciadorSensores();
@@ -57,6 +59,7 @@ class GerenciadorSensores
 		Float mDistanciaFrente;
 		SensorDistancia mSensorDistanciaBaixo;
 		Float mDistanciaBaixo;
-};
+	};
+}
 
 #endif //_GERENCIADOR_SENSORES_H_
