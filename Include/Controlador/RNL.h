@@ -18,9 +18,10 @@ namespace AQC
 	class RNL : public IControlador
 	{
 	public:
+		RNL();
 		RNL(
-			GerenciadorAcopladores& gerAcopladores,
-			GerenciadorSensores& gerSensores,
+			GerenciadorAcopladores& pGerAcopladores,
+			GerenciadorSensores& pGerSensores,
 			const ParametrosModelo& parametros
 		);
 		~RNL();

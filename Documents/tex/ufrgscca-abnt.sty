@@ -23,8 +23,8 @@
 %% CCA   stands for "Control and Automation Engineering Course" (Portuguese acronym)
 %%%==============================================================================
 \NeedsTeXFormat{LaTeX2e}[2022/06/01]
-\def\tc@tmp@packname{ufrgscca-abnt}
-\def\tc@tmp@altpackname{ufrgsccaabnt}
+\def\tc@tmp@packname{tex/ufrgscca-abnt}
+\def\tc@tmp@altpackname{tex/ufrgsccaabnt}
 \def\tc@tmp@packdesc{UFRGS/CCA ABNT layout}
 \def\tc@tmp@packdate{2023/05/08}
 \def\tc@tmp@packversion{1.9}
@@ -35,7 +35,7 @@
 \def\tc@tocdepth{3}  % Table of Contents depth
 \def\tc@secdepth{4} % Sectioning numbers depth (3 -> subsubsection)
 
-\DeclareKeys[ufrgscca-abnt]{
+\DeclareKeys[tex/ufrgscca-abnt]{
     strict-abnt.usage = load,
 		strict-abnt.if = tcif@strictabnt,
 
@@ -74,7 +74,7 @@
 		dctools.if = tcif@dctools,
 }
 
-\ProcessKeyOptions[ufrgscca-abnt]\relax
+\ProcessKeyOptions[tex/ufrgscca-abnt]\relax
 
 %%%%%%%%%%%%%%%%%%%%%
 %%% Packages Loading
@@ -465,7 +465,7 @@
 
 %for english%
 \@namedef{captionsenglish}{%%
- \input{ufrgscca-en-base.def}%%
+ \input{tex/ufrgscca-en-base.def}%%
 }%
 \@namedef{dateenglish}{%%
 	\def\today{\monthname\space\number\day,\space\number\year}%%
@@ -485,7 +485,7 @@
 %
 %para portugues%
 \@namedef{captionsbrazilian}{%%
- \input{ufrgscca-ptBR-base.def}%%
+ \input{tex/ufrgscca-ptBR-base.def}%%
 }%
 \@namedef{datebrazilian}{%%
 	\def\today{\number\day\space de\space\monthname\space de\space\number\year}%%

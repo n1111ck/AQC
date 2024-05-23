@@ -21,6 +21,14 @@ namespace AQC
 		Float mX;
 		Float mY;
 		Float mZ;
+
+		Vetor3D();
+
+		Vetor3D(
+			const Float& x,
+			const Float& y,
+			const Float& z
+		);
 	};
 
 	struct Linha4D;
@@ -32,6 +40,14 @@ namespace AQC
 		Float mY;
 		Float mZ;
 
+		Vetor4D();
+
+		Vetor4D(
+			const Float& w,
+			const Float& x,
+			const Float& y,
+			const Float& z
+		);
 		Float Element(const UInt8& index) const;
 		Void Saturar(const Float& inferior);
 		Void Saturar(const Float& inferior, const Float& superior);
@@ -55,6 +71,14 @@ namespace AQC
 		Float mY;
 		Float mZ;
 
+		Linha4D();
+
+		Linha4D(
+			const Float& w,
+			const Float& x,
+			const Float& y,
+			const Float& z
+		);
 		Float Element(const UInt8& index) const;
 		Void Saturar(const Float& inferior);
 		Void Saturar(const Float& inferior, const Float& superior);

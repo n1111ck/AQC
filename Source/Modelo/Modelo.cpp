@@ -1,8 +1,16 @@
 #include "Modelo/Modelo.h"
 #include "math.h"
 
+// Incluir Utils
+#include "Utils/Constantes.h"
+
 namespace AQC
 {
+	Modelo::Modelo()
+	{
+
+	}
+
 	Modelo::Modelo(const ParametrosModelo& parametros) :
 		mParametros(parametros),
 		mPosicao({}),
@@ -12,7 +20,7 @@ namespace AQC
 		mTempo(0.0),
 		mUltimoSinal({}),
 		mSinalMotor{ 0.0, 0.0, 0.0, 0.0 },
-		mChao(true),
+		mSobreposicao(false),
 		mArrasto({})
 	{
 	}
@@ -186,6 +194,7 @@ namespace AQC
 		mRotacao.mX += mParametros.mPasso / 6.0 * (kRolamento[0] + 2.0 * kRolamento[1] + 2.0 * kRolamento[2] + kRolamento[3]);
 		mRotacao.mY += mParametros.mPasso / 6.0 * (kArfagem[0] + 2.0 * kArfagem[1] + 2.0 * kArfagem[2] + kArfagem[3]);
 		mRotacao.mZ += mParametros.mPasso / 6.0 * (kGuinada[0] + 2.0 * kGuinada[1] + 2.0 * kGuinada[2] + kGuinada[3]);
+		AtualizarRotores();
 
 		// Atualizar Tempo
 		mTempo += mParametros.mPasso;
@@ -231,7 +240,7 @@ namespace AQC
 			+ cos(rotacao.mX) * cos(rotacao.mY) * U1 / mParametros.mMassa
 			- mArrasto.mZ * velocidadeLinear.mZ;
 
-		if ((mPosicao.mZ < 0.0 && resultado < 0.0) && mChao)
+		if (resultado < 0.0 && mSobreposicao)
 		{
 			resultado = 0.0;
 		}
@@ -246,7 +255,7 @@ namespace AQC
 			(mParametros.mInercia.mZ - mParametros.mInercia.mY) * velocidadeAngular.mY * velocidadeAngular.mZ +
 			mParametros.mInerciaRotacao * rotacaoRotorResultante * velocidadeAngular.mY +
 			U2
-			);
+		);
 	}
 
 	Float
@@ -256,7 +265,7 @@ namespace AQC
 			(mParametros.mInercia.mX - mParametros.mInercia.mZ) * velocidadeAngular.mX * velocidadeAngular.mZ -
 			mParametros.mInerciaRotacao * rotacaoRotorResultante * velocidadeAngular.mX +
 			U3
-			);
+		);
 	}
 
 	Float
@@ -265,7 +274,7 @@ namespace AQC
 		return 1 / mParametros.mInercia.mZ * (
 			(mParametros.mInercia.mY - mParametros.mInercia.mX) * velocidadeAngular.mX * velocidadeAngular.mY +
 			U4
-			);
+		);
 	}
 
 	// TODO: todos getters tem que retornar valores que os sensores reais retornariam
@@ -276,10 +285,22 @@ namespace AQC
 		return mPosicao;
 	}
 
+	Void
+	Modelo::Posicao(const Vetor3D& posicao)
+	{
+		mPosicao = posicao;
+	}
+
 	Vetor3D
 	Modelo::VelocidadeLinear() const
 	{
 		return mVelocidadeLinear;
+	}
+
+	Void
+	Modelo::VelocidadeLinear(const Vetor3D& velocidade)
+	{
+		mVelocidadeLinear = velocidade;
 	}
 
 	Vetor3D
@@ -288,10 +309,22 @@ namespace AQC
 		return mRotacao;
 	}
 
+	Void
+	Modelo::Rotacao(const Vetor3D& rotacao)
+	{
+		mRotacao = rotacao;
+	}
+
 	Vetor3D
 	Modelo::VelocidadeAngular() const
 	{
 		return mVelocidadeAngular;
+	}
+
+	Void
+	Modelo::VelocidadeAngular(const Vetor3D& velocidade)
+	{
+		mVelocidadeAngular = velocidade;
 	}
 
 	Vetor4D
@@ -306,14 +339,68 @@ namespace AQC
 	}
 
 	Void
-	Modelo::Chao(const Boolean& valor)
-	{
-		mChao = valor;
-	}
-
-	Void
 	Modelo::Arrasto(const Vetor3D& arrasto)
 	{
 		mArrasto = arrasto;
 	}
+
+	Void
+	Modelo::Resetar()
+	{
+		mUltimoSinal = Vetor4D();
+		mTempo = 0.0;
+		mPosicao = Vetor3D();
+		mVelocidadeLinear = Vetor3D();
+		mRotacao = Vetor3D();
+		mVelocidadeAngular = Vetor3D();
+		mSinalMotor[0] = 0.0;
+		mSinalMotor[1] = 0.0;
+		mSinalMotor[2] = 0.0;
+		mSinalMotor[3] = 0.0;
+		mRotacaoMotor = Vetor4D();
+	}
+
+	Void 
+	Modelo::Sobreposicao(const Boolean& valor)
+	{
+		mSobreposicao = valor;
+	}
+
+	Vetor4D 
+	Modelo::VelocidadeRotores() const
+	{
+		return {
+			mParametros.mRelacaoVelocidade * mSinalMotor[0],
+			mParametros.mRelacaoVelocidade * mSinalMotor[1],
+			mParametros.mRelacaoVelocidade * mSinalMotor[2],
+			mParametros.mRelacaoVelocidade * mSinalMotor[3]
+		};
+	}
+
+	Void
+	Modelo::AtualizarRotores()
+	{
+		Vetor4D velocidadeRotores = VelocidadeRotores();
+		Vetor4D rotacao = mRotacaoMotor;
+
+		rotacao.mW += velocidadeRotores.mW * mParametros.mPasso;
+		rotacao.mX += velocidadeRotores.mX * mParametros.mPasso;
+		rotacao.mY += velocidadeRotores.mY * mParametros.mPasso;
+		rotacao.mZ += velocidadeRotores.mZ * mParametros.mPasso;
+
+		rotacao.mW -= 2 * PI * floor(rotacao.mW / (2 * PI));
+		rotacao.mX -= 2 * PI * floor(rotacao.mX / (2 * PI));
+		rotacao.mY -= 2 * PI * floor(rotacao.mY / (2 * PI));
+		rotacao.mZ -= 2 * PI * floor(rotacao.mZ / (2 * PI));
+
+		mRotacaoMotor = rotacao;
+	}
+
+	Vetor4D 
+	Modelo::RotacaoRotores() const
+	{
+		return mRotacaoMotor;
+	}
+
+
 }

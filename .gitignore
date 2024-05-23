@@ -1,3 +1,8 @@
 Build/*
 .vs/*
 Scripts/LibraryLocation.json
+
+# Documents
+Documents/main.*
+!Documents/main.tex
+*.log

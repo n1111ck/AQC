@@ -3,6 +3,49 @@
 
 namespace AQC
 {
+	Vetor3D::Vetor3D():
+		mX(0.0),
+		mY(0.0),
+		mZ(0.0)
+	{
+
+	}
+
+	Vetor3D::Vetor3D(
+		const Float& x,
+		const Float& y,
+		const Float& z
+	) :
+		mX(x),
+		mY(y),
+		mZ(z)
+	{
+
+	}
+
+	Vetor4D::Vetor4D() :
+		mW(0.0),
+		mX(0.0),
+		mY(0.0),
+		mZ(0.0)
+	{
+
+	}
+
+	Vetor4D::Vetor4D(
+		const Float& w,
+		const Float& x,
+		const Float& y,
+		const Float& z
+	):
+		mW(w),
+		mX(x),
+		mY(y),
+		mZ(z)
+	{
+
+	}
+
 	Float
 	Vetor4D::Element(const UInt8& index) const
 	{
@@ -220,6 +263,28 @@ namespace AQC
 		return operator+=(-valor);
 	}
 
+	Linha4D::Linha4D() :
+		mW(0.0),
+		mX(0.0),
+		mY(0.0),
+		mZ(0.0)
+	{
+
+	}
+
+	Linha4D::Linha4D(
+		const Float& w,
+		const Float& x,
+		const Float& y,
+		const Float& z
+	) :
+		mW(w),
+		mX(x),
+		mY(y),
+		mZ(z)
+	{
+
+	}
 
 	Float
 	Linha4D::Element(const UInt8& index) const

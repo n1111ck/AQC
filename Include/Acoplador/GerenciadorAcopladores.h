@@ -15,6 +15,7 @@ namespace AQC
 	class GerenciadorAcopladores
 	{
 	public:
+		GerenciadorAcopladores();
 		GerenciadorAcopladores(
 			const Float& limiteTensao,
 			const Float& relacaoVelocidade,
@@ -27,6 +28,7 @@ namespace AQC
 		Void Simulacao(Modelo& modelo);
 
 		Float SomatorioRotacao() const;
+		Vetor4D Tensao() const;
 		Void Aplicar(const Vetor4D& entrada);
 	private:
 		Acoplador mpAcoplador[4];
@@ -34,6 +36,7 @@ namespace AQC
 
 		Float mRelacaoVelocidade;
 		Vetor4D mUltimaVelocidade;
+		Vetor4D mUltimaTensao;
 		Float mLimiteTensao;
 	};
 }

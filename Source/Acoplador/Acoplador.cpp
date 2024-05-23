@@ -69,5 +69,11 @@ namespace AQC
 		return mLinhaConversao * entrada;
 	}
 
+	Void
+	Acoplador::Resetar()
+	{
+		sMotorCounter = 0;
+	}
+
 	UInt8 Acoplador::sMotorCounter = 0;
 }

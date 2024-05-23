@@ -23,8 +23,8 @@
 %% CCA   stands for "Control and Automation Engineering Course" (Portuguese acronym)
 %%%==============================================================================
 \NeedsTeXFormat{LaTeX2e}[2022/06/01]
-\def\tc@tmp@packname{ufrgscca-cover}
-\def\tc@tmp@altpackname{ufrgsccacover}
+\def\tc@tmp@packname{tex/ufrgscca-cover}
+\def\tc@tmp@altpackname{tex/ufrgsccacover}
 \def\tc@tmp@packdesc{UFRGS/CCA cover commands}
 \def\tc@tmp@packdate{2023/05/08}
 \def\tc@tmp@packversion{1.9}
@@ -32,7 +32,7 @@
 \@exp\edef\csname\tc@tmp@altpackname version\endcsname{\tc@tmp@packversion}
 \@exp\@exp\@exp\ProvidesPackage\@exp\@exp\@exp{\@exp\tc@tmp@packname\@exp}\@exp[\tc@tmp@packdate\space v\tc@tmp@packversion\space\tc@tmp@packdesc]
 
-\DeclareKeys[ufrgscca-cover]{
+\DeclareKeys[tex/ufrgscca-cover]{
     report.usage = load,
     report.if = tcif@report,
     internship.usage = load,
@@ -40,7 +40,7 @@
     nonrequired.usage = load,
     nonrequired.if = tcif@nonrequired,
 }
-\ProcessKeyOptions[ufrgscca-cover]\relax
+\ProcessKeyOptions[tex/ufrgscca-cover]\relax
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%

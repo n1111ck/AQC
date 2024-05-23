@@ -15,4 +15,5 @@ target_sources(Utils
     PUBLIC
         ${CMAKE_SOURCE_DIR}/Include/Utils/Mutex.h
         ${CMAKE_SOURCE_DIR}/Include/Utils/Tipos.h
+        ${CMAKE_SOURCE_DIR}/Include/Utils/Constantes.h
 )

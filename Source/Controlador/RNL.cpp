@@ -3,6 +3,11 @@
 
 namespace AQC
 {
+	RNL::RNL()
+	{
+
+	}
+
 	RNL::RNL(
 		GerenciadorAcopladores& gerAcopladores,
 		GerenciadorSensores& gerSensores,

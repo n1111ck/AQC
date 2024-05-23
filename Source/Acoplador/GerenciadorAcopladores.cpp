@@ -2,6 +2,11 @@
 
 namespace AQC
 {
+	GerenciadorAcopladores::GerenciadorAcopladores()
+	{
+
+	}
+
 	GerenciadorAcopladores::GerenciadorAcopladores(
 		const Float& limiteTensao,
 		const Float& relacaoVelocidade,
@@ -12,7 +17,8 @@ namespace AQC
 		mpModelo(nullptr),
 		mRelacaoVelocidade(relacaoVelocidade),
 		mLimiteTensao(limiteTensao),
-		mUltimaVelocidade({})
+		mUltimaVelocidade({}),
+		mUltimaTensao({})
 	{
 		for (UInt8 motorIndex = 0; motorIndex < 4; motorIndex++)
 		{
@@ -52,6 +58,7 @@ namespace AQC
 		mUltimaVelocidade = tensaoRotor;
 		tensaoRotor = tensaoRotor * (1 / mRelacaoVelocidade);
 		tensaoRotor.Saturar(0, mLimiteTensao);
+		mUltimaTensao = tensaoRotor;
 
 		if (mpModelo == nullptr)
 		{
@@ -74,4 +81,11 @@ namespace AQC
 			+ mUltimaVelocidade.mZ
 			);
 	}
+
+	Vetor4D
+	GerenciadorAcopladores::Tensao() const
+	{
+		return mUltimaTensao;
+	}
+
 }

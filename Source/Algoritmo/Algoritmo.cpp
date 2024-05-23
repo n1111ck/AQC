@@ -4,8 +4,17 @@
 // Incluir Controlador
 #include "Controlador/RNL.h"
 
+// Incluir Utils
+#include "Utils/Constantes.h"
+
 namespace AQC
 {
+	template<typename Controlador>
+	Algoritmo<Controlador>::Algoritmo()
+	{
+
+	}
+
 	template<typename Controlador>
 	Algoritmo<Controlador>::Algoritmo(
 		Controlador& controlador,
@@ -20,7 +29,7 @@ namespace AQC
 		mLatitudeBase(0.0),
 		mLongitudeBase(0.0),
 		mAltitudeVoo(200.0),
-		mArfagemAvanco(5 * atan(1) / 45.0),
+		mArfagemAvanco(5 * PI / 180.0),
 		mToleranciaEntrega(10.0),
 		mToleranciaPouso(2.0),
 		mLatitudeDestino(0.0),
@@ -283,7 +292,7 @@ namespace AQC
 	Float
 	Algoritmo<Controlador>::Equilibrio(const Float& valor) const
 	{
-		return atan(mConstanteEquilibrio * valor) / (atan(1) * 2);
+		return atan(mConstanteEquilibrio * valor) * 2.0 / PI;
 	}
 
 	template class Algoritmo<RNL>;

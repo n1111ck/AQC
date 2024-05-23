@@ -25,9 +25,10 @@ namespace AQC
 			ePrevencaoColisao
 		};
 
+		Algoritmo();
 		Algoritmo(
-			Controlador& controlador,
-			GerenciadorSensores& gerSensores
+			Controlador& pControlador,
+			GerenciadorSensores& pGerSensores
 		);
 		~Algoritmo();
 

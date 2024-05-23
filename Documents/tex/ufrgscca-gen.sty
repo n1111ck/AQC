@@ -23,8 +23,8 @@
 %% CCA   stands for "Control and Automation Engineering Course" (Portuguese acronym)
 %%%==============================================================================
 \NeedsTeXFormat{LaTeX2e}[2022/06/01]
-\def\tc@tmp@packname{ufrgscca-gen}
-\def\tc@tmp@altpackname{ufrgsccagen}
+\def\tc@tmp@packname{tex/ufrgscca-gen}
+\def\tc@tmp@altpackname{tex/ufrgsccagen}
 \def\tc@tmp@packdesc{UFRGS/CCA generic/miscellany commands}
 \def\tc@tmp@packdate{2023/05/08}
 \def\tc@tmp@packversion{1.9}
@@ -36,14 +36,14 @@
 \def\tcgen@factgrp{gen}%
 %
 
-\DeclareKeys[ufrgscca-gen]{
+\DeclareKeys[tex/ufrgscca-gen]{
     family.usage = load,
 	family.store = \tcgen@fam,
 
     group.usage = load,
 	group.store = \tcgen@factgrp,
 }
-\ProcessKeyOptions[ufrgscca-gen]\relax
+\ProcessKeyOptions[tex/ufrgscca-gen]\relax
 
 
 

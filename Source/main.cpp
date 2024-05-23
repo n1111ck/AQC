@@ -69,7 +69,6 @@ int main()
 	AQC::Vetor4D sinal = {};
 
 	// Aplicacao de chao
-	modelo.Chao(false);
 	modelo.Arrasto({1.0, 1.0, 0.5});
 	algoritmo.NovaEntrega(-100.0, -200.0);
 
@@ -77,6 +76,8 @@ int main()
 	{
 		algoritmo.Atualizar();
 		modelo.Simular();
+		modelo.Sobreposicao(modelo.Posicao().mZ < 0.0);
+		std::cout << modelo.RotacaoRotores().mW << std::endl;
 
 		csvExport << i * parametros.mPasso << ",";
 		csvExport << modelo.VelocidadeLinear().mX << ",";

@@ -18,6 +18,7 @@ namespace AQC
 		);
 		~Acoplador();
 
+		static Void Resetar();
 		Float Calcular(const Vetor4D& entrada) const;
 	private:
 		Float mRelacaoVelocidade;
