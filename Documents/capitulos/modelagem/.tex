@@ -8,7 +8,7 @@
 
 %\textcolor{anotacao}{// Explicar objetivo da seção (vai conter uma parte de modelagem matemática e outra computacional)}
 
-A fim de controlar um quadricóptero, independente de seu fim, é necessário conhecer sua dinâmica e ser capaz de descrevê-la em termos matemáticos. Assim, nessa seção são apresentados os equacionamentos para o sistema além da apresentação de um ambiente de simulação composto por cálculo numérico e visualização gráfica.
+A fim de controlar um quadricóptero, independente de seu fim, é necessário conhecer sua dinâmica e ser capaz de descrevê-la em termos matemáticos. Assim, nessa seção são apresentados os equacionamentos para esse sistema além da apresentação de um ambiente de simulação composto por cálculo numérico e visualização gráfica.
 
 \section{Referenciais}
 
@@ -21,11 +21,13 @@ Com o objetivo de obter um equacionamento que descreva a modelagem dinâmica, as
 Na Figura \ref{} são apresentados os sistemas de coordenadas utilizados neste trabalho, que correspondem a:
 
 \begin{enumerate}
-    \item \textbf{Referencial inercial (ou \textit{inertial frame}):} sua orientação e posição são sempre fixos. A orientação é equivalente ao referencial magnético global, assim, $X$, $Y$ e $Z$ correspondem respectivamente às direções Leste, Norte, Cima, enquanto a posição será determinada nula ao iniciar o dispositivo por motivos de facilidade de cálculo.
+    \item \textbf{Referencial inercial (ou \textit{inertial frame}):} sua orientação e posição são sempre fixos. A orientação é equivalente ao referencial magnético global, assim, $X$, $Y$ e $Z$ correspondem respectivamente às direções Leste, Norte, Cima, enquanto a posição será determinada nula ao iniciar o dispositivo por motivos de facilidade de cálculo. 
     \item \textbf{Referencial não-inercial (ou \textit{body frame}):} sua orientação e posição acompanham o veículo, informações essas que podem ser traduzidas ao referencial inercial.
 \end{enumerate}
 
 Ambos os referenciais são importantes ao projeto e serão utilizados no cálculo da dinâmica de translação e de rotação a seguir.
+
+\textcolor{corrigir}{// Explicar a nomenclatura para indicar cada um dos referenciais.}
 
 \section{Dinâmica de translação}
 
@@ -39,17 +41,17 @@ Para a dinâmica de translação, parte-se de um referencial não-inercial, conf
 \end{figure}
 
 \begin{equation}\label{eq:forca_body}
-    F_b = \begin{bmatrix}
+    F_\eta = \begin{bmatrix}
         0\\
         0\\
-        \Sigma T_i
+        \Sigma T_j
     \end{bmatrix}
 \end{equation}
 
-Porém, como o sistema de coordenadas não-inercial está sob constante rotação, sua informação dinâmica não revela de maneira clara a posição global do veículo. Logo, é necessário traduzir a dinâmica para o sistema de coordenadas inercial. Este procedimento é realizado por meio da matriz de rotação conforme a Equação \ref{eq:rotational_matrix_raw} \cite{robotica}.
+Porém, como o sistema de coordenadas não-inercial está sob constante rotação, sua informação dinâmica não revela de maneira clara a posição global do veículo. Logo, é necessário traduzir a dinâmica para o sistema de coordenadas inercial. Este procedimento é realizado por meio da matriz de rotação apresentada na Equação \ref{eq:rotational_matrix_raw} \cite{robotica}.
 
 \begin{equation}\label{eq:rotational_matrix_raw}
-    \boldsymbol{^iR_b} = 
+    \boldsymbol{^iR_\eta} = 
      \begin{bmatrix}
         \cos(\psi)  &   -\sin(\psi) &   0\\
         \sin(\psi)  &   \cos(\psi)  &   0\\
@@ -69,18 +71,18 @@ Porém, como o sistema de coordenadas não-inercial está sob constante rotaçã
 
 \textcolor{anotacao}{// Tem que checar se seria essa matriz ou a transversa, e se precisar ser a transversa acho que cabe ao menos citar a explicação do porque a inversa é igual a transversa nesse caso}
 
-Obtidos o vetor de atuação dos motores e a matriz de rotação, realiza-se o somatório de forças do sistema conforme a Equação \ref{eq:dinamica_translacao_balanco}.
+Obtidos o vetor de atuação dos motores e a matriz de rotação, realiza-se o somatório de forças do sistema inercial conforme a Equação \ref{eq:dinamica_translacao_balanco}.
 
 \begin{equation}\label{eq:dinamica_translacao_balanco}
     m \begin{bmatrix}
         \Ddot{x}\\
         \Ddot{y}\\
         \Ddot{z}
-    \end{bmatrix} = \boldsymbol{^iR_b}
+    \end{bmatrix} = \boldsymbol{^iR_\eta}
     \begin{bmatrix}
         0\\
         0\\
-        \Sigma T_i 
+        \Sigma T_j
     \end{bmatrix} + m
     \begin{bmatrix}
         0\\
@@ -89,25 +91,130 @@ Obtidos o vetor de atuação dos motores e a matriz de rotação, realiza-se o s
     \end{bmatrix}
 \end{equation}
 
-Por fim, a dinâmica de translação é descrita na Equação \ref{eq:dinamica_translacao} ao isolar as acelerações obtidas na Equação \ref{eq:dinamica_translacao_balanco}.
+Por fim, a dinâmica de translação no referencial inercial é descrita na Equação \ref{eq:dinamica_translacao} ao isolar as acelerações obtidas na Equação \ref{eq:dinamica_translacao_balanco}.
 
 \begin{equation}\label{eq:dinamica_translacao}
     \begin{split}
-        \ddot{x} &= (\sin{(\psi)}\sin{(\phi)} + \cos{(\psi)}\sin{(\theta)}\cos{(\phi)})\frac{\Sigma T_i}{m}\\
-        \ddot{y} &= (-\cos{(\psi)}\sin{(\phi)} + \sin{(\psi)}\sin{(\theta)}\cos{(\phi)})\frac{\Sigma T_i}{m}\\
-        \ddot{z} &= -g + \cos{(\theta)}\cos{(\phi)}\frac{\Sigma T_i}{m}\\
+        \ddot{x} &= (\sin{(\psi)}\sin{(\phi)} + \cos{(\psi)}\sin{(\theta)}\cos{(\phi)})\frac{\Sigma T_j}{m}\\
+        \ddot{y} &= (-\cos{(\psi)}\sin{(\phi)} + \sin{(\psi)}\sin{(\theta)}\cos{(\phi)})\frac{\Sigma T_j}{m}\\
+        \ddot{z} &= -g + \cos{(\theta)}\cos{(\phi)}\frac{\Sigma T_j}{m}\\
     \end{split}
 \end{equation}
 
 \section{Dinâmica de rotação}
 
-\textcolor{anotacao}{// Começar apenas com somatório de momentos}
+Já para a dinâmica de rotação, parte-se do momento resultante no corpo rígido a partir de um referencial não-inercial, conforme o diagrama de corpo livre que é apresentado na Figura \ref{fig:attitude_dcl}.
 
-\textcolor{anotacao}{// Introduzir o efeito giroscópico}
+\begin{figure}[!h]
+	\centering
+	\caption{Diagrama de corpo livre da atitude de um quadricóptero com eixos orientados x, y e z em vermelho, verde e azul respectivamente além de forças e momentos em laranja.}
+	\includegraphics[width=1\textwidth]{capitulos/modelagem/imgs/attitude_dcl.png}
+	\label{fig:attitude_dcl}
+\end{figure}
 
-\textcolor{anotacao}{// Introduzir a conversão do sistema não inercial para o inercial}
+Para tanto, é necessário conhecer o tensor de inércia atuante no quadricóptero, apresentado na Equação \ref{eq:tensor_inercia}. Os produtos de inércia, nesse caso, são aproximados como nulos devido à simetria do quadricóptero \cite{justificativa_inercia}.
+
+\begin{equation}\label{eq:tensor_inercia}
+	\boldsymbol{I} = \begin{bmatrix}
+		I_{xx} & -I_{xy} & -I_{xz}\\
+		-I_{xy} &  I_{yy} & -I_{yz}\\
+		-I_{xz} & -I_{yz} & I_{zz}
+	\end{bmatrix} \approx \begin{bmatrix}
+	I_{xx} 	& 0 		& 0\\
+	0 		&  I_{yy} 	& 0\\
+	0 		& 0 		& I_{zz}
+	\end{bmatrix}
+\end{equation}
+
+Assim, o somatório de momentos no referencial não-inercial é apresentado na Equação \ref{eq:dinamica_rotacao_nao_inercial_incompleta}, $	\boldsymbol{M^\eta_R}$ representa o momento resultante no sistema não inercial, $\boldsymbol{M_a}$ o momento aparente e $\boldsymbol{M_g}$ o momento giroscópico.
+
+\begin{equation}\label{eq:dinamica_rotacao_nao_inercial_incompleta}
+	\boldsymbol{M^\eta_R} = \boldsymbol{I} \begin{bmatrix}
+		\dot{p_\eta}\\
+		\dot{q_\eta}\\
+		\dot{r_\eta}
+	\end{bmatrix} = \Sigma \boldsymbol{M} = \boldsymbol{M_a} + \boldsymbol{M_g}
+\end{equation}
+
+O momento aparente é o interpretado a partir apenas do diagrama de corpo livre apresentado anteriormente, com seu resultado descrito na Equação \ref{eq:momento_aparente}, $L$ representa o comprimento do centro à extremidade do quadricóptero, $T_j$ é a força de propulsão exercida pelo rotor $j$, $\tau_j$ é o momento torsor exercido pelo rotor $j$.
+
+\textcolor{corrigir}{// O detalhamento da força de propulsão não vai mais ser necessário aqui uma vez que e esteja explicitado na parte da translação.}
+
+\begin{equation}\label{eq:momento_aparente}
+	\boldsymbol{M_a} =
+	\begin{bmatrix}
+		L (T_2 - T_4)\\
+		L (T_3 - T_1)\\
+		-\tau_1 + \tau_2 - \tau_3 + \tau_4
+	\end{bmatrix}
+\end{equation}
+
+Porém, existe ainda uma dinâmica de resistência ao movimento angular, denominada momento giroscópico, a qual ocorre pelos rotores possuírem uma direção fixa em seu eixo de rotação, no referencial não-inercial, apesar de existir uma velocidade angular não nula \cite{hibbeler2011engineering}. O equacionamento do momento giroscópico é apresentado na Equação \ref{eq:momento_giroscopico}, $I_r$ representa o momento de inércia da hélice do veículo, $\omega_j$ representa a velocidade angular do rotor $j$ naquele instante e $\Omega$ é a rotação resultante dos rotores.
+
+\begin{equation}\label{eq:momento_giroscopico}
+	\boldsymbol{M_g} = \begin{bmatrix}
+		0\\
+		0\\
+		I_r\Omega
+	\end{bmatrix} \times \begin{bmatrix}
+		p\\
+		q\\
+		r
+	\end{bmatrix} = \begin{bmatrix}
+		- I_r\Omega\cdot q\\
+		I_r\Omega\cdot p\\
+		0
+	\end{bmatrix} \hspace{0.4cm} , \hspace{0.4cm} \Omega = -\omega_1 + \omega_2 - \omega_3 + \omega_4
+\end{equation}
+
+ Logo, o momento resultante no referencial não-inercial é apresentado na Equação \ref{eq:dinamica_rotacao_nao_inercial} ao combinar as Equações \ref{eq:momento_aparente} e \ref{eq:momento_giroscopico} na Equação \ref{eq:dinamica_rotacao_nao_inercial_incompleta}.
+
+\begin{equation}\label{eq:dinamica_rotacao_nao_inercial}
+	\boldsymbol{M^\eta_R} = \boldsymbol{I} \begin{bmatrix}
+		\dot{p_\eta}\\
+		\dot{q_\eta}\\
+		\dot{r_\eta}
+	\end{bmatrix} = \begin{bmatrix}
+	- I_r\Omega\cdot q + L(T_2 - T_4)\\
+	I_r\Omega\cdot p + L(T_3 - T_1)\\
+	-\tau_1 + \tau_2 - \tau_3 + \tau_4
+	\end{bmatrix}
+\end{equation}
+
+Por fim, para considerar a dinâmica no referencial inercial é necessário considerar o efeito que a rotação do sistema de coordenadas causa a um observador fixo, o qual ocasiona as psedoforças de Coriolis e centrífuga \cite{classica:livro} apresentado na Equação \ref{eq:coriolis}.
+
+\begin{equation}\label{eq:coriolis}
+	\boldsymbol{I}\begin{bmatrix}
+		\dot{p}\\
+		\dot{q}\\
+		\dot{r}
+	\end{bmatrix} + \begin{bmatrix}
+		p\\
+		q\\
+		r
+	\end{bmatrix}\times\left(\boldsymbol{I}\begin{bmatrix}
+	p\\
+	q\\
+	r
+	\end{bmatrix}\right) = \boldsymbol{M^\eta_R}
+\end{equation}
+
+Portanto, ao substituir a Equação \ref{eq:dinamica_rotacao_nao_inercial} na Equação \ref{eq:coriolis} e isolar as acelerações é obtido a dinâmica de rotação em um referencial inercial apresentada na Equação \ref{eq:dinamica_rotacao}.
+
+\begin{equation}\label{eq:dinamica_rotacao}
+	\begin{split}
+		\dot{p} &= \left((I_{zz} - I_{yy})qr - I_r\Omega\cdot q + L(T_2 - T_4)\right)I_{xx}^{-1}\\
+		\dot{q} &= \left((I_{xx} - I_{zz})pr + I_r\Omega\cdot p + L(T_3 - T_1\right))I_{yy}^{-1}\\
+		\dot{r} &= \left((I_{yy} - I_{xx})pq -\tau_1 + \tau_2 - \tau_3 + \tau_4\right)I_{zz}^{-1}\\
+	\end{split}
+\end{equation}
 
 \section{Dinâmica dos atuadores}
+
+As determinações anteriores partem do princípio de que são conhecidos os momentos e forças exercidos pelos rotores, porém para o futuro controle dessas variáveis é necessário compreender a relação entre um sinal elétrico enviado pelo controlador e a força produzida por consequência.
+
+[Aqui citar uma fonte didática e dois ou três trabalhos que utilizam esse processo por ensaios, além dos gráficos de relação].
+
 
 \textcolor{anotacao}{// Explicar dinâmica de volts para rotação}
 

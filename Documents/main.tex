@@ -87,115 +87,34 @@
 \definecolor{estranho}{RGB}{210, 70, 0}
 \definecolor{att}{RGB}{0, 0, 230}
 
+% Para escrever no escuro %
+\makeatletter
+\newcommand{\darkmode}{%
+	\AtBeginDocument{
+		\definecolor{dark-bk}{RGB}{31, 31 31}
+		\color{white}\global\let\default@color\current@color
+		\pagecolor{dark-bk}
+	}
+}
+\makeatother
+
+
+% Controlador tema escuro %
+\darkmode
+
+
 \begin{document}
 
-% O comando \maketile gera a capa, a folha de rosto e a folha de aprovacao
-% (se for o caso)
-\maketitle
-
-
-% dedicatoria é opcional
-%\nonum\chapter{Dedicatória} %vai ter uma entrada no sumário
-\notoc\chapter{Dedicatória} %não vai aparecer no sumário
-
-%Lista de cores:
-%\begin{itemize}
-%    \item \textcolor{anotacao}{ANOTAÇÕES}
-%    \item \textcolor{corrigir}{CORRIGIR}
-%    \item \textcolor{estranho}{ESTRANHO}
-%    \item \textcolor{verificar}{VERIFICAR}
-%\end{itemize}
-
-%Dedico este trabalho aos meus pais, em especial pela dedicação e apoio em
-%todos os momentos difíceis.
-
-% agradecimentos são opcionais
-%\nonum\chapter{Agradecimentos}
-\notoc\chapter{Agradecimentos}
-
-\`{A} Universidade Federal do Rio Grande do Sul, UFRGS, pela
-oportunidade de realização de estudos.
-
-Aos colegas de curso pelo seu auxílio nas tarefas desenvolvidas durante o
-curso e apoio na revisão deste trabalho.
-
-Agradeço ao \LaTeX\ por não ter vírus de macro\ldots
-
-% resumo no idioma do documento
-\begin{abstract}
-
-No âmbito deste trabalho, busca-se o desenvolvimento de um sistema embarcado destinado a quadricópteros, visando controlar sua dinâmica com base em trajetórias predefinidas para operações autônomas de entrega. O sistema é modelado, empregando-se malhas de controle digital para gerenciar os estados que influenciam os motores da aeronave não tripulada (UAV, \textit{unmanned aerial vehicle}), utilizando o \textit{feedback} proveniente de uma unidade de medição inercial (IMU, \textit{inertial measurement unit}) e um sistema de posicionamento global (GPS, \textit{global positioning system}). Para determinar a configuração ideal do controlador para essa finalidade, são avaliadas distintas abordagens, como o controlador PID, realimentação de estados e linearização via realimentação de estados. Opta-se pela aplicação da técnica de linearização via realimentação de estados, validada por meio do \textit{software} Simulink do MATLAB. As próximas etapas desse estudo envolvem a definição do gerador de trajetória, a elaboração do código do controlador, simulações utilizando o ambiente de \textit{software} ROS e a realização de testes em um protótipo real a ser desenvolvido.
-
-\end{abstract}
-
-% resumo no outro idioma
-% como parametro devem ser passadas as palavras-chave
-% no outro idioma, separadas por vírgulas
-\begin{otherabstract}{Project, UAV, Autonomous Delivery, Automation and Control, Flight Dynamics}
-
-Within the scope of this work, the development of an embedded system intended for quadcopters is pursued, aiming to control their dynamics based on predefined trajectories for autonomous delivery operations. The system is modeled, employing digital control loops to manage the states influencing the motors of the unmanned aerial vehicle (UAV), utilizing feedback from an inertial measurement unit (IMU) and a global positioning system (GPS). To determine the optimal controller configuration for this purpose, various approaches are evaluated, such as the PID controller, state feedback, and linearization through state feedback. The choice is made to apply the state feedback-based linearization technique, validated through the Simulink software of MATLAB. The forthcoming stages of this study encompass trajectory generator definition, controller code development, simulations using the ROS software environment, and testing on a real prototype to be developed.
-\end{otherabstract}
-
-% Conforme a NBR 6027, secao 4, o sumário deve ser o último elemento pré-textual. O
-% modelo do PPGEE nao atende a esta exigencia. Obviamente, a norma deveria ter a
-% precedência. No entanto, neste arquivo optou-se por reproduzir o que está
-% no modelo para word.
-
-% sumario
-\setcounter{tocdepth}{3}
-
-% lista de ilustrações
-\listoffigures
-
-% lista de tabelas
-\listoftables
-
-% lista de listagens (código fonte)
-\listofcodelist %% doesn't work on overleaf
-
-% lista de abreviaturas e siglas
-% o parametro deve ser a abreviatura mais longa
-\begin{listofabbrv}{PPGEE}
-    \item[UAV] Unmanned Aerial Vehicle (Veículo Aéreo Não-tripulado)
-    \item[IMU] Inertial Measurement Unit (Unidade de Mensuração Inercial)
-    \item[GPS] Global Positioning System (Sistema de Posicionamento Global)
-    \item[VTOL] Vertical Take-Off and Landing (Decolagem e Aterrisagem Verticais)
-    \item[PID] Controlador proporcional, integral e derivativo
-    \item[LRE] Linearização por Realimentação de Estados
-\end{listofabbrv}
-
-% lista de símbolos é opcional
-\begin{listofsymbols}{$\alpha\beta\pi\omega$}
-       \item[$\theta$] Ângulo de arfagem
-       \item[$\phi$] Ângulo de rolamento
-       \item[$\psi$] Ângulo de guinada
-       \item[$z$] Altitude
-       \item[$p$] Velocidade angular de rolamento
-       \item[$q$] Velocidade angular de arfagem
-       \item[$r$] Velocidade angular de guinada
-       \item[$\omega_i$] Velocidade angular i
-       \item[$T_i$] Força propulsora i
-       \item[$\tau_i$] Torque propulsor i
-       \item[$U_i$] Sinal de controle i
-       \item[$I_{ii}$] Momento de inércia no plano i
-       \item[$I_{r}$] Momento polar de inércia
-       \item[$\Omega$] Velocidade angular resultante dos rotores
-       \item[$b$] Constante de propulsão
-       \item[$d$] Constante de torque
-\end{listofsymbols}
-
-
-\tableofcontents
+% IMPORTAR DOCUMENTOS INICIAIS
+%\subfile{pre}
 
 % IMPORTAR DOCUMENTOS PRINCIPAIS
-\subfile{capitulos/introducao/}
-\subfile{capitulos/descricao/}
+%\subfile{capitulos/introducao/}
+%\subfile{capitulos/descricao/}
 \subfile{capitulos/modelagem/}
-\subfile{capitulos/controle_atitude/}
-\subfile{capitulos/algoritmo_voo/}
-
-\printbibliography
-
+%\subfile{capitulos/controle_atitude/}
+%\subfile{capitulos/algoritmo_voo/}
+%\subfile{capitulos/conclusao/}
 
 \end{document}
 

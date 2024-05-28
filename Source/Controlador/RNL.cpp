@@ -149,11 +149,11 @@ namespace AQC
 		}
 
 		resultado.mX = (
-			mVelocidadeAngular.mY * mVelocidadeAngular.mZ * (mInercia.mY - mInercia.mZ) -
+			mVelocidadeAngular.mY * mVelocidadeAngular.mZ * (mInercia.mY - mInercia.mZ) +
 			mVelocidadeAngular.mY * somatorioRotores * mInerciaRotacao
 			);
 		resultado.mY = (
-			mVelocidadeAngular.mX * mVelocidadeAngular.mZ * (mInercia.mZ - mInercia.mX) +
+			mVelocidadeAngular.mX * mVelocidadeAngular.mZ * (mInercia.mZ - mInercia.mX) -
 			mVelocidadeAngular.mX * somatorioRotores * mInerciaRotacao
 			);
 		resultado.mZ = mVelocidadeAngular.mX * mVelocidadeAngular.mY * (mInercia.mX - mInercia.mY);

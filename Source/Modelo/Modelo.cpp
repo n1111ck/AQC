@@ -252,7 +252,7 @@ namespace AQC
 	Modelo::AceleracaoRolamento(const Float& U2, const Vetor3D& velocidadeAngular, const Float& rotacaoRotorResultante) const
 	{
 		return 1 / mParametros.mInercia.mX * (
-			(mParametros.mInercia.mZ - mParametros.mInercia.mY) * velocidadeAngular.mY * velocidadeAngular.mZ +
+			(mParametros.mInercia.mZ - mParametros.mInercia.mY) * velocidadeAngular.mY * velocidadeAngular.mZ -
 			mParametros.mInerciaRotacao * rotacaoRotorResultante * velocidadeAngular.mY +
 			U2
 		);
@@ -262,7 +262,7 @@ namespace AQC
 	Modelo::AceleracaoArfagem(const Float& U3, const Vetor3D& velocidadeAngular, const Float& rotacaoRotorResultante) const
 	{
 		return 1 / mParametros.mInercia.mY * (
-			(mParametros.mInercia.mX - mParametros.mInercia.mZ) * velocidadeAngular.mX * velocidadeAngular.mZ -
+			(mParametros.mInercia.mX - mParametros.mInercia.mZ) * velocidadeAngular.mX * velocidadeAngular.mZ +
 			mParametros.mInerciaRotacao * rotacaoRotorResultante * velocidadeAngular.mX +
 			U3
 		);
