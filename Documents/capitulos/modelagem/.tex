@@ -8,7 +8,7 @@
 
 %\textcolor{anotacao}{// Explicar objetivo da seção (vai conter uma parte de modelagem matemática e outra computacional)}
 
-A fim de controlar um quadricóptero, independente de seu fim, é necessário conhecer sua dinâmica e ser capaz de descrevê-la em termos matemáticos. Assim, nessa seção são apresentados os equacionamentos para esse sistema além da apresentação de um ambiente de simulação composto por cálculo numérico e visualização gráfica.
+A fim de controlar um quadricóptero, independente de seu fim, é necessário conhecer sua dinâmica e ser capaz de descrevê-la em termos matemáticos. Assim, nessa seção são apresentados os equacionamentos para esse sistema.
 
 \section{Referenciais}
 
@@ -16,39 +16,45 @@ A fim de controlar um quadricóptero, independente de seu fim, é necessário co
 
 Com o objetivo de obter um equacionamento que descreva a modelagem dinâmica, as relações entre forças e momentos de atuadores com os deslocamentos e velocidades correspondentes do veículo devem ser encontradas. Essas relações podem ser interpretadas em diferentes sistemas de coordenadas a fim de facilitar sua modelagem. 
 
-\textcolor{corrigir}{COLOCAR IMAGEM DOS REFERENCIAIS}
+\begin{figure}[!h]
+	\centering
+	\caption{Referenciais inercial e não-inercial comparados indicados respectivamente por $i$ e $\eta$.}
+	\includegraphics[width=0.5\textwidth]{capitulos/modelagem/imgs/referenciais.png}
+	\label{fig:referenciais}
+	\begin{flushleft}
+		\small{Fonte: \cite{imagem_referenciais}}
+	\end{flushleft}
+\end{figure}
 
-Na Figura \ref{} são apresentados os sistemas de coordenadas utilizados neste trabalho, que correspondem a:
+Na Figura \ref{fig:referenciais} são apresentados os sistemas de coordenadas utilizados neste trabalho, que correspondem a:
 
 \begin{enumerate}
-    \item \textbf{Referencial inercial (ou \textit{inertial frame}):} sua orientação e posição são sempre fixos. A orientação é equivalente ao referencial magnético global, assim, $X$, $Y$ e $Z$ correspondem respectivamente às direções Leste, Norte, Cima, enquanto a posição será determinada nula ao iniciar o dispositivo por motivos de facilidade de cálculo. 
-    \item \textbf{Referencial não-inercial (ou \textit{body frame}):} sua orientação e posição acompanham o veículo, informações essas que podem ser traduzidas ao referencial inercial.
+    \item \textbf{Referencial inercial (ou \textit{inertial frame}):} sua orientação e posição são sempre fixos. A orientação é equivalente ao referencial magnético global, assim, $X$, $Y$ e $Z$ correspondem respectivamente às direções Leste, Norte, Cima, enquanto a posição será determinada nula ao iniciar o dispositivo por motivos de facilidade de cálculo. Convenciona-se a simbologia $i$ (subscrito ou sobre-escrito), ou ainda a ausência de simbologia com relação ao referencial, como um referencial inercial.
+    \item \textbf{Referencial não-inercial (ou \textit{body frame}):} sua orientação e posição acompanham o veículo, informações essas que podem ser traduzidas ao referencial inercial. Convenciona-se a simbologia $\eta$ (subscrito ou sobre-escrito) como um referencial não-inercial.
 \end{enumerate}
 
 Ambos os referenciais são importantes ao projeto e serão utilizados no cálculo da dinâmica de translação e de rotação a seguir.
 
-\textcolor{corrigir}{// Explicar a nomenclatura para indicar cada um dos referenciais.}
-
 \section{Dinâmica de translação}
 
-Para a dinâmica de translação, parte-se de um referencial não-inercial, conforme apresentado na Figura \ref{fig:ref_frame} e atuação dos motores conforme a Equação \ref{eq:forca_body}.
+Para a dinâmica de translação, parte-se de um referencial não-inercial, conforme apresentado na Figura \ref{fig:ref_frame} e atuação dos motores conforme a Equação \ref{eq:forca_body}, $T_j$ representa a força de propulsão exercida pelo rotor $j$.
 
 \begin{figure}[!h]
     \centering
-    \caption{Comparação da força dos propulsores do referencial não-inercial X'Y'Z' com o referencial inercial XYZ com eixos orientados x, y e z em vermelho, verde e azul respectivamente além da força em laranja.}
+    \caption{Comparação da força dos propulsores do referencial não-inercial com o referencial inercial com eixos orientados X, Y e Z em vermelho, verde e azul respectivamente além de forças em laranja.}
     \includegraphics[width=0.85\textwidth]{capitulos/modelagem/imgs/ref_frame.png}
     \label{fig:ref_frame}
 \end{figure}
 
 \begin{equation}\label{eq:forca_body}
-    F_\eta = \begin{bmatrix}
+    \boldsymbol{F_\eta} = \begin{bmatrix}
         0\\
         0\\
         \Sigma T_j
     \end{bmatrix}
 \end{equation}
 
-Porém, como o sistema de coordenadas não-inercial está sob constante rotação, sua informação dinâmica não revela de maneira clara a posição global do veículo. Logo, é necessário traduzir a dinâmica para o sistema de coordenadas inercial. Este procedimento é realizado por meio da matriz de rotação apresentada na Equação \ref{eq:rotational_matrix_raw} \cite{robotica}.
+Porém, como o sistema de coordenadas não-inercial está sob constante rotação, sua informação dinâmica não revela de maneira clara a posição global do veículo. Logo, é necessário traduzir a dinâmica para o sistema de coordenadas inercial. Este procedimento é realizado por meio da matriz de rotação \cite{robotica} apresentada na Equação \ref{eq:rotational_matrix_raw}.
 
 \begin{equation}\label{eq:rotational_matrix_raw}
     \boldsymbol{^iR_\eta} = 
@@ -68,8 +74,6 @@ Porém, como o sistema de coordenadas não-inercial está sob constante rotaçã
         0           &   \sin(\phi)  &   \cos(\phi)
     \end{bmatrix}_x
 \end{equation}
-
-\textcolor{anotacao}{// Tem que checar se seria essa matriz ou a transversa, e se precisar ser a transversa acho que cabe ao menos citar a explicação do porque a inversa é igual a transversa nesse caso}
 
 Obtidos o vetor de atuação dos motores e a matriz de rotação, realiza-se o somatório de forças do sistema inercial conforme a Equação \ref{eq:dinamica_translacao_balanco}.
 
@@ -133,12 +137,10 @@ Assim, o somatório de momentos no referencial não-inercial é apresentado na E
 		\dot{p_\eta}\\
 		\dot{q_\eta}\\
 		\dot{r_\eta}
-	\end{bmatrix} = \Sigma \boldsymbol{M} = \boldsymbol{M_a} + \boldsymbol{M_g}
+	\end{bmatrix} = \Sigma \boldsymbol{M_\eta} = \boldsymbol{M_a} + \boldsymbol{M_g}
 \end{equation}
 
-O momento aparente é o interpretado a partir apenas do diagrama de corpo livre apresentado anteriormente, com seu resultado descrito na Equação \ref{eq:momento_aparente}, $L$ representa o comprimento do centro à extremidade do quadricóptero, $T_j$ é a força de propulsão exercida pelo rotor $j$, $\tau_j$ é o momento torsor exercido pelo rotor $j$.
-
-\textcolor{corrigir}{// O detalhamento da força de propulsão não vai mais ser necessário aqui uma vez que e esteja explicitado na parte da translação.}
+O momento aparente é o interpretado a partir apenas do diagrama de corpo livre apresentado anteriormente, com seu resultado descrito na Equação \ref{eq:momento_aparente}, $L$ representa o comprimento do centro à extremidade do quadricóptero, $\tau_j$ é o momento torsor exercido pelo rotor $j$.
 
 \begin{equation}\label{eq:momento_aparente}
 	\boldsymbol{M_a} =
@@ -211,17 +213,68 @@ Portanto, ao substituir a Equação \ref{eq:dinamica_rotacao_nao_inercial} na Eq
 
 \section{Dinâmica dos atuadores}
 
-As determinações anteriores partem do princípio de que são conhecidos os momentos e forças exercidos pelos rotores, porém para o futuro controle dessas variáveis é necessário compreender a relação entre um sinal elétrico enviado pelo controlador e a força produzida por consequência.
+Embora já obtido os equacionamentos que descrevem a dinâmica do veículo, a partir de forças, momentos e suas respectivas velocidades, ainda não é possível controlá-lo devido a ausência de uma grandeza diretamente controlável. Para tanto, é necessário compreender como um sinal elétrico enviado aos motores se converte em uma força ou momento, ilustrado na Figura \ref{fig:sistemas_mecanico_eletrico}. 
 
-[Aqui citar uma fonte didática e dois ou três trabalhos que utilizam esse processo por ensaios, além dos gráficos de relação].
+\begin{figure}[!h]
+	\centering
+	\caption{Esquemático da relação entre os sistemas mecânico e elétrico.}
+	\includegraphics[width=0.8\textwidth]{capitulos/modelagem/imgs/sistema.png}
+	\label{fig:sistemas_mecanico_eletrico}
+\end{figure}
+
+Os motores usualmente utilizados na construção de um quadricóptero são os motores de corrente contínua sem escovas, que, a partir de um controlador intermediário chamada de ESC (\textit{eletronic speed controller}, ou controlador eletrônico de velocidade) \cite{esc_ref}, podem ser modelados como motores de corrente contínua apenas \cite{popoola2015modelling}. 
+
+Para um motor de corrent contínua, a relação entre um valor de tensão aplicado e uma velocidade angular é linear em seu regime permanente e conforme a Equação \ref{eq:relacao_linear_rotor}, $\omega_{RP}$ representa a velocidade angular do rotor em regime permanente, $k_v$ a constante que relaciona um valor de tensão à velocidade angular, $V$ a tensão no rotor.
+
+\begin{equation}\label{eq:relacao_linear_rotor}
+	\omega_{RP} = k_v \cdot V
+\end{equation}
+
+Já ao considerar a dinâmica como um todo, releva-se apenas a dinâmica mecânica do motor, permitido pela dinâmica elétrica ser no geral muito mais rápida que a mecânica. É apresentado na Equação \ref{eq:sinal_eletrico_rotor} a relação entre um sinal elétrico e a velocidade angular no rotor, $\omega$ representa a velocidade angular do rotor, $T_m$ a constante de tempo dessa dinâmica.
+
+\begin{equation}\label{eq:sinal_eletrico_rotor}
+	\dot{\omega} = T_m^{-1}(\omega_{RP} - \omega) = T_m^{-1}(k_v \cdot V - \omega)
+\end{equation}
+
+Obtida a velocidade angular de uma hélice acoplada a um motor, deve-se então descrever a dinâmica que ocasiona a força de propulsão em si, ilustrada na Figura \ref{fig:lift_forces}.
 
 
-\textcolor{anotacao}{// Explicar dinâmica de volts para rotação}
+\begin{figure}[!h]
+	\centering
+	\caption{Diagrama de corpo livre da hélice do rotor com $v_{rv}$ representando a velocidade relativa do vento, $T$ a força propulsora, $S$ a força de sustentação e $D$ a componente de arrasto.}
+	\includegraphics[width=0.65\textwidth]{capitulos/modelagem/imgs/lift_forces.png}
+	\label{fig:lift_forces}
+\end{figure}
 
-\textcolor{anotacao}{// Explicar relação de volts com thrust}
+Observa-se que o movimento angular da hélice ocasiona uma velocidade relativa com o ar o qual, em consequência, é propulsionado verticalmente. A força que empurra o ar para baixo é sentida pela hélice como uma reação, o que causa uma propulsão para cima e nenhum movimento horizontal, devido ao cancelamento das componentes de arraste. 
 
-\textcolor{anotacao}{// Explicar relação de volts com momento}
+Esse comportamento é denominado como Sustentação Aerodinâmica \cite{fundamentals_aerodynamics} e é representada na Equação \ref{eq:equacao_lift}, $S$ representa a força de sustentação, $C_L$ o coeficiente de sustentação, $\rho$ a densidade do ar, $A$ a área projetada sobre o plano perpendicular à direção do vento e $v$ a velocidade relativa entre a pá e o ar, $r$ representa o raio da hélice.
 
+\begin{equation}\label{eq:equacao_lift}
+	S = \frac{1}{2}C_L\rho A v^2 = \frac{1}{2}C_L\rho A r^2 \omega^2
+\end{equation}
+
+Ainda, as variáveis de ambiente associadas à sustentação no geral podem ser negligenciadas para o cálculo da propulsão, visto que na literatura esses coeficientes são obtidos como apenas uma constante a partir de ensaios no rotor \cite{muzar2016experimental}. Assim, considera-se a força de propulsão $T$ conforme apresentada na Equação \ref{eq:equacao_propulsao}, na qual $k_f$ representa a constante de propulsão.
+
+\begin{equation}\label{eq:equacao_propulsao}
+	T = k_f \cdot \omega^2
+\end{equation}
+
+O raciocínio para descrever o momento torsor da hélice é similar, apenas a relação entre grandezas $k_t$, denominada constante de torque, é diferente, de forma que pode ser descrito conforme Equação \ref{eq:equacao_torsor}.
+
+\begin{equation}\label{eq:equacao_torsor}
+	\tau = k_t \cdot \omega^2
+\end{equation}
+
+Logo, ao combinar as equações elétricas e mecânicas obtêm-se as Equações \ref{eq:equacao_final_propulsao} e \ref{eq:equacao_final_torsao}, para as forças e momentos respectivamente, que descrevem como o sinal elétrico implica em uma reação mecânica.
+
+\begin{equation}\label{eq:equacao_final_propulsao}
+	T = k_f \cdot (k_v \cdot V - T_m\dot{\omega})^2
+\end{equation}
+
+\begin{equation}\label{eq:equacao_final_torsao}
+	\tau = k_t \cdot (k_v \cdot V - T_m\dot{\omega})^2
+\end{equation}
 
 \section{Sistema completo}
 
