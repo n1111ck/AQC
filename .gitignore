@@ -6,3 +6,4 @@ Scripts/LibraryLocation.json
 Documents/main.*
 !Documents/main.tex
 *.log
+*.bak

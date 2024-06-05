@@ -99,9 +99,9 @@ Por fim, a dinâmica de translação no referencial inercial é descrita na Equa
 
 \begin{equation}\label{eq:dinamica_translacao}
     \begin{split}
-        \ddot{x} &= (\sin{(\psi)}\sin{(\phi)} + \cos{(\psi)}\sin{(\theta)}\cos{(\phi)})\frac{\Sigma T_j}{m}\\
-        \ddot{y} &= (-\cos{(\psi)}\sin{(\phi)} + \sin{(\psi)}\sin{(\theta)}\cos{(\phi)})\frac{\Sigma T_j}{m}\\
-        \ddot{z} &= -g + \cos{(\theta)}\cos{(\phi)}\frac{\Sigma T_j}{m}\\
+        \ddot{x} &= (\sin{(\psi)}\sin{(\phi)} + \cos{(\psi)}\sin{(\theta)}\cos{(\phi)})m^{-1}\Sigma T_j\\
+        \ddot{y} &= (-\cos{(\psi)}\sin{(\phi)} + \sin{(\psi)}\sin{(\theta)}\cos{(\phi)})m^{-1}\Sigma T_j\\
+        \ddot{z} &= -g + m^{-1}\cos{(\theta)}\cos{(\phi)}\Sigma T_j\\
     \end{split}
 \end{equation}
 
@@ -206,7 +206,7 @@ Portanto, ao substituir a Equação \ref{eq:dinamica_rotacao_nao_inercial} na Eq
 \begin{equation}\label{eq:dinamica_rotacao}
 	\begin{split}
 		\dot{p} &= \left((I_{zz} - I_{yy})qr - I_r\Omega\cdot q + L(T_2 - T_4)\right)I_{xx}^{-1}\\
-		\dot{q} &= \left((I_{xx} - I_{zz})pr + I_r\Omega\cdot p + L(T_3 - T_1\right))I_{yy}^{-1}\\
+		\dot{q} &= \left((I_{xx} - I_{zz})pr + I_r\Omega\cdot p + L(T_3 - T_1)\right)I_{yy}^{-1}\\
 		\dot{r} &= \left((I_{yy} - I_{xx})pq -\tau_1 + \tau_2 - \tau_3 + \tau_4\right)I_{zz}^{-1}\\
 	\end{split}
 \end{equation}
@@ -278,15 +278,58 @@ Logo, ao combinar as equações elétricas e mecânicas obtêm-se as Equações 
 
 \section{Sistema completo}
 
-\textcolor{anotacao}{// Introduzir as variáveis U e a relação delas}
+Por fim, para obter o sistema completo traduz-se as componentes propulsoras em variáveis mais simples, conforme apresentado na Equação \ref{eq:conversao_U_omega}.
+
+\begin{equation}\label{eq:conversao_U_omega}
+	\begin{bmatrix}
+		U_1\\
+		U_2\\
+		U_3\\
+		U_4
+	\end{bmatrix} = 
+	\begin{bmatrix}
+		k_f		& k_f 	& k_f 	& k_f\\
+		0 		& k_f 	& 0 	& -k_f\\
+		-k_f	& 0		& k_f	& 0\\
+		-k_t 	& k_t 	& -k_t 	& k_t\\
+	\end{bmatrix}
+	\begin{bmatrix}
+		\omega_1^2\\
+		\omega_2^2\\
+		\omega_3^2\\
+		\omega_4^2
+	\end{bmatrix}
+\end{equation}
+
+O objetivo dessa conversão é tratar cada dinâmica como possuindo apenas uma variável de entrada, apesar de a entrada ser uma combinação linear das forças propulsoras, e por consequência, conforme apresentado nas Equações \ref{eq:equacao_propulsao} e \ref{eq:equacao_torsor}, uma combinação linear das velocidades angulares dos rotores ao quadrado.
 
 
-%\section{Simulação}
+Assim, o sistema completo é separado em três blocos distintos, os quais são ilustrados na Figura \ref{fig:diagrama_blocos_final} e representam :
+\begin{enumerate}
+	\item \textbf{Dinâmica elétrica}: efetua a conversão de sinais elétricos em propulsão.
+	\item \textbf{Conversão}: traduz as forças e momentos propulsores em variáveis mais simples de serem manipuladas.
+	\item \textbf{Dinâmica mecânica}: representa a dinâmica de voo do quadricóptero em si.
+\end{enumerate} 
 
-%\textcolor{anotacao}{// Mostrar o ambiente base de simulação MATLAB}
+\begin{figure}[!h]
+	\centering
+	\caption{Diagrama de blocos do sistema que evidencia as entradas e saídas de cada bloco com unidades no SI.}
+	\includegraphics[width=0.8\textwidth]{capitulos/modelagem/imgs/diagrama_blocos_final.png}
+	\label{fig:diagrama_blocos_final}
+\end{figure}
 
-%\textcolor{anotacao}{// Introduzir comunicação UDP}
 
-%\textcolor{anotacao}{// Mostrar o ambiente simulação Unreal Engine}
+Logo, o sistema completo é representado como a formação de propulsão por parte dos rotores conforme Equações \ref{eq:equacao_final_propulsao} e \ref{eq:equacao_final_torsao}, conversão dessa propulsão na Equação \ref{eq:conversao_U_omega} e realização do voo na Equação \ref{eq:dinamica_final}.
+
+\begin{equation}\label{eq:dinamica_final}
+	\begin{split}
+		\ddot{x} &= (\sin{(\psi)}\sin{(\phi)} + \cos{(\psi)}\sin{(\theta)}\cos{(\phi)})m^{-1}U_1\\
+		\ddot{y} &= (-\cos{(\psi)}\sin{(\phi)} + \sin{(\psi)}\sin{(\theta)}\cos{(\phi)})m^{-1}U_1\\
+		\ddot{z} &= -g + m^{-1}\cos{(\theta)}\cos{(\phi)}U_1\\
+		\dot{p} &= \left((I_{zz} - I_{yy})qr - I_r\Omega\cdot q + LU_2\right)I_{xx}^{-1}\\
+		\dot{q} &= \left((I_{xx} - I_{zz})pr + I_r\Omega\cdot p + LU_3\right)I_{yy}^{-1}\\
+		\dot{r} &= \left((I_{yy} - I_{xx})pq + U_4\right)I_{zz}^{-1}\\
+	\end{split}
+\end{equation}
 
 \end{document}
