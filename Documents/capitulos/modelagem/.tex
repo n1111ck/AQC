@@ -365,7 +365,7 @@ Assim, a Linearização Jacobiana para a aerodinâmica do quadricóptero possui 
 \begin{equation}\label{eq:jacobiana_A}
 	\small{
 	\boldsymbol{A} = \begin{bmatrix}
-		0 & m^{-1}\cos{(t_0)}\cos{(\theta_0)}U_{1_0} & m^{-1}\cos{(\phi_0)}\cos{(t_0)}U_{1_0} & 0\\
+		0 & - m^{-1}\cos{(\theta_0)}\sin{(\phi_0)}t_0U_{1_0} & - m^{-1}\sin{(\theta_0)}\cos{(\phi_0)}t_0U_{1_0}} & 0\\
 		
 		0 & 0 & \left((I_{zz} - I_{yy})r_0 - I_r\Omega_0\right)I_{xx}^{-1} & \left((I_{zz} - I_{yy})q_0\right)I_{xx}^{-1}\\
 		
