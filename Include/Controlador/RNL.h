@@ -20,29 +20,28 @@ namespace AQC
 	public:
 		RNL();
 		RNL(
-			GerenciadorAcopladores& pGerAcopladores,
-			GerenciadorSensores& pGerSensores,
+			GerenciadorAcopladores& gerAcopladores,
+			GerenciadorSensores& gerSensores,
 			const ParametrosModelo& parametros
 		);
 		~RNL();
 
 		Void Aplicar(const Vetor4D& referencia);
 	private:
+		// Informacoes do controlador
 		Float mMassa;
 		Float mGravidade;
 		Float mRaio;
 		Vetor3D mInercia;
 		Float mInerciaRotacao;
+		Vetor4D mProporcionalVelocidade;
+		Vetor4D mProporcionalPosicao;
 
+		// Informacoes dos sensores
 		Vetor3D mPosicao;
 		Vetor3D mRotacao;
 		Vetor3D mVelocidadeLinear;
 		Vetor3D mVelocidadeAngular;
-		Float mDistanciaBaixo;
-		Float mDistanciaFrente;
-
-		Vetor4D mProporcionalVelocidade;
-		Vetor4D mProporcionalPosicao;
 
 		Void Capturar();
 		Vetor4D ProporcionalPosicao(const Float& constanteTempo);

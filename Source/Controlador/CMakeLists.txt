@@ -10,8 +10,10 @@ target_include_directories(Controlador
 # Include Files
 target_sources(Controlador
     PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/PID.cpp
         ${CMAKE_CURRENT_LIST_DIR}/RNL.cpp
     PUBLIC
+        ${CMAKE_SOURCE_DIR}/Include/Controlador/PID.h
         ${CMAKE_SOURCE_DIR}/Include/Controlador/RNL.h
         ${CMAKE_SOURCE_DIR}/Include/Controlador/IControlador.h
 )

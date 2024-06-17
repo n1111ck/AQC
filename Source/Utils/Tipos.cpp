@@ -209,6 +209,19 @@ namespace AQC
 		return resultado;
 	}
 
+	Vetor4D 
+	Vetor4D::operator/(const Float& valor) const
+	{
+		Vetor4D resultado = *this;
+
+		resultado.mW /= valor;
+		resultado.mX /= valor;
+		resultado.mY /= valor;
+		resultado.mZ /= valor;
+
+		return resultado;
+	}
+
 	Vetor4D
 	Vetor4D::operator-(const Vetor4D& vetor) const
 	{

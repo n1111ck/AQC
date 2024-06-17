@@ -55,6 +55,7 @@ namespace AQC
 		Void Raiz();
 		Float operator*(const Linha4D& linha) const;
 		Vetor4D operator*(const Float& valor) const;
+		Vetor4D operator/(const Float& valor) const;
 
 		Vetor4D operator-(const Vetor4D& vetor) const;
 		Vetor4D operator*(const Vetor4D& vetor) const;

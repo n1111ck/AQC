@@ -101,8 +101,6 @@ namespace AQC
 		mVelocidadeLinear = IControlador::mpGerenciadorSensores->VelocidadeLinear();
 		mRotacao = IControlador::mpGerenciadorSensores->Rotacao();
 		mVelocidadeAngular = IControlador::mpGerenciadorSensores->VelocidadeAngular();
-		mDistanciaBaixo = IControlador::mpGerenciadorSensores->Baixo();
-		mDistanciaFrente = IControlador::mpGerenciadorSensores->Frente();
 	}
 
 	Vetor4D

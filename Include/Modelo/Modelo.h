@@ -45,12 +45,12 @@ namespace AQC
 		Vetor3D mRotacao;
 		Vetor3D mVelocidadeAngular;
 
-		Float mSinalMotor[4];
+		Float mVelocidadeAngularRotor[4];
 		Vetor4D mRotacaoMotor;
 
-		Float TensaoAplicada(
-			const Float& tensaoEntradaAtual,
-			const Float& tensaoSaidaAtual
+		Float VelocidadeAngularRotor(
+			const Float& tensao,
+			const Float& velocidadeAngularAtual
 		) const;
 		Float AceleracaoLatitude(const Float& U1, const Vetor3D& rotacao, const Vetor3D& velocidadeLinear) const;
 		Float AceleracaoLongitude(const Float& U1, const Vetor3D& rotacao, const Vetor3D& velocidadeLinear) const;
