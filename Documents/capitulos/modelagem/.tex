@@ -6,13 +6,9 @@
 \chapter{Modelagem do quadricóptero}
 \label{chap:modelagem}
 
-%\textcolor{anotacao}{// Explicar objetivo da seção (vai conter uma parte de modelagem matemática e outra computacional)}
-
 A fim de controlar um quadricóptero, independente de seu fim, é necessário conhecer sua dinâmica e ser capaz de descrevê-la em termos matemáticos. Assim, nessa seção são apresentados os equacionamentos para esse sistema.
 
 \section{Referenciais}
-
-%\textcolor{anotacao}{// Explicar as duas referências possíveis e explicar porquê que para o ângulo é de um jeito e pra deslocamento outro}
 
 Com o objetivo de obter um equacionamento que descreva a modelagem dinâmica, as relações entre forças e momentos de atuadores com os deslocamentos e velocidades correspondentes do veículo devem ser encontradas. Essas relações podem ser interpretadas em diferentes sistemas de coordenadas a fim de facilitar sua modelagem. 
 
@@ -289,8 +285,8 @@ Por fim, para obter o sistema completo traduz-se as componentes propulsoras em v
 	\end{bmatrix} = 
 	\begin{bmatrix}
 		k_f		& k_f 	& k_f 	& k_f\\
-		0 		& k_f 	& 0 	& -k_f\\
-		-k_f	& 0		& k_f	& 0\\
+		0 		& L\cdot k_f 	& 0 	& -L\cdot k_f\\
+		-L\cdot k_f	& 0		& L\cdot k_f	& 0\\
 		-k_t 	& k_t 	& -k_t 	& k_t\\
 	\end{bmatrix}
 	\begin{bmatrix}
@@ -306,30 +302,122 @@ O objetivo dessa conversão é tratar cada dinâmica como possuindo apenas uma v
 
 Assim, o sistema completo é separado em três blocos distintos, os quais são ilustrados na Figura \ref{fig:diagrama_blocos_final} e representam :
 \begin{enumerate}
-	\item \textbf{Dinâmica elétrica}: efetua a conversão de sinais elétricos em propulsão.
-	\item \textbf{Conversão}: traduz as forças e momentos propulsores em variáveis mais simples de serem manipuladas.
-	\item \textbf{Dinâmica mecânica}: representa a dinâmica de voo do quadricóptero em si.
+	\item \textbf{Eletromecânica}: efetua a conversão de sinais elétricos em velocidades angulares.
+	\item \textbf{Propulsão}: traduz as velocidades angulares em forças e momentos propulsores, que são combinados em variáveis mais simples de serem manipuladas.
+	\item \textbf{Aerodinâmica}: representa a dinâmica de voo do quadricóptero em si.
 \end{enumerate} 
 
 \begin{figure}[!h]
 	\centering
 	\caption{Diagrama de blocos do sistema que evidencia as entradas e saídas de cada bloco com unidades no SI.}
-	\includegraphics[width=0.8\textwidth]{capitulos/modelagem/imgs/diagrama_blocos_final.png}
+	\includegraphics[width=1\textwidth]{capitulos/modelagem/imgs/diagrama_blocos_final.png}
 	\label{fig:diagrama_blocos_final}
 \end{figure}
 
 
-Logo, o sistema completo é representado como a formação de propulsão por parte dos rotores conforme Equações \ref{eq:equacao_final_propulsao} e \ref{eq:equacao_final_torsao}, conversão dessa propulsão na Equação \ref{eq:conversao_U_omega} e realização do voo na Equação \ref{eq:dinamica_final}.
+Logo, o sistema completo é representado como a formação de propulsão por parte dos rotores conforme Equações \ref{eq:equacao_final_propulsao} e \ref{eq:equacao_final_torsao}, simplificação dessa propulsão na Equação \ref{eq:conversao_U_omega} e realização do voo na Equação \ref{eq:dinamica_final}.
 
 \begin{equation}\label{eq:dinamica_final}
 	\begin{split}
 		\ddot{x} &= (\sin{(\psi)}\sin{(\phi)} + \cos{(\psi)}\sin{(\theta)}\cos{(\phi)})m^{-1}U_1\\
 		\ddot{y} &= (-\cos{(\psi)}\sin{(\phi)} + \sin{(\psi)}\sin{(\theta)}\cos{(\phi)})m^{-1}U_1\\
 		\ddot{z} &= -g + m^{-1}\cos{(\theta)}\cos{(\phi)}U_1\\
-		\dot{p} &= \left((I_{zz} - I_{yy})qr - I_r\Omega\cdot q + LU_2\right)I_{xx}^{-1}\\
-		\dot{q} &= \left((I_{xx} - I_{zz})pr + I_r\Omega\cdot p + LU_3\right)I_{yy}^{-1}\\
+		\dot{p} &= \left((I_{zz} - I_{yy})qr - I_r\Omega\cdot q + U_2\right)I_{xx}^{-1}\\
+		\dot{q} &= \left((I_{xx} - I_{zz})pr + I_r\Omega\cdot p + U_3\right)I_{yy}^{-1}\\
 		\dot{r} &= \left((I_{yy} - I_{xx})pq + U_4\right)I_{zz}^{-1}\\
 	\end{split}
+\end{equation}
+
+\vspace{0.2cm}
+
+\section{Linearização}
+
+Apesar de obtido o modelo real do sistema, para utilização em técnicas com controladores lineares é necessário obter um modelo linearizado. O cálculo deste modelo é realizado a partir da Linearização Jacobiana \cite{jacobiana} do sistema, conforme a Equação \ref{eq:jacobiana}, na qual $\boldsymbol{x}$ representa o vetor de estados, $\boldsymbol{U}$ o vetor de entradas e o subscrito $0$ representa a aplicação em torno do ponto de equilíbrio.
+
+\vspace{0.1cm}
+
+\begin{equation}\label{eq:jacobiana}
+	\boldsymbol{\dot{x}} = \boldsymbol{A\Delta x} + \boldsymbol{B\Delta U} = \begin{bmatrix}
+		\frac{\partial \ddot{z}}{\partial z} & \frac{\partial \ddot{z}}{\partial p} & \frac{\partial \ddot{z}}{\partial q} & \frac{\partial \ddot{z}}{\partial r}\\
+		
+		\frac{\partial \dot{p}}{\partial z} & \frac{\partial \dot{p}}{\partial p} & \frac{\partial \dot{p}}{\partial q} & \frac{\partial \dot{p}}{\partial r}\\
+		
+		\frac{\partial \dot{q}}{\partial z} & \frac{\partial \dot{q}}{\partial p} & \frac{\partial \dot{q}}{\partial q} & \frac{\partial \dot{q}}{\partial r}\\
+		
+		\frac{\partial \dot{r}}{\partial z} & \frac{\partial \dot{r}}{\partial p} & \frac{\partial \dot{r}}{\partial q} & \frac{\partial \dot{r}}{\partial r}
+	\end{bmatrix}_{0}\boldsymbol{\Delta x} + \begin{bmatrix}
+		\frac{\partial \ddot{z}}{\partial U_1} & \frac{\partial \ddot{z}}{\partial U_2} & \frac{\partial \ddot{z}}{\partial U_3} & \frac{\partial \ddot{z}}{\partial U_4}\\
+		
+		\frac{\partial \dot{p}}{\partial U_1} & \frac{\partial \dot{p}}{\partial U_2} & \frac{\partial \dot{p}}{\partial U_3} & \frac{\partial \dot{p}}{\partial U_4}\\
+		
+		\frac{\partial \dot{q}}{\partial U_1} & \frac{\partial \dot{q}}{\partial U_2} & \frac{\partial \dot{q}}{\partial U_3} & \frac{\partial \dot{q}}{\partial U_4}\\
+		
+		\frac{\partial \dot{r}}{\partial U_1} & \frac{\partial \dot{r}}{\partial U_2} & \frac{\partial \dot{r}}{\partial U_3} & \frac{\partial \dot{r}}{\partial U_4}
+	\end{bmatrix}_{0}\boldsymbol{\Delta U}
+\end{equation}
+
+\vspace{0.1cm}
+
+Assim, a Linearização Jacobiana para a aerodinâmica do quadricóptero possui as matrizes $\boldsymbol{A}$ e $\boldsymbol{B}$ conforme apresentadas nas Equações \ref{eq:jacobiana_A} e \ref{eq:jacobiana_B}.
+
+\vspace{0.1cm}
+
+\begin{equation}\label{eq:jacobiana_A}
+	\small{
+	\boldsymbol{A} = \begin{bmatrix}
+		0 & m^{-1}\cos{(t_0)}\cos{(\theta_0)}U_{1_0} & m^{-1}\cos{(\phi_0)}\cos{(t_0)}U_{1_0} & 0\\
+		
+		0 & 0 & \left((I_{zz} - I_{yy})r_0 - I_r\Omega_0\right)I_{xx}^{-1} & \left((I_{zz} - I_{yy})q_0\right)I_{xx}^{-1}\\
+		
+		0 & \left((I_{xx} - I_{zz})r_0 + I_r\Omega_0\right)I_{yy}^{-1} & 0 & \left((I_{xx} - I_{zz})p_0\right)I_{yy}^{-1}\\
+		
+		0 & \left((I_{yy} - I_{xx})q_0\right)I_{zz}^{-1} & \left((I_{yy} - I_{xx})p_0\right)I_{zz}^{-1} & 0
+	\end{bmatrix}
+	}
+\end{equation}
+
+\begin{equation}\label{eq:jacobiana_B}
+	\boldsymbol{B} = \begin{bmatrix}
+		m^{-1}\cos{(\theta_0)}\cos{(\phi_0)} & 0 & 0 & 0\\
+		
+		0 & I_{xx}^{-1} & 0 & 0\\
+		
+		0 & 0 & I_{yy}^{-1} & 0\\
+		
+		0 & 0 & 0 & I_{zz}^{-1}
+	\end{bmatrix}
+\end{equation}
+	
+Ainda, alguns métodos optam por mais uma simplificação do modelo para facilidade de cálculo ao considerar que as seguintes premissas são válidas:
+
+\begin{enumerate}
+	\item as velocidades angulares iniciais são nulas
+	\item a soma das velocidades dos rotores iniciais é nula
+	\item os ângulos de \textit{pitch} e \textit{roll} iniciais são nulos
+\end{enumerate}
+
+O modelo linearizado simplificado da aerodinâmica é apresentado na Equação \ref{eq:jacobiana_simples}.
+
+\begin{equation}\label{eq:jacobiana_simples}
+	\begin{bmatrix}
+		\ddot{z}\\
+		\dot{p}\\
+		\dot{q}\\
+		\dot{r}\\
+	\end{bmatrix} = \begin{bmatrix}
+		m^{-1} & 0 & 0 & 0\\
+		
+		0 & I_{xx}^{-1} & 0 & 0\\
+		
+		0 & 0 & I_{yy}^{-1} & 0\\
+		
+		0 & 0 & 0 & I_{zz}^{-1}
+	\end{bmatrix}\begin{bmatrix}
+		\Delta \dot{z}\\
+		\Delta p\\
+		\Delta q\\
+		\Delta r\\
+	\end{bmatrix}
 \end{equation}
 
 \end{document}

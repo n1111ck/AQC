@@ -5,79 +5,11 @@
 
 \chapter{Controle da atitude e altitude}\label{chap:controle}
 
-Conforme a dinâmica obtida para o quadricóptero no Capítulo \ref{chap:modelagem}, desenvolve-se em seguida o controlador da atitude a partir da análise dos graus de liberdade envolvidos. As equações dinâmicas desse subsistema são isoladas na Equação \ref{eq:dinamica_atitude_raw}:
-
-\begin{equation}\label{eq:dinamica_atitude_raw}
-    \begin{split}
-        \dot{p} &= \frac{I_{zz} - I_{yy}}{I_{xx}}qr + \frac{I_r}{I_{xx}}\Omega q + \frac{L}{I_{xx}}(T_2 - T_4)\\
-        \dot{q} &= \frac{I_{xx} - I_{zz}}{I_{yy}}pr - \frac{I_r}{I_{yy}}\Omega p + \frac{L}{I_{yy}}(T_1 - T_3)\\
-        \dot{r} &= \frac{I_{yy} - I_{xx}}{I_{zz}}pq + \frac{-\tau_1 + \tau_2 - \tau_3 + \tau_4}{I_{zz}}
-    \end{split}  
-\end{equation}
-
-O subsistema em análise apresenta, inicialmente, 8 entradas distintas acompanhadas por 3 variáveis de estado. Esse cenário caracteriza o sistema como sobre-determinado, onde há um excesso de informações em relação ao número de variáveis de estado. Porém, é conhecido que existe uma relação entre a força de propulsão e de torque gerado pelo atuador, de forma que $\tau_i \propto \omega_i^2$ e $T_i \propto \omega_i^2$ \cite{rotor-quad}. Denotando tais relações por meio dos coeficientes de proporcionalidade d e b, respectivamente, a Equação \ref{eq:dinamica_atitude_raw} se torna:
-
-\begin{equation}\label{eq:dinamica_atitude_raw_omega}
-    \begin{split}
-        \dot{p} &= \frac{I_{zz} - I_{yy}}{I_{xx}}qr + \frac{I_r}{I_{xx}}\Omega q + \frac{L}{I_{xx}}b(\omega^2_2 - \omega^2_4)\\
-        \dot{q} &= \frac{I_{xx} - I_{zz}}{I_{yy}}pr - \frac{I_r}{I_{yy}}\Omega p + \frac{L}{I_{yy}}b(\omega^2_1 - \omega^2_3)\\
-        \dot{r} &= \frac{I_{yy} - I_{xx}}{I_{zz}}pq + d\frac{-\omega^2_1 + \omega^2_2 - \omega^2_3 + \omega^2_4}{I_{zz}}
-    \end{split} 
-\end{equation}
-
-Ainda, o sistema continua a ser sobre-determinado por existirem 4 entradas para 3 variáveis de estado. Logo, faz-se necessário que o controle da atitude do sistema seja realizado em conjunto com o controle da altitude do sistema, a fim de obter um sistema especificado. O subsistema resultante é apresentado na Equação \ref{eq:dinamica_atitude_altitude_raw_omega}:
-
-\begin{equation}\label{eq:dinamica_atitude_altitude_raw_omega}
-    \begin{split}
-        \ddot{z} &= -g + \frac{\cos{(\theta)}\cos{(\phi)}b}{m}(\omega_1^2 + \omega_2^2 + \omega_3^2 + \omega_4^2)\\
-        \dot{p} &= \frac{I_{zz} - I_{yy}}{I_{xx}}qr + \frac{I_r}{I_{xx}}\Omega q + \frac{L}{I_{xx}}b(\omega^2_2 - \omega^2_4)\\
-        \dot{q} &= \frac{I_{xx} - I_{zz}}{I_{yy}}pr - \frac{I_r}{I_{yy}}\Omega p + \frac{L}{I_{yy}}b(\omega^2_1 - \omega^2_3)\\
-        \dot{r} &= \frac{I_{yy} - I_{xx}}{I_{zz}}pq + d\frac{-\omega^2_1 + \omega^2_2 - \omega^2_3 + \omega^2_4}{I_{zz}}
-    \end{split}
-\end{equation}
-
-Por fim, a manipulação do sistema pode ser facilitada pela mudança de variáveis introduzida na Equação \ref{eq:relacao_U_omega}, resultando na Equação \ref{eq:dinamica_atitude_altitude}. Esta simplificação será útil quando da implementação digital do controlador do sistema, pois relaciona as variáveis manipuladas com seus atuadores respectivos.
-
-\begin{equation}\label{eq:relacao_U_omega}
-    \begin{bmatrix}
-        U_1\\U_2\\U_3\\U_4
-    \end{bmatrix} = 
-    \begin{bmatrix}
-        b(\omega_1^2 + \omega_2^2 + \omega_3^2 + \omega_4^2)\\
-        bL(\omega_2^2 - \omega_4^2)\\
-        bL(\omega_1^2 - \omega_3^2)\\
-        d(- \omega_1^2 + \omega_2^2 - \omega_3^2 + \omega_4^2)
-    \end{bmatrix} = 
-    \begin{bmatrix}
-        b & b & b & b\\
-        0 & bL & 0 & -bL\\
-        bL & 0 & -bL & 0\\
-        -d & d & -d & d
-    \end{bmatrix}
-    \begin{bmatrix}
-        \omega_1^2\\
-        \omega_2^2\\
-        \omega_3^2\\
-        \omega_4^2
-    \end{bmatrix}
-\end{equation}
-
-\begin{equation}\label{eq:dinamica_atitude_altitude}
-    \begin{split}
-        \ddot{z} &= -g + \cos{(\theta)}\cos{(\phi)}\frac{U_1}{m}\\
-        \dot{p} &= \frac{I_{zz} - I_{yy}}{I_{xx}}qr + \frac{I_r}{I_{xx}}\Omega q + \frac{1}{I_{xx}}U_2\\
-        \dot{q} &= \frac{I_{xx} - I_{zz}}{I_{yy}}pr - \frac{I_r}{I_{yy}}\Omega p + \frac{1}{I_{yy}}U_3\\
-        \dot{r} &= \frac{I_{yy} - I_{xx}}{I_{zz}}pq + \frac{1}{I_{zz}}U_4
-    \end{split}
-\end{equation}
-
-Assim, o sistema possui uma descrição determinada, apropriada à implementação de diferentes técnicas de controle. As opções consideradas no contexto deste trabalho serão descritas a seguir.
-
-\textcolor{red}{OBS: O sistema de coordenadas foi alterado, a partir daqui é necessário revisão completa!}
+Com o equacionamento efetuado, deve-se determinar qual será a lei de controle que regerá o veículo. Assim, nesta seção, são apresentadas algumas metodologias de controle a fim de determinar o controlador mais viável para o sistema.
 
 \section{Controle PID}
 
-O controlador proporcional, integral e derivativo (PID) tem como característica a manipulação da ação a partir de operações lineares aplicadas ao erro da variável de processo, conforme Equação \ref{eq:PID} e representação gráfica aplicada ao sistema de quadricóptero na Figura \ref{fig:PID}.
+O controlador proporcional, integral e derivativo (PID) tem como característica a manipulação da ação a partir de operações lineares aplicadas ao erro da variável de processo, conforme Equação \ref{eq:PID} e representação gráfica aplicada ao sistema do quadricóptero na Figura \ref{fig:PID}.
 
 \begin{figure}[!h]
     \centering
@@ -98,7 +30,7 @@ O controlador proporcional, integral e derivativo (PID) tem como característica
     \end{gathered}
 \end{equation}
 
-Essa topologia foi implementada em diversos outros trabalhos como no apresentado pela Universidade Shantou \cite{controle:pid} e pela IEEE \cite{controle:pid_modelagem_basica}. A configuração é bastante eficiente para condições de \textit{hover} (flutuação), porém apresenta trepidações quando em outros estados como durante uma translação.
+Essa topologia foi implementada em diversos outros trabalhos como no apresentado pela Universidade Shantou \cite{controle:pid} e pela Universidade de Moratuwa, \cite{controle:pid_modelagem_basica}. A configuração é bastante eficiente para condições de \textit{hover} (flutuação), porém apresenta trepidações quando em transações de estados.
 
 Para melhorar a técnica foram introduzidos estudos baseados em aprendizado de máquina \cite{controle:pid-aprendizado-maquina} para manipulação dinâmica dos parâmetros do PID que pode vir a estabilizar trepidações e melhorar o voo durante outras condições.
 
