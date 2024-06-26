@@ -274,7 +274,7 @@ Logo, ao combinar as equações elétricas e mecânicas obtêm-se as Equações 
 
 \section{Sistema completo}
 
-Por fim, para obter o sistema completo traduz-se as componentes propulsoras em variáveis mais simples, conforme apresentado na Equação \ref{eq:conversao_U_omega}.
+Por fim, para obter o sistema completo traduz-se as componentes propulsoras em variáveis auxiliares a partir de uma matriz de conversão $\boldsymbol{\sigma}$, conforme apresentado na Equação \ref{eq:conversao_U_omega}.
 
 \begin{equation}\label{eq:conversao_U_omega}
 	\begin{bmatrix}
@@ -283,17 +283,17 @@ Por fim, para obter o sistema completo traduz-se as componentes propulsoras em v
 		U_3\\
 		U_4
 	\end{bmatrix} = 
-	\begin{bmatrix}
-		k_f		& k_f 	& k_f 	& k_f\\
-		0 		& L\cdot k_f 	& 0 	& -L\cdot k_f\\
-		-L\cdot k_f	& 0		& L\cdot k_f	& 0\\
-		-k_t 	& k_t 	& -k_t 	& k_t\\
-	\end{bmatrix}
+	\boldsymbol{\sigma}
 	\begin{bmatrix}
 		\omega_1^2\\
 		\omega_2^2\\
 		\omega_3^2\\
 		\omega_4^2
+		\end{bmatrix}\hspace{0.4cm},\hspace{0.4cm}\boldsymbol{\sigma} = \begin{bmatrix}
+		k_f		& k_f 	& k_f 	& k_f\\
+		0 		& L\cdot k_f 	& 0 	& -L\cdot k_f\\
+		-L\cdot k_f	& 0		& L\cdot k_f	& 0\\
+		-k_t 	& k_t 	& -k_t 	& k_t\\
 	\end{bmatrix}
 \end{equation}
 
@@ -396,7 +396,7 @@ Ainda, alguns métodos optam por mais uma simplificação do modelo para facilid
 	\item os ângulos de \textit{pitch} e \textit{roll} iniciais são nulos
 \end{enumerate}
 
-O modelo linearizado simplificado da aerodinâmica é apresentado na Equação \ref{eq:jacobiana_simples}.
+O modelo linearizado simplificado da aerodinâmica é apresentado na Equação \ref{eq:jacobiana_simples}. Observa-se que, dessa forma, o sistema deixa de ser interdependente, pois cada estado depende exclusivamente de apenas uma entrada.
 
 \begin{equation}\label{eq:jacobiana_simples}
 	\begin{bmatrix}
@@ -413,10 +413,10 @@ O modelo linearizado simplificado da aerodinâmica é apresentado na Equação \
 		
 		0 & 0 & 0 & I_{zz}^{-1}
 	\end{bmatrix}\begin{bmatrix}
-		\Delta \dot{z}\\
-		\Delta p\\
-		\Delta q\\
-		\Delta r\\
+		\Delta U_1\\
+		\Delta U_2\\
+		\Delta U_3\\
+		\Delta U_4\\
 	\end{bmatrix}
 \end{equation}
 

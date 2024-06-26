@@ -9,528 +9,157 @@ Com o equacionamento efetuado, deve-se determinar qual será a lei de controle q
 
 \section{Controle PID}
 
-O controlador proporcional, integral e derivativo (PID) tem como característica a manipulação da ação a partir de operações lineares aplicadas ao erro da variável de processo, conforme Equação \ref{eq:PID} e representação gráfica aplicada ao sistema do quadricóptero na Figura \ref{fig:PID}.
+O controlador proporcional, integral e derivativo (PID) é caracterizado pela manipulação da ação a partir de operações lineares aplicadas ao erro da variável de processo. Por se tratar de um método linear será utilizado para cálculo a aerodinâmica linearizada simplificada, apresentada na Equação \ref{eq:jacobiana_simples}, que pode ser representada no domínio da frequência conforme a Equação \ref{eq:modelo_simplificado_aerodinamica_pid}.
+
+\begin{equation}\label{eq:modelo_simplificado_aerodinamica_pid}
+	\begin{bmatrix}
+		\Delta Z_{(s)}\\
+		\Delta \Phi_{(s)}\\
+		\Delta \Theta_{(s)}\\
+		\Delta \Psi_{(s)}
+	\end{bmatrix} = \frac{1}{s^2}\begin{bmatrix}
+		m^{-1} & 0 & 0 & 0\\
+		
+		0 & I_{xx}^{-1} & 0 & 0\\
+		
+		0 & 0 & I_{yy}^{-1} & 0\\
+		
+		0 & 0 & 0 & I_{zz}^{-1}
+	\end{bmatrix}\begin{bmatrix}
+		\Delta U_{1(s)}\\
+		\Delta U_{2(s)}\\
+		\Delta U_{3(s)}\\
+		\Delta U_{4(s)}
+	\end{bmatrix}
+\end{equation}
+
+No entanto, para controlar o quadricóptero é necessário compreender a relação entre o sinal elétrico e a aerodinâmica. Para isso, é estabelecido que o controle será realizado usando as variáveis auxiliares de forças e momentos, que serão posteriormente convertidas em um sinal elétrico conforme demonstrado no diagrama de blocos da Figura \ref{fig:diagrama_sinal_quadricoptero}.
 
 \begin{figure}[!h]
-    \centering
-    \caption{Diagrama de blocos para o controle da atitude e altitude por um PID.}
-    \includegraphics[width=0.8\textwidth]{capitulos/controle_atitude/imgs/controle_PID.png}
-    \label{fig:PID}
+	\centering
+	\caption{Diagrama de blocos do sinal de controle para o quadricóptero com bloco de conversão $\varepsilon$.}
+	\includegraphics[width=0.9\textwidth]{capitulos/controle_atitude/imgs/diagrama_sinal_quadricoptero.png}
+	\label{fig:diagrama_sinal_quadricoptero}
 \end{figure}
 
-\begin{equation}\label{eq:PID}
-    \begin{gathered}
-        \boldsymbol{U} = \boldsymbol{K_p}\boldsymbol{e} + \boldsymbol{K_i}\int_0^t\boldsymbol{e(\tau)}d\tau + \boldsymbol{K_d}\boldsymbol{\dot{e}}\\
-        \boldsymbol{K_j} =\begin{bmatrix}
-            K_{jz} & 0 & 0 & 0\\
-            0 & K_{j\theta} & 0 & 0\\
-            0 & 0 & K_{j\phi} & 0\\
-            0 & 0 & 0 & K_{j\psi}
-        \end{bmatrix} \hspace{0.4cm} , \hspace{0.4cm} j \in [p, i, d]
-    \end{gathered}
+Assim, a modelagem da planta do quadricóptero linearizada é apresentada na Equação \ref{eq:modelo_simplificado_final_pid}. Denota-se que o ganho unitário da dinâmica eletromecânica acontece devido a compensação do bloco de conversão $\varepsilon$.
+
+\begin{equation}\label{eq:modelo_simplificado_final_pid}
+	\begin{bmatrix}
+		\Delta Z_{(s)}\\
+		\Delta \Phi_{(s)}\\
+		\Delta \Theta_{(s)}\\
+		\Delta \Psi_{(s)}
+	\end{bmatrix} = \frac{T_s^{-1}}{s + T_s^{-1}}\frac{1}{s^2}\begin{bmatrix}
+		m^{-1} & 0 & 0 & 0\\
+		
+		0 & I_{xx}^{-1} & 0 & 0\\
+		
+		0 & 0 & I_{yy}^{-1} & 0\\
+		
+		0 & 0 & 0 & I_{zz}^{-1}
+	\end{bmatrix}\begin{bmatrix}
+		\Delta U_{1(s)}\\
+		\Delta U_{2(s)}\\
+		\Delta U_{3(s)}\\
+		\Delta U_{4(s)}
+	\end{bmatrix}
 \end{equation}
 
-Essa topologia foi implementada em diversos outros trabalhos como no apresentado pela Universidade Shantou \cite{controle:pid} e pela Universidade de Moratuwa, \cite{controle:pid_modelagem_basica}. A configuração é bastante eficiente para condições de \textit{hover} (flutuação), porém apresenta trepidações quando em transações de estados.
+A partir da nova equação da planta, observa-se que as dinâmicas são todas semelhantes entre si, portanto, para calcular o controlador basta considerar o cálculo para uma versão genérica dessa dinâmica e substituí-la posteriormente. Considera-se então uma constante dimensional $\alpha$, um sinal de controle $U_g$ e saída $Y_g$ para a planta genérica unidimensional representada na Equação \ref{eq:planta_generica_simplificada} no domínio da frequência.
 
-Para melhorar a técnica foram introduzidos estudos baseados em aprendizado de máquina \cite{controle:pid-aprendizado-maquina} para manipulação dinâmica dos parâmetros do PID que pode vir a estabilizar trepidações e melhorar o voo durante outras condições.
-
-O cálculo dos parâmetros do PID é realizado a partir da linearização do sistema pela matriz jacobiana das entradas e dos estados. O modelo linearizado é apresentado na Equação \ref{eq:linearizado} com subscritos zero representando valores iniciais das variáveis referentes.
-
-\begin{equation}\label{eq:linearizado}
-    \begin{gathered}
-        \boldsymbol{\dot{x}} = \boldsymbol{A\Delta x} + \boldsymbol{B\Delta U}\hspace{0.4cm}, \hspace{0.4cm} \boldsymbol{x} = \begin{bmatrix}
-        \dot{z}\\ 
-        p\\
-        q\\
-        r
-        \end{bmatrix} \hspace{0.4cm} , \hspace{0.4cm} \boldsymbol{U} = \begin{bmatrix}
-            U_1\\ 
-            U_2\\
-            U_3\\
-            U_4
-        \end{bmatrix}\\
-        A = \begin{bmatrix}
-            0 & - m^{-1}\sin{(\theta_0)}\cos{(\phi_0)}p_0&- m^{-1}\cos{(\theta_0)}\sin{(\phi_0)}q_0&0\\ 
-            0&0&(I_{yy} - I_{zz})I_{xx}^{-1}r_0 - I_{r}I_{xx}^{-1}\Omega_0&(I_{yy} - I_{zz})I_{xx}^{-1}q_0\\
-            0&(I_{zz} - I_{xx})I_{yy}^{-1}r_0 - I_{r}I_{yy}^{-1}\Omega_0&0&(I_{zz} - I_{xx})I_{yy}^{-1}p_0\\
-            0&(I_{xx} - I_{yy})I_{zz}^{-1}q_0&(I_{xx} - I_{yy})I_{zz}^{-1}p_0&0
-        \end{bmatrix}\\ 
-        B = \begin{bmatrix}
-            \frac{1}{m}\cos{(\theta_0)}\cos{(\phi_0)}&0&0&0\\ 
-            0&\frac{1}{I_{xx}}&0&0\\
-            0&0&\frac{1}{I_{yy}}&0\\
-            0&0&0&\frac{1}{I_{zz}}
-        \end{bmatrix}
-    \end{gathered}
+\begin{equation}\label{eq:planta_generica_simplificada}
+	\Delta Y_{g(s)} = \alpha^{-1}\frac{1}{s^2}\frac{T_s^{-1}}{s + T_s^{-1}}\Delta U_{g(s)}\hspace{0.4cm},\hspace{0.4cm} \begin{matrix}
+		Y_g \in [Z, \Phi, \Theta, \Psi]\\
+		\alpha \in [m, I_{xx}, I_{yy}, I_{zz}]\\\vspace{0.2cm}
+		U_g \in [U_1, U_2, U_3, U_4]\vspace{0.2cm}
+	\end{matrix}
 \end{equation}
 
-Este modelo pode ser utilizado para controlar o sistema fazendo atualizações dinâmicas. Porém alguns trabalhos ainda fazem algumas considerações visando apenas um bom controle em \textit{hover}:
+Em seguida deve-se calcular o controlador PID dessa planta genérica, que possui fórmula conforme a Equação \ref{eq:pid_generico} no domínio da frequência, na qual $K_p$ representa o ganho proporcional, $K_i$ o ganho integral, $K_d$ o ganho derivativo e $d$ a frequência de corte da ação derivativa.
 
-\begin{enumerate}
-    \item as velocidades angulares iniciais são nulas
-    \item a soma das velocidades dos rotores iniciais é nula
-    \item os ângulos de \textit{pitch} e de \textit{roll} iniciais são nulos
-\end{enumerate}
-
-Assim, um modelo linearizado simplificado é apresentado na Equação \ref{eq:linearizado_simples}:
-
-\begin{equation}\label{eq:linearizado_simples}
-    \boldsymbol{\dot{x}} = 
-    \begin{bmatrix}
-        \frac{1}{m}&0&0&0\\ 
-        0&\frac{1}{I_{xx}}&0&0\\
-        0&0&\frac{1}{I_{yy}}&0\\
-        0&0&0&\frac{1}{I_{zz}}
-    \end{bmatrix}
-    \Delta\boldsymbol{U}
+\begin{equation}\label{eq:pid_generico}
+	C_{PID(s)} = K_p + K_i\frac{1}{s} + K_ds\frac{d}{s + d}
 \end{equation}
 
-\section{Realimentação de estados}
-
-Outra abordagem clássica adotada por controladores lineares é a técnica que se baseia na combinação linear dos estados do sistema e na integração do erro, conhecida como controle por realimentação de estados. O diagrama dessa configuração é ilustrado na Figura \ref{fig:realimentacao_estados}.
+Ao considerar o controlador para a planta genérica observa-se que sua aplicação direta, seja por PID, PI, PD, ou mesmo P, não é encorajada, visto que o lugar das raízes dessas malhas fechadas tendem à instabilização. A aplicação é ilustrada na Figura \ref{fig:lugar_raizes_ruim}, com a premissa de que caso o controlador possua um zero o mesmo deve cancelar o polo eletromecânico a fim de remover essa limitação.
 
 \begin{figure}[!h]
-    \centering
-    \caption{Diagrama de blocos para o controle da atitude e altitude por realimentação de estados.}
-    \includegraphics[width=0.8\textwidth]{capitulos/controle_atitude/imgs/controle_realimentacao_estados.png}
-    \label{fig:realimentacao_estados}
+	\centering
+	\caption{Lugar das raízes da malha fechada do sistema completo com um controlador PID, PI, PD e P.}
+	\includegraphics[width=0.9\textwidth]{capitulos/controle_atitude/imgs/lugar_raizes_ruim.png}
+	\label{fig:lugar_raizes_ruim}
 \end{figure}
 
-Essa disposição resulta em um novo espaço de estados que está representado na Equação \ref{eq:novo_espaco_estados}:
 
-\begin{equation}\label{eq:novo_espaco_estados}
-    \begin{bmatrix}
-        \boldsymbol{\dot{x}}\\
-        \boldsymbol{e}
-    \end{bmatrix} = 
-    \begin{bmatrix}
-        \boldsymbol{A} + \boldsymbol{BK_{RE}} & \boldsymbol{BK_i}\\
-        - \boldsymbol{I_{4\times4}} & \boldsymbol{0}_{4\times4}
-    \end{bmatrix}\begin{bmatrix}
-        \Delta x\\
-        \Delta \int_0^t\boldsymbol{e(\tau)}d\tau
-    \end{bmatrix} + \begin{bmatrix}
-        \boldsymbol{0}_{4\times0}\\\boldsymbol{1_{4\times0}}
-    \end{bmatrix}\boldsymbol{r}
+Observa-se que esse comportamento em grande parte está ligado ao fato da planta possuir um integrador duplo. Assim, ao invés de considerar apenas um controlador PID diretamente associado ao erro das variáveis odométricas, deve-se considerar dois PID's em cascata que objetivam controlar a velocidade e a posição em dois laços de controle distintos, representado na Figura \ref{fig:controlador_cascata_pid}. 
+
+\begin{figure}[!h]
+	\centering
+	\caption{Diagrama de blocos da malha fechada do quadricóptero com dois controladores PID em cascata, $\boldsymbol{C_o}$ para a odometria e $\boldsymbol{C_v}$ para a velocidade.}
+	\includegraphics[width=0.9\textwidth]{capitulos/controle_atitude/imgs/controlador_cascata_pid.png}
+	\label{fig:controlador_cascata_pid}
+\end{figure}
+
+Com essa nova configuração, pondera-se novamente sobre qual configuração de PID deve ser considerada, entre PID, PI, PD e P. Logo, novamente, são traçados os lugares das raízes de cada configuração com a mesma premissa para ambas as malhas e o resultado é ilustrado na Figura \ref{fig:lugar_raizes_bom}.
+
+\begin{figure}[!h]
+	\centering
+	\caption{Lugar das raízes para o laço de velocidade ou o de posição com um controlador PID, PI, PD e P.}
+	\includegraphics[width=0.9\textwidth]{capitulos/controle_atitude/imgs/lugar_raizes_bom.png}
+	\label{fig:lugar_raizes_bom}
+\end{figure}
+
+Observa-se que a aplicação de dois PD's em cascata é a opção desejada, por não possuir sobrepasso e ter um tempo de acomodação $T_a$ teoricamente ilimitado. Com isso, os ganhos são determinados pela teoria do lugar das raízes \cite{controle_ufrgs} conforme a Tabela \ref{tab:controlador_pd} e novamente com a premissa de que o zero de cada PD cancelará o polo de seu respectivo do laço.
+
+\begin{table}[!h]
+	\centering
+	\caption{Ganhos para os controladores PD's unidimensionais genéricos em cascata.}
+	\begin{tabular}{|c|c|c|}
+		\cline{2-3}
+		\multicolumn{1}{c|}{} & $K_p$  & $K_d$ \\\hline
+		$C_{vg}$ & $4\cdot \alpha T_a^{-1} T_s$ & $4 \cdot\alpha T_a^{-1}$ \\\hline
+		$C_{og}$ & $4\cdot T_a^{-1}$ & $1$ \\\hline
+	\end{tabular}
+	\label{tab:controlador_pd}
+\end{table},
+
+
+Por fim, a escolha de $T_a$ fica apenas limitada à saturação dos atuadores, visto que, em um caso real o tempo de acomodação não é ilimitado. O controlador final em sua maneira multivariável é apresentado na Equação \ref{eq:pid_multivariavel}. Decide-se nessa representação ignorar a parcela do corte da ação derivativa para legibilidade.
+
+\begin{equation}\label{eq:pid_multivariavel}
+	\begin{matrix}
+		\begin{split}
+			&\boldsymbol{C_{v(s)}} = \begin{bmatrix}
+				C_{vZ} & 0 & 0 & 0\\
+				0 & C_{v\Phi} & 0 & 0\\
+				0 & 0 & C_{v\Theta} & 0\\
+				0 & 0 & 0 & C_{v\Psi}\\
+			\end{bmatrix}\\
+			&\boldsymbol{C_{o(s)}} = \begin{bmatrix}
+				C_{og} & 0 & 0 & 0\\
+				0 & C_{og} & 0 & 0\\
+				0 & 0 & C_{og} & 0\\
+				0 & 0 & 0 & C_{og}\\
+			\end{bmatrix}\hspace{1cm}
+		\end{split}&
+		\begin{split}
+			&C_{vZ} = 4\cdot m T_a^{-1} T_s(s + Ts^{-1})\\
+			&C_{v\Phi} = 4\cdot I_{xx} T_a^{-1} T_s(s + Ts^{-1})\\
+			&C_{v\Theta} = 4\cdot I_{yy} T_a^{-1} T_s(s + Ts^{-1})\\
+			&C_{v\Psi} = 4\cdot I_{zz} T_a^{-1} T_s(s + Ts^{-1})\\
+			&C_{og} = s + 4\cdot{T_a^{-1}}\\
+		\end{split}
+		
+	\end{matrix}
 \end{equation}
 
-Assim como na calibração do PID, a realimentação de estados também se apoia no cálculo derivado do sistema linearizado, conforme expresso na Equação \ref{eq:linearizado} ou a versão simplificada da Equação \ref{eq:linearizado_simples}. 
+Essa topologia foi implementada em diversos outros trabalhos como no apresentado pela Universidade Shantou \cite{controle:pid} e pela Universidade de Moratuwa, \cite{controle:pid_modelagem_basica}. 
 
-Comparada com os resultados apresentados por diversas configurações de malhas SISO (\textit{single input single output}, ou seja, um sinal de entrada e um de saída) PID, a topologia de realimentação de estados demonstra um desempenho superior no acompanhamento de referências, como demonstrado em estudos conduzidos na Universidade de Benha \cite{controle:state-feedback}. Isso se deve à interação linear entre diferentes dinâmicas separadas, o que pode afetar cada estado mutuamente.
-
-Os resultados obtidos com essa abordagem são válidos e exibem menor oscilação. No entanto, é importante notar que, devido à presença de não linearidades significativas no sistema, ainda persistem algumas limitações no seguimento desejado.
+Ainda, para melhorar a técnica foram introduzidos estudos baseados em aprendizado de máquina \cite{controle:pid-aprendizado-maquina} para manipulação dinâmica dos parâmetros do PID que pode vir a estabilizar trepidações e melhorar o voo durante diferentes condições.
 
 \section{Linearização por realimentação de estados}
 
-\textcolor{att}{
-A técnica de linearização por realimentação de estados utiliza a funcionalidade da técnica de realimentação de estados para cancelar não linearidades existentes no sistema. Dessa forma, um sistema que a princípio não é linear passa a apresentar características lineares, e permite a aplicação de alguma técnica clássica sem aproximações de linearização.
-}
-
-\textcolor{att}{
-Apesar dessas vantagens para aplicação dessa técnica deve-se ser assertivo quanto à mensurações de parâmetros envolvidos na dinâmica do sistema, visto que uma mensuração errada ocasiona cálculos errados para o controle do sistema e comportamentos imprevisíveis.
-}
-
-\textcolor{att}{
-Interpreta-se um novo modelo linear com entrada $U$ e estados $x$, conforme ilustrado na Figura \ref{fig:mqm}.}
-
-\begin{figure}[!h]
-    \centering
-    \caption{Diagrama de blocos do MQA (modelo de quadricóptero alterado) e sua representação equivalente.}
-    \includegraphics[width=1\textwidth]{capitulos/controle_atitude/imgs/mqa.png}
-    \label{fig:mqm}
-\end{figure}
-
-\textcolor{att}{
-Na representação o sinal $U_L$ representa o sinal de entrada alterado pela linearização, $U_S$ representa o sinal que cancela não linearidades que se somam à dinâmica e não são multiplicadas pelo sinal de entrada original, e $U_M$ representa o sinal que cancela não linearidades multiplicadas ao sinal de entrada original. 
-}
-
-\textcolor{att}{
-Para melhor exemplificar, considera-se a dinâmica de altitude do sistema $\ddot{z}$, a qual estão presentes ambos os tipos de linearidades, de soma e multiplicativas. Na Equação \ref{eq:exemplo_altitude_soma} estão denotadas em negrito as não linearidades que se somam à dinâmica, que devem ser corrigidas por $\Lambda_S$, enquanto na Equação \ref{eq:exemplo_altitude_multiplicacao} estão denotadas as não linearidades que multiplicam o sinal de entrada, que devem ser corrigidas por $\Lambda_M$.
-}
-
-\textcolor{att}{
-\begin{equation}\label{eq:exemplo_altitude_soma}
-    \ddot{z} = \boldsymbol{-g} + \cos{(\theta)}\cos{(\phi)}\frac{U_{A1}}{m}
-\end{equation}
-}
-
-\textcolor{att}{
-\begin{equation}\label{eq:exemplo_altitude_multiplicacao}
-    \ddot{z} = -g + \boldsymbol{\cos{(\theta)}\cos{(\phi)}}\frac{U_{A1}}{m}
-\end{equation}
-}
-
-\textcolor{att}{
-Com as modificações determinadas a nova dinâmica para altitude comporta um sinal realimentado por soma e outro por multiplicação e está representado na Equação \ref{eq:altitude_modificada}:
-}
-
-\textcolor{att}{
-\begin{equation}\label{eq:altitude_modificada}
-    \ddot{z} = -g + \frac{\cos{(\theta)}\cos{(\phi)}}{m}(U_{S1}(x) + U_1\Lambda_{M1}(x))
-\end{equation}
-}
-
-\textcolor{att}{
-Para determinar a componente de soma considera-se a entrada nula e a aceleração nula, com o objetivo de determinar qual o valor de $U_{S1}$ capaz de cancelar as não linearidades, o resultado é apresentado na Equação \ref{}:
-}
-
-\textcolor{att}{
-\begin{equation}
-    \cancel{\ddot{z}} = -g + \frac{\cos{(\theta)}\cos{(\phi)}}{m}(U_{S1}(x) + \cancel{U_1\Lambda_{M1}(x)}) \longrightarrow U_{S1}(x) = \frac{mg}{\cos{(\theta)}\cos{(\phi)}}
-\end{equation}
-}
-
-\textcolor{att}{
-Já a componente multiplicativa considera os passos realizados na componente de soma e intuitivamente deve-se selecionar as não linearidades e dividi-las ou multiplicá-las. Cabe observar nesse caso que devem ser considerados limites para não ocasionar divisões por zero. Para a altitude o resultado é apresentado na Equação \ref{}:
-}
-
-\textcolor{att}{
-\begin{equation}
-    \ddot{z} = \cancel{-g} + \frac{\cos{(\theta)}\cos{(\phi)}}{m}(\cancel{U_{S1}(x)} + U_1\Lambda_{M1}(x)) \longrightarrow \Lambda_{M1}(x) = \frac{1}{\cos{(\theta)}\cos{(\phi)}}
-\end{equation}
-}
-
-\textcolor{att}{
-Logo, o mesmo se aplica para as demais dinâmicas e resulta nos sinais $U_S$ e $\Lambda_M$ apresentados na Figura \ref{}:
-}
-
-\textcolor{att}{
-\begin{equation}
-    \begin{matrix}
-        U_S = 
-        \begin{bmatrix}
-            \frac{mg}{\cos{(\theta)}\cos{(\phi)}}\\
-            (I_{zz} - I_{yy})qr + I_r\Omega q\\
-            (I_{xx} - I_{zz})rp + I_r\Omega q\\
-            (I_{yy} - I_{xx})pq\\
-        \end{bmatrix}
-        &,&
-        \Lambda_{M} = 
-        \begin{bmatrix}
-            \frac{1}{\cos{(\theta)}\cos{(\phi)}}\\
-            1\\
-            1\\
-            1\\
-        \end{bmatrix}
-    \end{matrix}
-\end{equation}
-}
-
-\textcolor{att}{
-Logo, o modelo de quadricóptero alterado é transformado e apresentado em Laplace na Equação \ref{}, por se tratar agora de um sistema linear.
-}
-
-\textcolor{att}{
-\begin{equation}
-    MQA(s) = \frac{X(s)}{U(s)} = 
-    \begin{bmatrix}
-        m^{-1}s^{-2}\\
-        I_{xx}^{-1}s^{-2}\\
-        I_{yy}^{-1}s^{-2}\\
-        I_{zz}^{-1}s^{-2}
-    \end{bmatrix}
-\end{equation}
-}
-
-\textcolor{att}{
-Observa-se que o sistema agora é apenas um integrador de segunda ordem, logo, é possível aplicar um controlador do tipo proporcional-derivativo (PD) para controlar sua atitude e altitude tendo ainda o seguimento da referência, seu diagrama de blocos é apresentado na Figura \ref{fig:controle_atitude_rle}
-}
-
-\begin{figure}[!h]
-    \centering
-    \caption{Diagrama de blocos para o controle da atitude e altitude com MQA e PD.}
-    \includegraphics[width=1\textwidth]{capitulos/controle_atitude/imgs/controle_atitude.png}
-    \label{fig:controle_atitude_rle}
-\end{figure}
-
-\textcolor{att}{
-A seguir, determina-se a melhor sintonia para o controlador PD baseado no lugar das raízes para esse sistema. A equação de laço genérica é representada na Equação \ref{} e sua representação gráfica na Figura \ref{fig:lugar_raizes}, na qual K representa o ganho proporcional, $T_d$ o tempo derivativo e $\alpha$ uma constante característica da planta.
-}
-
-\begin{figure}[!h]
-    \centering
-    \caption{Lugar das raízes do laço de controle para uma dinâmica genérica do MQA.}
-    \includegraphics[width=0.6\textwidth]{capitulos/controle_atitude/imgs/rlocus.png}
-    \label{fig:lugar_raizes}
-\end{figure}
-
-\textcolor{att}{
-\begin{equation}
-    L_{(s)} = C_{PD(s)}MQA_{(s)} = K\alpha T_d\frac{s + T_d^{-1}}{s^2}
-\end{equation}
-}
-
-\textcolor{att}{
-A fim de determinar o melhor polo dominante $p_d$ possível, o qual possui menor tempo de estabilização, deve-se encontrar os pontos de entrada do eixo real no lugar das raízes, realizado na Equação \ref{}:
-}
-
-\begin{equation}
-    \begin{gathered}
-        \frac{1}{ds}\left(\frac{1}{L_{(s)}}\right) = \frac{1}{ds}\left(\frac{s^2}{\alpha(T_ds + 1)}\right)\bigg|_{p_d} = 0\\
-        2p_d(T_dp_d + 1) - p_d^2T_d = 0 \longrightarrow p_d = -2T_d^{-1}
-    \end{gathered}
-\end{equation}
-
-\textcolor{att}{
-Com o polo dominante determinado, encontra-se qual o ganho $K$ relacionado a este polo, conforme Equação \ref{}:
-}
-
-\begin{equation}
-    |L_{(p_d)}| = 1 \longrightarrow K = \left|\frac{s^2}{\alpha(s + T_d^{-1})}\right| = \frac{4}{\alpha T_d^2}
-\end{equation}
-
-\textcolor{att}{
-Já a escolha de $T_d$ deve ser tal que o sistema não sature para as entradas desejadas, devendo ser sintonizado manualmente por uma bateria de testes.
-}
-
-\textcolor{att}{
-Logo, conclui-se que o controlador por linearização da realimentação de estados deve possuir controlador PD $C_{PD(s)}$, realimentação de não linearidade de multiplicidade $\Lambda_M$ e realimentação de não linearidade de soma $U_S$ conforme apresentado na Equação \ref{}:
-}
-
-\textcolor{att}{
-\begin{equation}
-    \begin{matrix}
-        C_{PD(s)} = \begin{bmatrix}
-            4mT_d^{-2}(1 + sT_d)\\
-            4I_{xx}T_d^{-2}(1 + sT_d)\\
-            4I_{yy}T_d^{-2}(1 + sT_d)\\
-            4I_{zz}T_d^{-2}(1 + sT_d)
-        \end{bmatrix}&
-        \Lambda_{M} = 
-        \begin{bmatrix}
-            \frac{1}{\cos{(\theta)}\cos{(\phi)}}\\
-            1\\
-            1\\
-            1\\
-        \end{bmatrix}&
-        U_S = 
-        \begin{bmatrix}
-            \frac{mg}{\cos{(\theta)}\cos{(\phi)}}\\
-            (I_{zz} - I_{yy})qr + I_r\Omega q\\
-            (I_{xx} - I_{zz})rp + I_r\Omega q\\
-            (I_{yy} - I_{xx})pq\\
-        \end{bmatrix}
-    \end{matrix}
-\end{equation}
-}
-
-
-%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%% OLD
-%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%
-
-% Por fim, apresenta-se uma técnica que leva em conta as não linearidades do sistema a fim de obter um controlador robusto que funcione para qualquer quadricóptero. 
-
-% Para tanto desenvolve-se uma lei de controle em duas partes com um entendimento "ideal" da dinâmica do sistema. A primeira parte busca eliminar precisamente a dinâmica não linear, enquanto a segunda estabelece uma dinâmica linear específica para o vetor de erros de seguimento.
-
-% Assim, é possível interpretar um novo modelo linear com entrada $U_m$ e estados $x$, conforme ilustrado na Figura \ref{fig:mqm}.
-
-% \begin{figure}[!h]
-%     \centering
-%     \caption{Diagrama de blocos do MQM (modelo de quadricóptero modificado) e sua representação equivalente.}
-%     \includegraphics[width=1\textwidth]{capitulos/controle_atitude/imgs/mqm.png}
-%     \label{fig:mqm}
-% \end{figure}
-
-% Para o cálculo da realimentação deve-se definir uma nova dinâmica linear. Determina-se que a nova planta deve levar em conta as seguintes considerações:
-
-% \begin{itemize}
-%     \item integração do sinal de controle
-%     \item modulação da frequência dominante
-% \end{itemize}
-
-% Assim, o MQM é apresentado na Equação \ref{eq:nova_variavel}. Na equação $\Gamma$ representa um estado arbitrário do sistema.
-
-% \begin{equation}\label{eq:nova_variavel}
-%     G_{MQM}(s) = \frac{\alpha}{s(s + \kappa)} = \frac{\Gamma(s)}{U_m(s)} \longrightarrow \alpha U_m(s) = \Gamma(s)(s^2 + s\kappa) \longrightarrow\ddot{\Gamma} = \alpha U_m - \kappa\dot{\Gamma}
-% \end{equation}  
-
-% Definida a nova interação do modelo realiza-se a igualdade entre o modelo não linear e o linear imposto, realizado na Equação \ref{eq:igualdade}, a fim de determinar uma lei de controle.
-
-% \begin{equation}\label{eq:igualdade}
-%     \begin{split}
-%         \ddot{z} &= cos{(\theta)}\cos{(\phi)}\frac{1}{m}U_{m_z} - \kappa_z\dot{z} = -g + \cos{(\theta)}\cos{(\phi)}\frac{1}{m}(U_{LRE_z} + U_{m_z})\\
-%         \dot{p} &= \frac{1}{I_{xx}}U_{m_\theta} - \kappa_\theta p = \frac{I_{yy} - I_{zz}}{I_{xx}}qr - \frac{I_r}{I_{xx}}\Omega q + \frac{1}{I_{xx}}(U_{LRE_\theta} + U_{m_\theta})\\
-%         \dot{q} &= \frac{1}{I_{yy}}U_{m_\phi} - \kappa_\phi q = \frac{I_{zz} - I_{xx}}{I_{yy}}rp - \frac{I_r}{I_{yy}}\Omega p + \frac{1}{I_{yy}}(U_{LRE_\phi} + U_{m_\phi})\\
-%         \dot{r} &= \frac{1}{I_{zz}}U_{m_\psi} - \kappa_\psi r = \frac{I_{xx} - I_{yy}}{I_{zz}}pq + \frac{1}{I_{zz}}(U_{LRE_\psi} + U_{m_\psi})\\
-%     \end{split}
-% \end{equation}
-
-% Observa-se que o sinal de controle da altitude deve levar em conta os os estados de \textit{pitch} e \textit{roll} para cancelamento ideal, o qual deverá ser considerado posteriormente.
-
-% Assim, após desenvolvimento da Equação \ref{eq:igualdade} determina-se o sinal de controle $U_{LRE}$ apresentado na Equação \ref{eq:LRE_1}. 
-
-% \begin{equation}\label{eq:LRE_1}
-%     U_{LRE} = 
-%     \begin{bmatrix}
-%         \frac{m}{\cos{(\theta)}\cos{(\phi)}}(g - \kappa_z\dot{z})\\
-%         I_{xx}\left(\frac{I_{zz} - I_{yy}}{I_{xx}}qr + \frac{I_r}{I_{xx}}\Omega q - \kappa_\theta p\right)\\
-%         I_{yy}\left( \frac{I_{xx} - I_{zz}}{I_{yy}}rp + \frac{I_r}{I_{yy}}\Omega p - \kappa_\phi q\right)\\
-%         I_{zz}\left(\frac{I_{yy} - I_{xx}}{I_{zz}}pq  - \kappa_\psi r\right)
-%     \end{bmatrix}
-% \end{equation}
-
-% Para efetuar a calibração do controlador o erro de cada um dos ângulos e da altitude é realimentado, a configuração é apresentada na Figura \ref{fig:modelo_pseudo_final} com lei de controle conforme Equação \ref{eq:lei_controle_pseudo_final}, com o objetivo de obter malhas multi-SISO que serão calibradas pelo lugar das raízes objetivando performance e a não saturação do atuador.
-
-% \begin{figure}[!h]
-%     \centering
-%     \caption{Diagrama de blocos para o controle da atitude e altitude por linearização por realimentação de estados.}
-%     \includegraphics[width=0.9\textwidth]{capitulos/controle_atitude/imgs/controle_atitude.png}
-%     \label{fig:modelo_pseudo_final}
-% \end{figure}
-
-% \begin{equation}\label{eq:lei_controle_pseudo_final}
-%     U = U_m + U_{LRE} = 
-%     \begin{bmatrix}
-%         \frac{m}{\cos{(\theta)}\cos{(\phi)}}(g - \kappa_z\dot{z}  + \nu_z e_z)\\
-%         I_{xx}\left(\frac{I_{zz} - I_{yy}}{I_{xx}}qr + \frac{I_r}{I_{xx}}\Omega q - \kappa_\theta p + \nu_\theta e_\theta\right)\\\
-%         I_{yy}\left( \frac{I_{xx} - I_{zz}}{I_{yy}}rp + \frac{I_r}{I_{yy}}\Omega p - \kappa_\phi q + \nu_\phi e_\phi\right)\\
-%         I_{zz}\left(\frac{I_{yy} - I_{xx}}{I_{zz}}pq  - \kappa_\psi r + \nu_\psi e_\psi\right) 
-%     \end{bmatrix}
-% \end{equation}
-
-% A calibração é calculada de forma que o polo do sistema em laço fechado esteja sempre em $-\frac{1}{2}\kappa$, o qual representa menor tempo de acomodação sem sobrepasso possível. Na Figura \ref{fig:lugar_raizes} é apresentado o lugar das raízes do controle LRE sugerido.
-
-% \begin{figure}[!h]
-%     \centering
-%     \caption{Lugar das raízes do laço de controle da atitude do quadricóptero.}
-%     \includegraphics[width=0.7\textwidth]{capitulos/controle_atitude/imgs/lugar_raizes.png}
-%     \label{fig:lugar_raizes}
-% \end{figure}
-
-% Portanto, a obtenção do valor de $\nu$ é adquirida pela teoria do lugar das raízes em que $\nu C(s)G(s) = -1$, o que implica na relação apresentada na Equação \ref{eq:rel_nu_kappa}:
-
-% \begin{equation}\label{eq:rel_nu_kappa}
-%     \nu = \left|s(s + \kappa)\right|_{s = -0,5\kappa} = \frac{1}{4}\kappa^2
-% \end{equation}
-
-% Logo, as leis de controle finais dessa configuração são apresentadas nas Equações \ref{eq:lei_controle_parcial} e \ref{eq:lei_controle_final}.
-
-% \begin{equation}\label{eq:lei_controle_parcial}
-%     U_{m} = \begin{bmatrix}
-%         \frac{m}{\cos{(\theta)}\cos{(\phi)}}\frac{1}{4}\kappa_z^2 e_z\\
-%         I_{xx}\frac{1}{4}\kappa_\theta^2 e_\theta\\\
-%         I_{yy}\frac{1}{4}\kappa_\phi^2 e_\phi\\
-%         I_{zz}\frac{1}{4}\kappa_\psi^2 e_\psi 
-%     \end{bmatrix} \hspace{1cm} U_{LRE} = \begin{bmatrix}
-%         \frac{m}{\cos{(\theta)}\cos{(\phi)}}(g - \kappa_z\dot{z})\\
-%         I_{xx}\left(\frac{I_{zz} - I_{yy}}{I_{xx}}qr + \frac{I_r}{I_{xx}}\Omega q - \kappa_\theta p\right)\\\
-%         I_{yy}\left( \frac{I_{xx} - I_{zz}}{I_{yy}}rp + \frac{I_r}{I_{yy}}\Omega p - \kappa_\phi q\right)\\
-%         I_{zz}\left(\frac{I_{yy} - I_{xx}}{I_{zz}}pq  - \kappa_\psi r\right) 
-%     \end{bmatrix}
-% \end{equation}
-
-% \begin{equation}\label{eq:lei_controle_final}
-%     U = U_{m} + U_{LRE} = \begin{bmatrix}
-%         \frac{m}{\cos{(\theta)}\cos{(\phi)}}(g - \kappa_z\dot{z} + \frac{1}{4}\kappa_z^2 e_z)\\
-%         I_{xx}\left(\frac{I_{zz} - I_{yy}}{I_{xx}}qr + \frac{I_r}{I_{xx}}\Omega q - \kappa_\theta p + \frac{1}{4}\kappa_\theta^2 e_\theta\right)\\\
-%         I_{yy}\left( \frac{I_{xx} - I_{zz}}{I_{yy}}rp + \frac{I_r}{I_{yy}}\Omega p - \kappa_\phi q + \frac{1}{4}\kappa_\phi^2 e_\phi\right)\\
-%         I_{zz}\left(\frac{I_{yy} - I_{xx}}{I_{zz}}pq  - \kappa_\psi r + \frac{1}{4}\kappa_\psi^2 e_\psi\right) 
-%     \end{bmatrix}
-% \end{equation}
-
-% Essa topologia será utilizada no trabalho e garante uma resposta ótima às não-linearidades. O risco envolvido com a implementação é devido à imprecisão dos parâmetros do modelo capturados, visto que eles precisam ser os mais próximos possíveis da realidade para correto cancelamento das não-linearidades.
-
-%\textcolor{red}{As ideias desta seção estão OK, mas a forma de representação é bem diferente da que estou acostumado, e imagino que este será o caso dos outros membros da banca também. Portanto, recomendo que você referencie cada passo dos desenvolvimentos feitos nesta seção. Também acho recomendável caprichar mais na explicação da ideia geral, lá no 1o parágrafo: com o conhecimento "perfeito" da dinâmica do sistema, é possível criar uma lei de controle em duas parcelas, cada uma com uma função bem definida. A primeira faz o cancelamento exato da dinâmica não linear, enquanto a segunda especifica uma dinâmica linear bem definida para o vetor de erros de seguimento. Idealmente, isso quer dizer que seu sistema vai seguir "perfeitamente" a trajetória desejada após um período transiente que você pode arbitrar... Eu tenho algum material sobre isso do tempo do ERE, pois este assunto é abordado em fluidomecânicos. Se quiser dar uma olhada, eu te passo os links.}
-
-
-
-\section{Sensor para \textit{low-hover}}
-
-Para executar a entrega da carga o UAV deve ficar estável e próximo ao solo a fim de evitar danos ao item. Assim, planeja-se a implementação de um sensor de proximidade com o solo  nessa seção.
-
-O aparato tem sua medição condicionada em um valor percentual, sendo 1 o valor máximo de medição ao infinito e 0 para o sensor em contato com o objeto medido. Na Tabela \ref{tab:tabela_verdade} é apresentada a tabela-verdade de como o sistema deve atuar em resposta à uma mensuração de proximidade para altitude, com $S_h$ representando o sensor de altitude e $U_{1C}$ o valor de controle calculado da altitude.
-
-\begin{table}[!h]
-    \centering
-    \caption{Tabela-verdade para o sensor de proximidade para altitude}
-    \begin{tabular}{|c|c|c|}
-        \hline
-        \multicolumn{2}{|c|}{Condições} &      $U_{m_1}$\\\hline
-        $S_h = 1$       & $U_{1_C} > 0$          &      $U_{1C}$\\
-        $S_h = 1$       & $U_{1_C} \leq 0$       &      $U_{1C}$\\
-        $S_h < 1$       & $U_{1_C} > 0$          &      $U_{1C}$\\
-        $S_h < 1$       & $U_{1_C} \leq 0$       &      0\\
-        \hline
-        \end{tabular}
-    \label{tab:tabela_verdade}
-\end{table}
-
-Baseado na tabela da verdade determina-se qual a expressão lógica referente capaz de representá-la, o resultado é apresentado na Equação \ref{eq:sensor_hover}.
-
-\begin{equation}\label{eq:sensor_hover}
-    U_{m_1} =    (S_h == 1 + U_{C_1} > 0)\cdot U_{C_1}
-\end{equation}
-
-Essa expressão deve, então, ser implementada junto ao controlador previamente calculado para ser possível a planar próximo ao solo durante uma descendência.
-
-\newpage
-\section{Simulações}
-
-Para averiguar o projeto do controlador escolhido utiliza-se o \textit{software} Simulink do MATLAB para implementar o modelo e testar algumas manobras do controlador com parâmetros arbitrários. Na Tabela \ref{tab:roteiro} é apresentado um roteiro das manobras realizadas.
-
-\begin{table}[!h]
-    \centering
-    \caption{Roteiro de manobras para a referência do controlador.}
-    \begin{tabular}{|r|c|c|c|c|}
-        \hline
-        \multirow{2}{*}{Tempo (s)} &  \multicolumn{3}{c|}{Atitude} & \multirow{2}{*}{Altitude (m)}\\\cline{2-4}
-        & $\theta$ & $\phi$ & $\psi$ & \\\hline
-        0.0 & 0$^\circ$     &   0$^\circ$&   0$^\circ$& 10.0\\\hline
-        5.0 & 30$^\circ$    &   0$^\circ$&   0$^\circ$& 30.0\\\hline
-        10.0& 0$^\circ$     &   0$^\circ$&   0$^\circ$& 30.0\\\hline
-        20.0& 0$^\circ$     &   0$^\circ$&  90$^\circ$& 30.0\\\hline
-        30.0& 30$^\circ$    &   0$^\circ$&  90$^\circ$& 30.0\\\hline
-        40.0& 0$^\circ$     &   0$^\circ$&  90$^\circ$& 30.0\\\hline
-        50.0& 0$^\circ$     & -30$^\circ$&  90$^\circ$& 30.0\\\hline
-        60.0& 0$^\circ$     &   0$^\circ$&  90$^\circ$& 60.0\\\hline
-        70.0& 0$^\circ$     &   0$^\circ$& 135$^\circ$& 60.0\\\hline
-        80.0& 0$^\circ$     & -30$^\circ$& 135$^\circ$& 0.0\\\hline
-        90.0& -30$^\circ$   &   0$^\circ$& 135$^\circ$& 0.0\\\hline
-        100.0& -30$^\circ$  &   0$^\circ$& 135$^\circ$& 0.0\\\hline
-    \end{tabular}
-    \label{tab:roteiro}
-\end{table}
-
-A atitude de saída é apresentada na Figura \ref{fig:teste_atitude}, a qual confirma que existe o seguimento de referências com dinâmica dominante de primeira ordem.
-
-\begin{figure}[!h]
-    \centering
-    \caption{Atitude de saída para o roteiro de testes realizado.}
-    \includegraphics[width=0.8\textwidth]{capitulos/controle_atitude/imgs/teste_atitude.png}
-    \label{fig:teste_atitude}
-\end{figure}
-
-Em seguida, apresenta-se a saída da altitude na Figura \ref{fig:teste_atitude_altitude}, denota-se que neste caso não há seguimento da referência entre 80 s e 100 s. Esse comportamento é esperado pois na simulação foi considerado que para posição final o solo está a 7 m.
-
-\begin{figure}[!h]
-    \centering
-    \caption{Altitude de saída para o roteiro de testes realizado.}
-    \includegraphics[width=0.8\textwidth]{capitulos/controle_atitude/imgs/teste_atitude_altitude.png}
-    \label{fig:teste_atitude_altitude}
-\end{figure}
-
-\vspace{10cm}
-
-Ainda, para melhor visualização da movimentação do \textit{drone} ao longo do trajeto, apresenta-se nas Figuras \ref{fig:teste_atitude_mapa} e \ref{fig:teste_atitude_mapa_3d} a translação da aeronave.
-
-\begin{figure}[!h]
-    \centering
-    \caption{Mapa da movimentação da aeronave no roteiro de teste.}
-    \includegraphics[width=0.8\textwidth]{capitulos/controle_atitude/imgs/teste_atitude_mapa.png}
-    \label{fig:teste_atitude_mapa}
-\end{figure}
-
-\begin{figure}[!h]
-    \centering
-    \caption{Visualização tridimensional da movimentação da aeronave no roteiro de teste.}
-    \includegraphics[width=0.5\textwidth]{capitulos/controle_atitude/imgs/teste_atitude_mapa_3d.png}
-    \label{fig:teste_atitude_mapa_3d}
-\end{figure}
-
-Conclui-se que o controlador está atuando de maneira adequada e consegue seguir as referências determinadas. Para o sistema completo o roteiro será determinado por um gerador de trajetória autônomo que será desenvolvido a seguir.
+Outra técnica que pode ser aplicada ao modelo é baseada no cancelamento das parcelas não lineares do sistema algebricamente, de forma a torná-lo linear e poder aplicar controladores lineares nesse novo sistema. Esse método é denominado Linearização por Realimentação de Estados \cite{slotine} e é diferente da linearização Jacobiana por ser alcançada a partir de transformações dos estados ao invés de uma aproximação da dinâmica. Na Figura \ref{} é representado um diagrama de blocos que exemplifica esta aplicação.
 
 \end{document}
