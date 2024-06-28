@@ -25,8 +25,8 @@ Com o objetivo de obter um equacionamento que descreva a modelagem dinâmica, as
 Na Figura \ref{fig:referenciais} são apresentados os sistemas de coordenadas utilizados neste trabalho, que correspondem a:
 
 \begin{enumerate}
-    \item \textbf{Referencial inercial (ou \textit{inertial frame}):} sua orientação e posição são sempre fixos. A orientação é equivalente ao referencial magnético global, assim, $X$, $Y$ e $Z$ correspondem respectivamente às direções Leste, Norte, Cima, enquanto a posição será determinada nula ao iniciar o dispositivo por motivos de facilidade de cálculo. Convenciona-se a simbologia $i$ (subscrito ou sobre-escrito), ou ainda a ausência de simbologia com relação ao referencial, como um referencial inercial.
-    \item \textbf{Referencial não-inercial (ou \textit{body frame}):} sua orientação e posição acompanham o veículo, informações essas que podem ser traduzidas ao referencial inercial. Convenciona-se a simbologia $\eta$ (subscrito ou sobre-escrito) como um referencial não-inercial.
+    \item \textbf{Referencial inercial:} sua orientação e posição são sempre fixos. A orientação é equivalente ao referencial magnético global, assim, $X$, $Y$ e $Z$ correspondem respectivamente às direções Leste, Norte, Cima, enquanto a posição será determinada nula ao iniciar o dispositivo por motivos de facilidade de cálculo. Convenciona-se a simbologia $i$ (subscrito ou sobre-escrito), ou ainda a ausência de simbologia com relação ao referencial, como um referencial inercial.
+    \item \textbf{Referencial não-inercial:} sua orientação e posição acompanham o veículo, informações essas que podem ser traduzidas ao referencial inercial. Convenciona-se a simbologia $\eta$ (subscrito ou sobre-escrito) como um referencial não-inercial.
 \end{enumerate}
 
 Ambos os referenciais são importantes ao projeto e serão utilizados no cálculo da dinâmica de translação e de rotação a seguir.
@@ -43,7 +43,7 @@ Para a dinâmica de translação, parte-se de um referencial não-inercial, conf
 \end{figure}
 
 \begin{equation}\label{eq:forca_body}
-    \boldsymbol{F_\eta} = \begin{bmatrix}
+    \boldsymbol{\vec{F_\eta}} = \begin{bmatrix}
         0\\
         0\\
         \Sigma T_j
@@ -78,12 +78,7 @@ Obtidos o vetor de atuação dos motores e a matriz de rotação, realiza-se o s
         \Ddot{x}\\
         \Ddot{y}\\
         \Ddot{z}
-    \end{bmatrix} = \boldsymbol{^iR_\eta}
-    \begin{bmatrix}
-        0\\
-        0\\
-        \Sigma T_j
-    \end{bmatrix} + m
+    \end{bmatrix} = \boldsymbol{^iR_\eta}\boldsymbol{\vec{F_\eta}} + m
     \begin{bmatrix}
         0\\
         0\\
@@ -126,20 +121,20 @@ Para tanto, é necessário conhecer o tensor de inércia atuante no quadricópte
 	\end{bmatrix}
 \end{equation}
 
-Assim, o somatório de momentos no referencial não-inercial é apresentado na Equação \ref{eq:dinamica_rotacao_nao_inercial_incompleta}, $	\boldsymbol{M^\eta_R}$ representa o momento resultante no sistema não inercial, $\boldsymbol{M_a}$ o momento aparente e $\boldsymbol{M_g}$ o momento giroscópico.
+Assim, o somatório de momentos no referencial não-inercial é apresentado na Equação \ref{eq:dinamica_rotacao_nao_inercial_incompleta}, $	\boldsymbol{\vec{M}^\eta_R}$ representa o momento resultante no sistema não inercial, $\boldsymbol{\vec{M}_a}$ o momento aparente e $\boldsymbol{\vec{M}_g}$ o momento giroscópico.
 
 \begin{equation}\label{eq:dinamica_rotacao_nao_inercial_incompleta}
-	\boldsymbol{M^\eta_R} = \boldsymbol{I} \begin{bmatrix}
+	\boldsymbol{\vec{M}^\eta_R} = \boldsymbol{I} \begin{bmatrix}
 		\dot{p_\eta}\\
 		\dot{q_\eta}\\
 		\dot{r_\eta}
-	\end{bmatrix} = \Sigma \boldsymbol{M_\eta} = \boldsymbol{M_a} + \boldsymbol{M_g}
+	\end{bmatrix} = \Sigma \boldsymbol{\vec{M}_\eta} = \boldsymbol{\vec{M}_a} + \boldsymbol{\vec{M}_g}
 \end{equation}
 
 O momento aparente é o interpretado a partir apenas do diagrama de corpo livre apresentado anteriormente, com seu resultado descrito na Equação \ref{eq:momento_aparente}, $L$ representa o comprimento do centro à extremidade do quadricóptero, $\tau_j$ é o momento torsor exercido pelo rotor $j$.
 
 \begin{equation}\label{eq:momento_aparente}
-	\boldsymbol{M_a} =
+	\boldsymbol{\vec{M}_a} =
 	\begin{bmatrix}
 		L (T_2 - T_4)\\
 		L (T_3 - T_1)\\
@@ -150,7 +145,7 @@ O momento aparente é o interpretado a partir apenas do diagrama de corpo livre 
 Porém, existe ainda uma dinâmica de resistência ao movimento angular, denominada momento giroscópico, a qual ocorre pelos rotores possuírem uma direção fixa em seu eixo de rotação, no referencial não-inercial, apesar de existir uma velocidade angular não nula \cite{hibbeler2011engineering}. O equacionamento do momento giroscópico é apresentado na Equação \ref{eq:momento_giroscopico}, $I_r$ representa o momento de inércia da hélice do veículo, $\omega_j$ representa a velocidade angular do rotor $j$ naquele instante e $\Omega$ é a rotação resultante dos rotores.
 
 \begin{equation}\label{eq:momento_giroscopico}
-	\boldsymbol{M_g} = \begin{bmatrix}
+	\boldsymbol{\vec{M}_g} = \begin{bmatrix}
 		0\\
 		0\\
 		I_r\Omega
@@ -168,7 +163,7 @@ Porém, existe ainda uma dinâmica de resistência ao movimento angular, denomin
  Logo, o momento resultante no referencial não-inercial é apresentado na Equação \ref{eq:dinamica_rotacao_nao_inercial} ao combinar as Equações \ref{eq:momento_aparente} e \ref{eq:momento_giroscopico} na Equação \ref{eq:dinamica_rotacao_nao_inercial_incompleta}.
 
 \begin{equation}\label{eq:dinamica_rotacao_nao_inercial}
-	\boldsymbol{M^\eta_R} = \boldsymbol{I} \begin{bmatrix}
+	\boldsymbol{\vec{M}^\eta_R} = \boldsymbol{I} \begin{bmatrix}
 		\dot{p_\eta}\\
 		\dot{q_\eta}\\
 		\dot{r_\eta}
@@ -194,7 +189,7 @@ Por fim, para considerar a dinâmica no referencial inercial é necessário cons
 	p\\
 	q\\
 	r
-	\end{bmatrix}\right) = \boldsymbol{M^\eta_R}
+	\end{bmatrix}\right) = \boldsymbol{\vec{M}^\eta_R}
 \end{equation}
 
 Portanto, ao substituir a Equação \ref{eq:dinamica_rotacao_nao_inercial} na Equação \ref{eq:coriolis} e isolar as acelerações é obtido a dinâmica de rotação em um referencial inercial apresentada na Equação \ref{eq:dinamica_rotacao}.
@@ -207,7 +202,7 @@ Portanto, ao substituir a Equação \ref{eq:dinamica_rotacao_nao_inercial} na Eq
 	\end{split}
 \end{equation}
 
-\section{Dinâmica dos atuadores}
+\section{Dinâmica dos atuadores}\label{sec:dinamica_atuadores}
 
 Embora já obtido os equacionamentos que descrevem a dinâmica do veículo, a partir de forças, momentos e suas respectivas velocidades, ainda não é possível controlá-lo devido a ausência de uma grandeza diretamente controlável. Para tanto, é necessário compreender como um sinal elétrico enviado aos motores se converte em uma força ou momento, ilustrado na Figura \ref{fig:sistemas_mecanico_eletrico}. 
 
@@ -220,16 +215,16 @@ Embora já obtido os equacionamentos que descrevem a dinâmica do veículo, a pa
 
 Os motores usualmente utilizados na construção de um quadricóptero são os motores de corrente contínua sem escovas, que, a partir de um controlador intermediário chamada de ESC (\textit{eletronic speed controller}, ou controlador eletrônico de velocidade) \cite{esc_ref}, podem ser modelados como motores de corrente contínua apenas \cite{popoola2015modelling}. 
 
-Para um motor de corrent contínua, a relação entre um valor de tensão aplicado e uma velocidade angular é linear em seu regime permanente e conforme a Equação \ref{eq:relacao_linear_rotor}, $\omega_{RP}$ representa a velocidade angular do rotor em regime permanente, $k_v$ a constante que relaciona um valor de tensão à velocidade angular, $V$ a tensão no rotor.
+Para um motor de corrent contínua, a relação entre um valor de tensão aplicado e uma velocidade angular é linear em seu regime permanente e conforme a Equação \ref{eq:relacao_linear_rotor}, $\omega_{jRP}$ representa a velocidade angular do rotor $j$ em regime permanente, $k_v$ a constante que relaciona um valor de tensão à velocidade angular, $V$ a tensão no rotor $j$.
 
 \begin{equation}\label{eq:relacao_linear_rotor}
-	\omega_{RP} = k_v \cdot V
+	\omega_{jRP} = k_v \cdot V_j
 \end{equation}
 
-Já ao considerar a dinâmica como um todo, releva-se apenas a dinâmica mecânica do motor, permitido pela dinâmica elétrica ser no geral muito mais rápida que a mecânica. É apresentado na Equação \ref{eq:sinal_eletrico_rotor} a relação entre um sinal elétrico e a velocidade angular no rotor, $\omega$ representa a velocidade angular do rotor, $T_m$ a constante de tempo dessa dinâmica.
+Já ao considerar a dinâmica como um todo, releva-se apenas a dinâmica mecânica do motor, permitido pela dinâmica elétrica ser no geral muito mais rápida que a mecânica. É apresentado na Equação \ref{eq:sinal_eletrico_rotor} a relação entre um sinal elétrico e a velocidade angular no rotor, $\omega_j$ representa a velocidade angular do rotor $j$, $T_m$ a constante de tempo dessa dinâmica.
 
 \begin{equation}\label{eq:sinal_eletrico_rotor}
-	\dot{\omega} = T_m^{-1}(\omega_{RP} - \omega) = T_m^{-1}(k_v \cdot V - \omega)
+	\dot{\omega_j} = T_m^{-1}(\omega_{jRP} - \omega_j) = T_m^{-1}(k_v \cdot V - \omega_j)
 \end{equation}
 
 Obtida a velocidade angular de uma hélice acoplada a um motor, deve-se então descrever a dinâmica que ocasiona a força de propulsão em si, ilustrada na Figura \ref{fig:lift_forces}.
@@ -247,29 +242,29 @@ Observa-se que o movimento angular da hélice ocasiona uma velocidade relativa c
 Esse comportamento é denominado como Sustentação Aerodinâmica \cite{fundamentals_aerodynamics} e é representada na Equação \ref{eq:equacao_lift}, $S$ representa a força de sustentação, $C_L$ o coeficiente de sustentação, $\rho$ a densidade do ar, $A$ a área projetada sobre o plano perpendicular à direção do vento e $v$ a velocidade relativa entre a pá e o ar, $r$ representa o raio da hélice.
 
 \begin{equation}\label{eq:equacao_lift}
-	S = \frac{1}{2}C_L\rho A v^2 = \frac{1}{2}C_L\rho A r^2 \omega^2
+	S = \frac{1}{2}C_L\rho A v^2 = \frac{1}{2}C_L\rho A r^2 \omega_j^2
 \end{equation}
 
-Ainda, as variáveis de ambiente associadas à sustentação no geral podem ser negligenciadas para o cálculo da propulsão, visto que na literatura esses coeficientes são obtidos como apenas uma constante a partir de ensaios no rotor \cite{muzar2016experimental}. Assim, considera-se a força de propulsão $T$ conforme apresentada na Equação \ref{eq:equacao_propulsao}, na qual $k_f$ representa a constante de propulsão.
+Ainda, as variáveis de ambiente associadas à sustentação no geral podem ser negligenciadas para o cálculo da propulsão, visto que na literatura esses coeficientes são obtidos como apenas uma constante a partir de ensaios no rotor \cite{muzar2016experimental}. Assim, considera-se a força de propulsão $T_j$ conforme apresentada na Equação \ref{eq:equacao_propulsao}, na qual $k_f$ representa a constante de propulsão.
 
 \begin{equation}\label{eq:equacao_propulsao}
-	T = k_f \cdot \omega^2
+	T_j = k_f \cdot \omega_j^2
 \end{equation}
 
 O raciocínio para descrever o momento torsor da hélice é similar, apenas a relação entre grandezas $k_t$, denominada constante de torque, é diferente, de forma que pode ser descrito conforme Equação \ref{eq:equacao_torsor}.
 
 \begin{equation}\label{eq:equacao_torsor}
-	\tau = k_t \cdot \omega^2
+	\tau_j = k_t \cdot \omega_j^2
 \end{equation}
 
 Logo, ao combinar as equações elétricas e mecânicas obtêm-se as Equações \ref{eq:equacao_final_propulsao} e \ref{eq:equacao_final_torsao}, para as forças e momentos respectivamente, que descrevem como o sinal elétrico implica em uma reação mecânica.
 
 \begin{equation}\label{eq:equacao_final_propulsao}
-	T = k_f \cdot (k_v \cdot V - T_m\dot{\omega})^2
+	T_j = k_f \cdot (k_v \cdot V_j - T_m\dot{\omega_j})^2
 \end{equation}
 
 \begin{equation}\label{eq:equacao_final_torsao}
-	\tau = k_t \cdot (k_v \cdot V - T_m\dot{\omega})^2
+	\tau_j = k_t \cdot (k_v \cdot V_j - T_m\dot{\omega_j})^2
 \end{equation}
 
 \section{Sistema completo}
@@ -332,12 +327,12 @@ Logo, o sistema completo é representado como a formação de propulsão por par
 
 \section{Linearização}
 
-Apesar de obtido o modelo real do sistema, para utilização em técnicas com controladores lineares é necessário obter um modelo linearizado. O cálculo deste modelo é realizado a partir da Linearização Jacobiana \cite{jacobiana} do sistema, conforme a Equação \ref{eq:jacobiana}, na qual $\boldsymbol{x}$ representa o vetor de estados, $\boldsymbol{U}$ o vetor de entradas e o subscrito $0$ representa a aplicação em torno do ponto de equilíbrio.
+Apesar de obtido o modelo real do sistema, para utilização em técnicas com controladores lineares é necessário obter um modelo linearizado. O cálculo deste modelo é realizado a partir da Linearização Jacobiana \cite{jacobiana} do sistema, conforme a Equação \ref{eq:jacobiana}, na qual $\boldsymbol{\vec{x}}$ representa o vetor de estados, $\boldsymbol{\vec{U}}$ o vetor de entradas e o subscrito $0$ representa a aplicação em torno do ponto de equilíbrio.
 
 \vspace{0.1cm}
 
 \begin{equation}\label{eq:jacobiana}
-	\boldsymbol{\dot{x}} = \boldsymbol{A\Delta x} + \boldsymbol{B\Delta U} = \begin{bmatrix}
+	\boldsymbol{\dot{\vec{x}}} = \boldsymbol{A\Delta \vec{x}} + \boldsymbol{B\Delta \vec{U}} = \begin{bmatrix}
 		\frac{\partial \ddot{z}}{\partial z} & \frac{\partial \ddot{z}}{\partial p} & \frac{\partial \ddot{z}}{\partial q} & \frac{\partial \ddot{z}}{\partial r}\\
 		
 		\frac{\partial \dot{p}}{\partial z} & \frac{\partial \dot{p}}{\partial p} & \frac{\partial \dot{p}}{\partial q} & \frac{\partial \dot{p}}{\partial r}\\
@@ -345,7 +340,7 @@ Apesar de obtido o modelo real do sistema, para utilização em técnicas com co
 		\frac{\partial \dot{q}}{\partial z} & \frac{\partial \dot{q}}{\partial p} & \frac{\partial \dot{q}}{\partial q} & \frac{\partial \dot{q}}{\partial r}\\
 		
 		\frac{\partial \dot{r}}{\partial z} & \frac{\partial \dot{r}}{\partial p} & \frac{\partial \dot{r}}{\partial q} & \frac{\partial \dot{r}}{\partial r}
-	\end{bmatrix}_{0}\boldsymbol{\Delta x} + \begin{bmatrix}
+	\end{bmatrix}_{0}\boldsymbol{\Delta \vec{x}} + \begin{bmatrix}
 		\frac{\partial \ddot{z}}{\partial U_1} & \frac{\partial \ddot{z}}{\partial U_2} & \frac{\partial \ddot{z}}{\partial U_3} & \frac{\partial \ddot{z}}{\partial U_4}\\
 		
 		\frac{\partial \dot{p}}{\partial U_1} & \frac{\partial \dot{p}}{\partial U_2} & \frac{\partial \dot{p}}{\partial U_3} & \frac{\partial \dot{p}}{\partial U_4}\\
@@ -353,7 +348,7 @@ Apesar de obtido o modelo real do sistema, para utilização em técnicas com co
 		\frac{\partial \dot{q}}{\partial U_1} & \frac{\partial \dot{q}}{\partial U_2} & \frac{\partial \dot{q}}{\partial U_3} & \frac{\partial \dot{q}}{\partial U_4}\\
 		
 		\frac{\partial \dot{r}}{\partial U_1} & \frac{\partial \dot{r}}{\partial U_2} & \frac{\partial \dot{r}}{\partial U_3} & \frac{\partial \dot{r}}{\partial U_4}
-	\end{bmatrix}_{0}\boldsymbol{\Delta U}
+	\end{bmatrix}_{0}\boldsymbol{\Delta \vec{U}}
 \end{equation}
 
 \vspace{0.1cm}
@@ -412,12 +407,7 @@ O modelo linearizado simplificado da aerodinâmica é apresentado na Equação \
 		0 & 0 & I_{yy}^{-1} & 0\\
 		
 		0 & 0 & 0 & I_{zz}^{-1}
-	\end{bmatrix}\begin{bmatrix}
-		\Delta U_1\\
-		\Delta U_2\\
-		\Delta U_3\\
-		\Delta U_4\\
-	\end{bmatrix}
+	\end{bmatrix}\boldsymbol{\Delta \vec{U}}
 \end{equation}
 
 \end{document}
