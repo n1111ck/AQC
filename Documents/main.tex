@@ -11,7 +11,6 @@
 %
 %\documentclass[repeatfields,openright,overleaf,nomicrotype]{tcc}
 \documentclass[repeatfields,xlists,xpacks,oneside,yearsonly]{ufrgscca}
-\addbibresource{referencias.bib}
 
 %%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%
@@ -72,13 +71,15 @@
 %\RenewDocumentCommand{\MakeUppercase}{m}{\uppercase{#1}}
 
 % Pacotes
+\usepackage{biblatex}
 \usepackage{xcolor}
 \usepackage{subfiles}
 \usepackage{amsmath}
 \usepackage{cancel}
 
-% Operadores matemáticos
-\DeclareMathOperator{\sign}{sign}
+% Bib
+\addbibresource{referencias.bib}
+
 
 
 % Cores especiais %
@@ -99,23 +100,21 @@
 \makeatother
 
 
-% Controlador tema escuro %
+% Controlador  tema escuro %
 %\darkmode
 
-
 \begin{document}
-
 % IMPORTAR DOCUMENTOS INICIAIS
 %\subfile{pre}
 
 % IMPORTAR DOCUMENTOS PRINCIPAIS
 %\subfile{capitulos/introducao/}
-%\subfile{capitulos/descricao/}
+%\subfile{capitulos/revisao_bibliografica/}
+\subfile{capitulos/descricao/}
 \subfile{capitulos/modelagem/}
 \subfile{capitulos/controle_atitude/}
 %\subfile{capitulos/algoritmo_voo/}
 
 \printbibliography
-
 \end{document}
 
