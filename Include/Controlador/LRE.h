@@ -44,12 +44,14 @@ namespace AQC
 		Float mRelacaoForca;
 		Float mRelacaoVelocidade;
 		Float mConstanteTempo;
+		Float mFiltro;
 
 		// Parametros do controlador
 		Vetor4D mProporcionalVelocidade;
 		Vetor4D mProporcionalPosicao;
 		Vetor4D mDerivativoPosicao;
 		Vetor4D mUltimoErroPosicao;
+		Vetor4D mUltimoSinalDerivativoPosicao;
 		Vetor4D mUltimaDinamicaRotor;
 		Vetor4D mUltimaReferenciaVelocidade;
 		Vetor4D mUltimaReferenciaPosicao;

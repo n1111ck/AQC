@@ -36,16 +36,19 @@ namespace AQC
 		// Parametros da planta
 		ParametrosModelo mParametros;
 		Float mFrequencia;
+		Float mFiltro;
 
 		// Informacoes do controlador de posicao
 		Vetor4D mProporcionalVelocidade;
 		Vetor4D mDerivativoVelocidade;
 		Vetor4D mUltimoErroVelocidade;
+		Vetor4D mUltimoSinalDerivativoVelocidade;
 
 		// Informacoes do controlador de velocidade
 		Float mProporcionalPosicao;
 		Float mDerivativoPosicao;
 		Vetor4D mUltimoErroPosicao;
+		Vetor4D mUltimoSinalDerivativoPosicao;
 
 		// Informacoes dos sensores
 		Vetor3D mPosicao;

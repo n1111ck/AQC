@@ -29,7 +29,8 @@ namespace AQC
 		mParametros(parametros),
 		mUltimoSinal({}),
 		mUltimaReferenciaPosicao({}),
-		mUltimaReferenciaVelocidade({})
+		mUltimaReferenciaVelocidade({}),
+		mFiltro(frequencia * 100)
 	{
 		IControlador::mpGerenciadorAcopladores = &gerAcopladores;
 		IControlador::mpGerenciadorSensores = &gerSensores;
@@ -119,7 +120,12 @@ namespace AQC
 			mRotacao.mZ
 		};
 		erro = referencia - sensor;
-		sinal = erro * mProporcionalPosicao + (erro - mUltimoErroPosicao) * mFrequencia * mDerivativoPosicao;
+		// Calcular sinal derivativo filtrado
+		mUltimoSinalDerivativoPosicao = (
+			(erro - mUltimoErroPosicao) * mFrequencia * mDerivativoPosicao
+			- mUltimoSinalDerivativoPosicao * mFrequencia / mFiltro
+			) * (1 / (1 + mFrequencia / mFiltro));
+		sinal = erro * mProporcionalPosicao + mUltimoSinalDerivativoPosicao;
 		mUltimoErroPosicao = erro;
 		sinal.Saturar({ -1.0, -10.0, -10.0, -10.0 }, { 5.0, 10.0, 10.0, 10.0 });
 		mUltimaReferenciaVelocidade = sinal;
@@ -134,7 +140,12 @@ namespace AQC
 			mVelocidadeAngular.mZ
 		};
 		erro = sinal - sensor;
-		sinal = mProporcionalVelocidade * erro + mDerivativoVelocidade * (erro - mUltimoErroVelocidade) * mFrequencia;
+		// Calcular sinal derivativo filtrado
+		mUltimoSinalDerivativoVelocidade = (
+			mDerivativoVelocidade * (erro - mUltimoErroVelocidade) * mFrequencia
+			- mUltimoSinalDerivativoVelocidade * mFrequencia / mFiltro
+			) * (1 / (1 + mFrequencia / mFiltro));
+		sinal = mProporcionalVelocidade * erro + mUltimoSinalDerivativoVelocidade;
 		mUltimoErroVelocidade = erro;
 
 		return sinal;

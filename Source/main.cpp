@@ -52,7 +52,7 @@ int main()
 	gerSensores.Simulacao(modelo);
 #endif
 
-	AQC::LRE controlador(
+	AQC::CascataPD controlador(
 		gerAcopladores,
 		gerSensores,
 		parametros,
@@ -60,7 +60,7 @@ int main()
 		1/parametros.mPasso
 	);
 
-	AQC::Algoritmo<AQC::LRE>::ParametrosAlgoritmo parametrosAlgo;
+	AQC::Algoritmo<AQC::CascataPD>::ParametrosAlgoritmo parametrosAlgo;
 	parametrosAlgo.mAltitudeVoo = 30.0;
 	parametrosAlgo.mArfagemAvanco = 5.0;
 	parametrosAlgo.mToleranciaEntrega = 10.0;
@@ -69,7 +69,7 @@ int main()
 	parametrosAlgo.mConstanteEquilibrio = 0.1;
 
 
-	AQC::Algoritmo<AQC::LRE> algoritmo(
+	AQC::Algoritmo<AQC::CascataPD> algoritmo(
 		controlador,
 		gerSensores,
 		parametrosAlgo
@@ -93,7 +93,7 @@ int main()
 	algoritmo.NovaEntrega(-100.0, -200.0);
 	AQC::Float ultimoControle = 0.0;
 
-	for (AQC::UInt32 i = 0; i < static_cast<AQC::UInt32>(100.0 / parametros.mPasso); i++)
+	for (AQC::UInt32 i = 0; i < static_cast<AQC::UInt32>(10.0 / parametros.mPasso); i++)
 	{
 		csvExport << i * parametros.mPasso << ",";
 		csvExport << modelo.Posicao().mX << ",";
@@ -131,16 +131,16 @@ int main()
 		{
 			//gerAcopladores.Aplicar(AQC::Vetor4D({ 6.0, 6.0, 6.0, 6.0 }));
 
-			/*if (i < static_cast<AQC::UInt32>(10.0 / parametros.mPasso))
+			if (i < static_cast<AQC::UInt32>(2.0 / parametros.mPasso))
 			{
 				controlador.Aplicar({ 1.0, 0.0, 0.0, 0.0 });
 			}
 			else
 			{
 				controlador.Aplicar({ 1.0, 0.0, 0.174, 0.0 });
-			}*/
+			}
 
-			algoritmo.Atualizar();
+			//algoritmo.Atualizar();
 
 			modelo.Sobreposicao(modelo.Posicao().mZ < 0.0);
 		}

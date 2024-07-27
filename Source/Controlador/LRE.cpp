@@ -30,7 +30,8 @@ namespace AQC
 		mConstanteTempo(parametros.mConstanteTempo),
 		mRelacaoVelocidade(parametros.mRelacaoVelocidade),
 		mRelacaoForca(parametros.mRelacaoForca),
-		mRelacaoTorque(parametros.mRelacaoTorque)
+		mRelacaoTorque(parametros.mRelacaoTorque),
+		mFiltro(frequencia*100)
 	{
 		IControlador::mpGerenciadorAcopladores = &gerAcopladores;
 		IControlador::mpGerenciadorSensores = &gerSensores;
@@ -132,7 +133,12 @@ namespace AQC
 			mRotacao.mZ
 		};
 		erro = referencia - sensor;
-		sinal = mProporcionalPosicao * erro + mDerivativoPosicao * (erro - mUltimoErroPosicao) * mFrequencia;
+		// Calcular sinal derivativo filtrado
+		mUltimoSinalDerivativoPosicao = (
+			mDerivativoPosicao * (erro - mUltimoErroPosicao) * mFrequencia 
+			- mUltimoSinalDerivativoPosicao * mFrequencia / mFiltro
+		) * (1 / (1 + mFrequencia / mFiltro));
+		sinal = mProporcionalPosicao * erro + mUltimoSinalDerivativoPosicao;
 		mUltimoErroPosicao = erro;
 		sinal.Saturar({ -1.0, -10.0, -10.0, -10.0 }, { 5.0, 10.0, 10.0, 10.0 });
 		mUltimaReferenciaVelocidade = sinal;
