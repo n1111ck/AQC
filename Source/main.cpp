@@ -52,15 +52,15 @@ int main()
 	gerSensores.Simulacao(modelo);
 #endif
 
-	AQC::CascataPD controlador(
+	AQC::LRE controlador(
 		gerAcopladores,
 		gerSensores,
 		parametros,
-		0.4,
+		0.5,
 		1/parametros.mPasso
 	);
 
-	AQC::Algoritmo<AQC::CascataPD>::ParametrosAlgoritmo parametrosAlgo;
+	AQC::Algoritmo<AQC::LRE>::ParametrosAlgoritmo parametrosAlgo;
 	parametrosAlgo.mAltitudeVoo = 30.0;
 	parametrosAlgo.mArfagemAvanco = 5.0;
 	parametrosAlgo.mToleranciaEntrega = 10.0;
@@ -69,7 +69,7 @@ int main()
 	parametrosAlgo.mConstanteEquilibrio = 0.1;
 
 
-	AQC::Algoritmo<AQC::CascataPD> algoritmo(
+	AQC::Algoritmo<AQC::LRE> algoritmo(
 		controlador,
 		gerSensores,
 		parametrosAlgo
@@ -92,6 +92,7 @@ int main()
 	modelo.Arrasto({1.0, 1.0, 0.5});
 	algoritmo.NovaEntrega(-100.0, -200.0);
 	AQC::Float ultimoControle = 0.0;
+	AQC::Float tempoAcomodacao = 0.0;
 
 	for (AQC::UInt32 i = 0; i < static_cast<AQC::UInt32>(10.0 / parametros.mPasso); i++)
 	{
@@ -145,6 +146,11 @@ int main()
 			modelo.Sobreposicao(modelo.Posicao().mZ < 0.0);
 		}
 		modelo.Simular();
+
+		if (fabsf(0.174 - modelo.Rotacao().mY) > 0.02)
+		{
+			tempoAcomodacao = i * parametros.mPasso - 2.0;
+		}
 	}
 
 	csvExport.close();

@@ -31,7 +31,8 @@ namespace AQC
 		mRelacaoVelocidade(parametros.mRelacaoVelocidade),
 		mRelacaoForca(parametros.mRelacaoForca),
 		mRelacaoTorque(parametros.mRelacaoTorque),
-		mFiltro(frequencia*100)
+		mFiltro(frequencia*100),
+		mUltimoCsi({})
 	{
 		IControlador::mpGerenciadorAcopladores = &gerAcopladores;
 		IControlador::mpGerenciadorSensores = &gerSensores;
@@ -214,9 +215,13 @@ namespace AQC
 		resultado.Raiz();
 
 		// Compensar a dinâmica do rotor
-		Vetor4D compensacaoDinamicaRotor = (resultado - mUltimaDinamicaRotor) * mFrequencia * mConstanteTempo;
-		mUltimaDinamicaRotor = resultado;
-		resultado += compensacaoDinamicaRotor;
+		mUltimaDinamicaRotor = (
+			(resultado - mUltimoCsi) * mFrequencia
+			- mUltimaDinamicaRotor * mFrequencia / mFiltro
+			) * (1 / (1 + mFrequencia / mFiltro) * mConstanteTempo
+		);
+		mUltimoCsi = resultado;
+		resultado += mUltimaDinamicaRotor;
 		
 		// Converter para valor de tensao em cada rotor
 		resultado /= mRelacaoVelocidade;

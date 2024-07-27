@@ -55,6 +55,7 @@ namespace AQC
 		Vetor4D mUltimaDinamicaRotor;
 		Vetor4D mUltimaReferenciaVelocidade;
 		Vetor4D mUltimaReferenciaPosicao;
+		Vetor4D mUltimoCsi;
 
 		// Informacoes dos sensores
 		Vetor3D mPosicao;
