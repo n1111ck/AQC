@@ -60,8 +60,11 @@ namespace AQC
 		Vetor4D operator-(const Vetor4D& vetor) const;
 		Vetor4D operator*(const Vetor4D& vetor) const;
 		Vetor4D operator+=(const Vetor4D& vetor);
+		Vetor4D operator-=(const Vetor4D& vetor);
 		Vetor4D operator+=(const Float& valor);
 		Vetor4D operator-=(const Float& valor);
+		Vetor4D operator/=(const Float& valor);
+		Vetor4D operator+(const Vetor4D& valor) const;
 
 	};
 

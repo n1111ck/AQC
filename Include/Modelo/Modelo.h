@@ -20,8 +20,10 @@ namespace AQC
 
 		Vetor3D Posicao() const;
 		Vetor3D VelocidadeLinear() const;
+		Vetor3D AceleracaoLinear() const;
 		Vetor3D Rotacao() const;
 		Vetor3D VelocidadeAngular() const;
+		Vetor3D AceleracaoAngular() const;
 		Vetor4D TensaoRotores() const;
 		Vetor4D VelocidadeRotores() const;
 		Vetor4D RotacaoRotores() const;
@@ -42,8 +44,10 @@ namespace AQC
 
 		Vetor3D mPosicao;
 		Vetor3D mVelocidadeLinear;
+		Vetor3D mAceleracaoLinear;
 		Vetor3D mRotacao;
 		Vetor3D mVelocidadeAngular;
+		Vetor3D mAceleracaoAngular;
 
 		Float mVelocidadeAngularRotor[4];
 		Vetor4D mRotacaoMotor;

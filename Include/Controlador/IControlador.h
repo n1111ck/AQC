@@ -17,6 +17,9 @@ namespace AQC
 	public:
 		virtual Void Aplicar(const Vetor4D& referencia) = 0;
 		virtual Void Capturar() = 0;
+		virtual Float Frequencia() const = 0;
+		virtual Vetor4D ReferenciaVelocidade() const = 0;
+		virtual Vetor4D ReferenciaPosicao() const = 0;
 	protected:
 		GerenciadorAcopladores* mpGerenciadorAcopladores;
 		GerenciadorSensores* mpGerenciadorSensores;

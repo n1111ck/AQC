@@ -9,26 +9,13 @@ namespace AQC
 
 	GerenciadorAcopladores::GerenciadorAcopladores(
 		const Float& limiteTensao,
-		const Float& relacaoVelocidade,
-		const Float& relacaoForca,
-		const Float& relacaoTorque,
-		const Float& raio
+		const Float& relacaoVelocidade
 	) :
 		mpModelo(nullptr),
-		mRelacaoVelocidade(relacaoVelocidade),
 		mLimiteTensao(limiteTensao),
-		mUltimaVelocidade({}),
-		mUltimaTensao({})
+		mUltimaTensao({}),
+		mRelacaoVelocidade(relacaoVelocidade)
 	{
-		for (UInt8 motorIndex = 0; motorIndex < 4; motorIndex++)
-		{
-			mpAcoplador[motorIndex] = Acoplador(
-				relacaoVelocidade,
-				relacaoForca,
-				relacaoTorque,
-				raio
-			);
-		}
 	}
 
 	GerenciadorAcopladores::~GerenciadorAcopladores()
@@ -45,20 +32,8 @@ namespace AQC
 	Void
 	GerenciadorAcopladores::Aplicar(const Vetor4D& entrada)
 	{
-		Vetor4D tensaoRotor;
-
-		tensaoRotor.mW = mpAcoplador[0].Calcular(entrada);
-		tensaoRotor.mX = mpAcoplador[1].Calcular(entrada);
-		tensaoRotor.mY = mpAcoplador[2].Calcular(entrada);
-		tensaoRotor.mZ = mpAcoplador[3].Calcular(entrada);
-
-		tensaoRotor.Saturar(0);
-		tensaoRotor.Raiz();
-
-		mUltimaVelocidade = tensaoRotor;
-		tensaoRotor = tensaoRotor * (1 / mRelacaoVelocidade);
-		tensaoRotor.Saturar(0, mLimiteTensao);
-		mUltimaTensao = tensaoRotor;
+		mUltimaTensao = entrada;
+		mUltimaTensao.Saturar(0, mLimiteTensao);
 
 		if (mpModelo == nullptr)
 		{
@@ -67,7 +42,7 @@ namespace AQC
 		else
 		{
 			// Implementacao simulada
-			mpModelo->Aplicar(tensaoRotor);
+			mpModelo->Aplicar(mUltimaTensao);
 		}
 	}
 
@@ -75,10 +50,10 @@ namespace AQC
 	GerenciadorAcopladores::SomatorioRotacao() const
 	{
 		return (
-			-mUltimaVelocidade.mW
-			+ mUltimaVelocidade.mX
-			- mUltimaVelocidade.mY
-			+ mUltimaVelocidade.mZ
+			- mUltimaTensao.mW * mRelacaoVelocidade
+			+ mUltimaTensao.mX * mRelacaoVelocidade
+			- mUltimaTensao.mY * mRelacaoVelocidade
+			+ mUltimaTensao.mZ * mRelacaoVelocidade
 			);
 	}
 

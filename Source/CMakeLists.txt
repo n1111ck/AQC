@@ -40,7 +40,8 @@ add_library(AQC
     Algoritmo/Algoritmo.cpp
     Acoplador/Acoplador.cpp
     Acoplador/GerenciadorAcopladores.cpp
-    Controlador/RNL.cpp
+    Controlador/LRE.cpp
+    Controlador/CascataPD.cpp
     Modelo/Modelo.cpp
     Sensor/Barometro.cpp
     Sensor/Bussola.cpp

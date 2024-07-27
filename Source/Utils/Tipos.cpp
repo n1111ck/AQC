@@ -260,6 +260,17 @@ namespace AQC
 	}
 
 	Vetor4D
+	Vetor4D::operator-=(const Vetor4D& vetor)
+	{
+		mW -= vetor.mW;
+		mX -= vetor.mX;
+		mY -= vetor.mY;
+		mZ -= vetor.mZ;
+
+		return *this;
+	}
+
+	Vetor4D
 	Vetor4D::operator+=(const Float& valor)
 	{
 		mW += valor;
@@ -274,6 +285,30 @@ namespace AQC
 	Vetor4D::operator-=(const Float& valor)
 	{
 		return operator+=(-valor);
+	}
+
+	Vetor4D 
+	Vetor4D::operator/=(const Float& valor)
+	{
+		mW /= valor;
+		mX /= valor;
+		mY /= valor;
+		mZ /= valor;
+
+		return *this;
+	}
+
+	Vetor4D 
+	Vetor4D::operator+(const Vetor4D& valor) const
+	{
+		Vetor4D resultado;
+
+		resultado.mW = mW + valor.mW;
+		resultado.mX = mX + valor.mX;
+		resultado.mY = mY + valor.mY;
+		resultado.mZ = mZ + valor.mZ;
+
+		return resultado;
 	}
 
 	Linha4D::Linha4D() :

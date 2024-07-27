@@ -2,7 +2,8 @@
 #include <math.h>
 
 // Incluir Controlador
-#include "Controlador/RNL.h"
+#include "Controlador/LRE.h"
+#include "Controlador/CascataPD.h"
 
 // Incluir Utils
 #include "Utils/Constantes.h"
@@ -18,7 +19,8 @@ namespace AQC
 	template<typename Controlador>
 	Algoritmo<Controlador>::Algoritmo(
 		Controlador& controlador,
-		GerenciadorSensores& gerSensores
+		GerenciadorSensores& gerSensores,
+		const ParametrosAlgoritmo& parametrosAlgoritmo
 	) :
 		mpControlador(&controlador),
 		mpGerenciadorSensores(&gerSensores),
@@ -28,14 +30,14 @@ namespace AQC
 		mEntregue(false),
 		mLatitudeBase(0.0),
 		mLongitudeBase(0.0),
-		mAltitudeVoo(200.0),
-		mArfagemAvanco(5 * PI / 180.0),
-		mToleranciaEntrega(10.0),
-		mToleranciaPouso(2.0),
+		mAltitudeVoo(parametrosAlgoritmo.mAltitudeVoo),
+		mArfagemAvanco(parametrosAlgoritmo.mArfagemAvanco * PI / 180.0),
+		mToleranciaEntrega(parametrosAlgoritmo.mToleranciaEntrega),
+		mToleranciaPouso(parametrosAlgoritmo.mToleranciaPouso),
 		mLatitudeDestino(0.0),
 		mLongitudeDestino(0.0),
-		mToleranciaColisao(3.0),
-		mConstanteEquilibrio(0.1),
+		mToleranciaColisao(parametrosAlgoritmo.mToleranciaColisao),
+		mConstanteEquilibrio(parametrosAlgoritmo.mConstanteEquilibrio),
 		mReferencia({})
 	{
 
@@ -295,5 +297,6 @@ namespace AQC
 		return atan(mConstanteEquilibrio * valor) * 2.0 / PI;
 	}
 
-	template class Algoritmo<RNL>;
+	template class Algoritmo<LRE>;
+	template class Algoritmo<CascataPD>;
 }

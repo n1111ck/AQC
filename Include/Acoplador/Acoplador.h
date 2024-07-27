@@ -9,25 +9,10 @@ namespace AQC
 	{
 	public:
 		Acoplador();
-
-		Acoplador(
-			const Float& relacaoVelocidade,
-			const Float& relacaoForca,
-			const Float& relacaoTorque,
-			const Float& raio
-		);
 		~Acoplador();
 
 		static Void Resetar();
-		Float Calcular(const Vetor4D& entrada) const;
 	private:
-		Float mRelacaoVelocidade;
-		Float mRelacaoForca;
-		Float mRelacaoTorque;
-		Float mRaio;
-
-		Linha4D mLinhaConversao;
-
 		static UInt8 sMotorCounter;
 	};
 }

@@ -217,10 +217,10 @@ Por fim, a escolha de $T_a$ fica apenas limitada à saturação dos atuadores, v
 			\end{bmatrix}\hspace{1cm}
 		\end{split}&
 		\begin{split}
-			&C_{vZ} = 4\cdot m T_a^{-1} T_m(s + Ts^{-1})\\
-			&C_{v\Phi} = 4\cdot I_{xx} T_a^{-1} T_m(s + Ts^{-1})\\
-			&C_{v\Theta} = 4\cdot I_{yy} T_a^{-1} T_m(s + Ts^{-1})\\
-			&C_{v\Psi} = 4\cdot I_{zz} T_a^{-1} T_m(s + Ts^{-1})\\
+			&C_{vZ} = 4\cdot m T_a^{-1} T_m(s + T_m^{-1})\\
+			&C_{v\Phi} = 4\cdot I_{xx} T_a^{-1} T_m(s + T_m^{-1})\\
+			&C_{v\Theta} = 4\cdot I_{yy} T_a^{-1} T_m(s + T_m^{-1})\\
+			&C_{v\Psi} = 4\cdot I_{zz} T_a^{-1} T_m(s + T_m^{-1})\\
 			&C_{og} = s + 4\cdot{T_a^{-1}}\\
 		\end{split}
 		
@@ -279,35 +279,19 @@ O sistema do quadricóptero como um todo não é considerado afim com relação 
 	\end{matrix}
 \end{equation}
 
-Portanto, o resultado dessas operações lineares na forma multivariável e com os valores de $b_{(\boldsymbol{\vec{x}})}$ já invertidos, é apresentado na Equação \ref{eq:f_b_inicial}.
+Portanto, o resultado dessas operações não lineares na forma multivariável e com os valores de $b_{(\boldsymbol{\vec{x}})}$ já invertidos, é apresentado na Equação \ref{eq:f_b_inicial}. Cabe observar que, diferente do controlador linear calculado pela matriz Jacobiana, essa planta opera em dimensões das acelerações lineares e angulares do ponto de vista de $\boldsymbol{\vec{\gamma}}$, ao invés das forças e momentos.
 
 \begin{equation}\label{eq:f_b_inicial}
-	f^*_{(\boldsymbol{\vec{x}})} = \begin{bmatrix}
+	f_{(\boldsymbol{\vec{x}})} = \begin{bmatrix}
 		-g\\
 		\left[(I_{zz} - I_{yy})qr - I_r\Omega\cdot q\right]I_{xx}^{-1}\\
 		\left[(I_{xx} - I_{zz})pr + I_r\Omega\cdot p\right]I_{yy}^{-1}\\
 		\left[(I_{yy} - I_{xx})pq\right]I_{zz}^{-1}
-	\end{bmatrix}\hspace{0.4cm},\hspace{0.4cm}b_{(\boldsymbol{\vec{x}})}^{*-1} = \begin{bmatrix}
+	\end{bmatrix}\hspace{0.4cm},\hspace{0.4cm}b_{(\boldsymbol{\vec{x}})}^{-1} = \begin{bmatrix}
 		m\cos{(\theta)}^{-1}\cos{(\phi)}^{-1}\\
 		I_{xx}\\
 		I_{yy}\\
 		I_{zz}
-	\end{bmatrix}
-\end{equation}
-
-Ainda, se considerar que o controlador linear atuará com componentes dimensionais de forças e momentos ao invés de acelerações, os operadores não lineares possuem a forma conforme a Equação \ref{eq:f_b_final}.
-
-\begin{equation}\label{eq:f_b_final}
-	f_{(\boldsymbol{\vec{x}})} = \begin{bmatrix}
-		-mg\\
-		(I_{zz} - I_{yy})qr - I_r\Omega\cdot q\\
-		(I_{xx} - I_{zz})pr + I_r\Omega\cdot p\\
-		(I_{yy} - I_{xx})pq
-	\end{bmatrix}\hspace{0.4cm},\hspace{0.4cm}b_{(\boldsymbol{\vec{x}})}^{-1} = \begin{bmatrix}
-		\cos{(\theta)}^{-1}\cos{(\phi)}^{-1}\\
-		1\\
-		1\\
-		1
 	\end{bmatrix}
 \end{equation}
 
@@ -333,6 +317,8 @@ O cálculo efetuado até então considera um sistema capaz de atuar diretamente 
 		\end{matrix}
 	\end{matrix}
 \end{equation}
+
+\newpage
 
 Assim, de maneira equivalente ao realizado no controle linear pela aproximação Jacobiana, obtém-se uma relação de conversão entre o sinal aplicado e o sinal aerodinâmico. A conversão do sinal é simbolizada pela operação $\delta$, que é representada na Figura \ref{fig:conversao_delta} em quatro etapas. A nova malha de linearização por realimentação de estados é apresentada na Figura \ref{fig:lre_quad} com a conversão $\delta$ e os operadores $f_{(\boldsymbol{\vec{x}})}$ e $b_{(\boldsymbol{\vec{x}})}^{-1}$ da Equação \ref{eq:f_b_final}.
 
@@ -360,14 +346,6 @@ Por fim, com uma malha linearizada pela realimentação de estados, deve-se calc
 		\Delta \Theta_{(s)}\\
 		\Delta \Psi_{(s)}
 	\end{bmatrix} = \frac{1}{s^2}\begin{bmatrix}
-		m^{-1} & 0 & 0 & 0\\
-		
-		0 & I_{xx}^{-1} & 0 & 0\\
-		
-		0 & 0 & I_{yy}^{-1} & 0\\
-		
-		0 & 0 & 0 & I_{zz}^{-1}
-	\end{bmatrix}\begin{bmatrix}
 		\Delta \Gamma_{1(s)}\\
 		\Delta \Gamma_{2(s)}\\
 		\Delta \Gamma_{3(s)}\\
@@ -383,7 +361,7 @@ De maneira análoga ao cálculo para o controlador linear, percebe-se que a melh
 	\begin{tabular}{|c|c|c|}
 		\cline{2-3}
 		\multicolumn{1}{c|}{} & $K_p$  & $K_d$ \\\hline
-		$C_{vg}$ & $4\cdot \alpha T_a^{-1}$ & - \\\hline
+		$C_{vg}$ & $4\cdot T_a^{-1}$ & - \\\hline
 		$C_{og}$ & $4\cdot T_a^{-1}$ & $1$ \\\hline
 	\end{tabular}
 	\label{tab:controlador_lre_linear}
@@ -392,10 +370,10 @@ De maneira análoga ao cálculo para o controlador linear, percebe-se que a melh
 \begin{equation}\label{eq:lre_multivariavel}
 	\begin{split}
 		&\boldsymbol{C_{v(s)}} = \begin{bmatrix}
-			4\cdot T_am & 0 & 0 & 0\\
-			0 & 4\cdot T_aI_{xx} & 0 & 0\\
-			0 & 0 & 4\cdot T_aI_{yy} & 0\\
-			0 & 0 & 0 & 4\cdot T_aI_{zz}\\
+			4T_a^{-1} & 0 & 0 & 0\\
+			0 & 4T_a^{-1} & 0 & 0\\
+			0 & 0 & 4T_a^{-1} & 0\\
+			0 & 0 & 0 & 4T_a^{-1}\\
 		\end{bmatrix}\\
 		&\boldsymbol{C_{o(s)}} = \begin{bmatrix}
 			s + 4T_a^{-1} & 0 & 0 & 0\\

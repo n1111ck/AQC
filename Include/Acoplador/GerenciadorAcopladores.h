@@ -18,10 +18,7 @@ namespace AQC
 		GerenciadorAcopladores();
 		GerenciadorAcopladores(
 			const Float& limiteTensao,
-			const Float& relacaoVelocidade,
-			const Float& relacaoForca,
-			const Float& relacaoTorque,
-			const Float& raio
+			const Float& relacaoVelocidade
 		);
 		~GerenciadorAcopladores();
 
@@ -31,11 +28,9 @@ namespace AQC
 		Vetor4D Tensao() const;
 		Void Aplicar(const Vetor4D& entrada);
 	private:
-		Acoplador mpAcoplador[4];
 		Modelo* mpModelo;
 
 		Float mRelacaoVelocidade;
-		Vetor4D mUltimaVelocidade;
 		Vetor4D mUltimaTensao;
 		Float mLimiteTensao;
 	};

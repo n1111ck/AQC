@@ -26,12 +26,12 @@ A modelagem geral é feita em duas configurações possíveis, denominadas da se
 
 \begin{itemize}
     \item \textbf{Configuração X}: o veículo avança em um ângulo de 45$^\circ$ com relação a um de seus braços, em forma de um "X" em relação à trajetória percorrida. Dois motores estão na parte dianteira e dois na parte traseira. Essa configuração é a mais comum e oferece uma boa combinação de estabilidade, manobrabilidade e resistência a falhas dos motores \cite{configuracoes}.
-    \item \textbf{Configuração} $\boldsymbol{+}$: o veículo avança colinear a um de seus braços, formando uma cruz em relação à trajetória. Um motor está na parte dianteira, um na traseira e os outros dois nos lados esquerdo e direito. Essa configuração também é popular e oferece boa estabilidade.
+    \item \textbf{Configuração} $\boldsymbol{+}$: o veículo avança colinear a um de seus braços, formando uma cruz em relação à trajetória. Um motor está na parte dianteira; outro, na traseira; os outros dois, nos lados esquerdo e direito. Essa configuração também é popular e oferece boa estabilidade.
 \end{itemize}
 
-Ambas as configurações têm suas próprias vantagens e desvantagens, e a escolha entre elas depende do uso pretendido do \textit{drone} e das preferências do piloto. Neste trabalho, será utilizada a configuração "mais" (+) para: simplificar o cálculo, isolar obstáculos em apenas um eixo de avanço e ainda possuir uma boa estabilidade.
+Ambas as configurações têm suas próprias vantagens e desvantagens, e a escolha entre elas depende do uso pretendido do \textit{drone} e das preferências do piloto. Neste trabalho, será utilizada a configuração "mais" (+) para simplificar o cálculo, isolar obstáculos em apenas um eixo de avanço e ainda possuir uma boa estabilidade.
 
-Através do controle independente das rotações das hélices, o quadricóptero gera forças de sustentação, propulsão e torque, permitindo o ajuste de sua atitude, que se refere à orientação espacial ou posição relativa da aeronave em relação a um sistema de coordenadas fixo, e movimento no espaço tridimensional. Existem quatro manobras básicas que possibilitam essa movimentação:
+O quadricóptero possui controle independente das rotações de cada uma de suas hélices, gerando forças que regulam tanto sua translação no espaço tridimensional, como sua atitude, que se refere à manutenção de uma posição e uma orientação definidas em relação a um sistema de coordenadas fixo. Tais regulagens são executadas por meio de quatro manobras básicas:
 
 \begin{itemize}
     \item \textbf{Ascendência/Descendência:} alteração da altitude do quadricóptero. O controle desse movimento é obtido variando as velocidades de rotação de todos rotores.
@@ -75,11 +75,11 @@ A estabilidade desses movimentos é mantida através de sensores como giroscópi
 A composição de sensores pode variar quanto à aplicação, mas o mínimo necessário são:
 
 \begin{itemize}
-	\item \textbf{Acelerômetro}: que detecta variações em forças lineares por meio de micro-mecanismos internos. Quando parado, também consegue sentir a força da gravidade atuando sobre o dispositivo.
-	\item \textbf{Giroscópio}: que percebe variações em momentos angulares por meio de micro-mecanismos internos. Em alguns casos, o giroscópio está integrado ao acelerômetro como parte do \textit{chip}.
-	\item \textbf{Magnetômetro}: que detecta o campo magnético da Terra da mesma forma que uma bússola mecânica, utilizando a direção norte como ponto de referência.
-	\item \textbf{Barômetro}: que lê a pressão atmosférica que o veículo está sentindo e, a partir de princípios físicos, converte na altitude atual.
-	\item \textbf{GPS}: que coleta a localização geodética do veículo na forma de latitude e longitude. Essas informações são interpretadas a partir do conhecimento da posição de três satélites no mínimo, de forma a obter a posição do objeto nos três eixos. No caso de um excedente de satélites, eles influenciam na precisão de medição. 
+	\item \textbf{Acelerômetro}: detecta variações em forças lineares por meio de micro-mecanismos internos. Quando parado, também consegue sentir a força da gravidade atuando sobre o dispositivo.
+	\item \textbf{Giroscópio}: percebe variações em momentos angulares por meio de micro-mecanismos internos. Em alguns casos, o giroscópio está integrado ao acelerômetro como parte do \textit{chip}.
+	\item \textbf{Magnetômetro}: detecta o campo magnético da Terra da mesma forma que uma bússola mecânica, utilizando a direção norte como ponto de referência.
+	\item \textbf{Barômetro}: lê a pressão atmosférica que o veículo está sentindo e, a partir de princípios físicos, converte na altitude atual.
+	\item \textbf{GPS}: coleta a localização geodética do veículo na forma de latitude e longitude. Essas informações são interpretadas a partir do conhecimento da posição de três satélites no mínimo, de forma a obter a posição do objeto nos três eixos. No caso de um excedente de satélites, eles influenciam na precisão de medição. 
 \end{itemize}
 
 Ainda, para prevenção de colisões é necessário também alguma forma de detectar obstáculos da trajetória do quadricóptero. Os sensores capazes de realizar esse tipo de detecção podem variar quanto ao princípio físico por trás da mensuração. Para este projeto, deve-se considerar dois sensores de distância, um na parte frontal do veículo (que deve detectar obstáculos e informar ao algoritmo de voo pra prevenção de uma colisão), e outro na parte inferior do veículo (para informar a proximidade com o solo).

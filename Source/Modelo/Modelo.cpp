@@ -76,7 +76,7 @@ namespace AQC
 			for (UInt8 motorIndex = 0; motorIndex < 4; motorIndex++)
 			{
 				kMotor[motorIndex][kIteration] = VelocidadeAngularRotor(
-					mUltimoSinal.Element(motorIndex) + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[motorIndex][kId - 1],
+					mUltimoSinal.Element(motorIndex),
 					mVelocidadeAngularRotor[motorIndex] + idMultiplicador[kIteration] * mParametros.mPasso * kMotor[motorIndex][kId - 1]
 				);
 			}
@@ -177,11 +177,60 @@ namespace AQC
 			kGuinada[kIteration] = mVelocidadeAngular.mZ + idMultiplicador[kIteration] * mParametros.mPasso * kVelocidadeGuinada[kId - 1];
 		}
 
+		// Calcular variaveis auxiliares para salvar aceleracao
+		aU1 = mParametros.mRelacaoForca * (
+			pow(mVelocidadeAngularRotor[0], 2) +
+			pow(mVelocidadeAngularRotor[1], 2) +
+			pow(mVelocidadeAngularRotor[2], 2) +
+			pow(mVelocidadeAngularRotor[3], 2)
+			);
+		aU2 = mParametros.mRelacaoForca * mParametros.mRaio * (
+			pow(mVelocidadeAngularRotor[1], 2) -
+			pow(mVelocidadeAngularRotor[3], 2)
+			);
+		aU3 = mParametros.mRelacaoForca * mParametros.mRaio * (
+			pow(mVelocidadeAngularRotor[2], 2) -
+			pow(mVelocidadeAngularRotor[0], 2)
+			);
+		aU4 = mParametros.mRelacaoTorque * (
+			-pow(mVelocidadeAngularRotor[0], 2)
+			+ pow(mVelocidadeAngularRotor[1], 2)
+			- pow(mVelocidadeAngularRotor[2], 2)
+			+ pow(mVelocidadeAngularRotor[3], 2)
+			);
+		aRotacaoResultante = (
+			-(mVelocidadeAngularRotor[0])
+			+ (mVelocidadeAngularRotor[1])
+			- (mVelocidadeAngularRotor[2])
+			+ (mVelocidadeAngularRotor[3])
+			);
+		aRotacao = {
+				mRotacao.mX,
+				mRotacao.mY,
+				mRotacao.mZ
+		};
+		aVelocidadeAngular = {
+				mVelocidadeAngular.mX,
+				mVelocidadeAngular.mY,
+				mVelocidadeAngular.mZ
+		};
+		aVelocidadeLinear = {
+				mVelocidadeLinear.mX,
+				mVelocidadeLinear.mY,
+				mVelocidadeLinear.mZ
+		};
+
 		// Atualizar variaveis
 		for (UInt8 motorIndex = 0; motorIndex < 4; motorIndex++)
 		{
 			mVelocidadeAngularRotor[motorIndex] += mParametros.mPasso / 6.0 * (kMotor[motorIndex][0] + 2.0 * kMotor[motorIndex][1] + 2.0 * kMotor[motorIndex][2] + kMotor[motorIndex][3]);
 		}
+		mAceleracaoLinear.mX = AceleracaoLatitude(aU1, aRotacao, aVelocidadeLinear);
+		mAceleracaoLinear.mY = AceleracaoLongitude(aU1, aRotacao, aVelocidadeLinear);
+		mAceleracaoLinear.mZ = AceleracaoAltitude(aU1, aRotacao, aVelocidadeLinear);
+		mAceleracaoAngular.mX = AceleracaoRolamento(aU2, aVelocidadeAngular, aRotacaoResultante);
+		mAceleracaoAngular.mY = AceleracaoArfagem(aU3, aVelocidadeAngular, aRotacaoResultante);
+		mAceleracaoAngular.mZ = AceleracaoGuinada(aU4, aVelocidadeAngular);
 		mVelocidadeLinear.mX += mParametros.mPasso / 6.0 * (kVelocidadeLatitude[0] + 2.0 * kVelocidadeLatitude[1] + 2.0 * kVelocidadeLatitude[2] + kVelocidadeLatitude[3]);
 		mVelocidadeLinear.mY += mParametros.mPasso / 6.0 * (kVelocidadeLongitude[0] + 2.0 * kVelocidadeLongitude[1] + 2.0 * kVelocidadeLongitude[2] + kVelocidadeLongitude[3]);
 		mVelocidadeLinear.mZ += mParametros.mPasso / 6.0 * (kVelocidadeAltitude[0] + 2.0 * kVelocidadeAltitude[1] + 2.0 * kVelocidadeAltitude[2] + kVelocidadeAltitude[3]);
@@ -195,6 +244,13 @@ namespace AQC
 		mRotacao.mY += mParametros.mPasso / 6.0 * (kArfagem[0] + 2.0 * kArfagem[1] + 2.0 * kArfagem[2] + kArfagem[3]);
 		mRotacao.mZ += mParametros.mPasso / 6.0 * (kGuinada[0] + 2.0 * kGuinada[1] + 2.0 * kGuinada[2] + kGuinada[3]);
 		AtualizarRotores();
+
+		// Altitude apenas positiva para simulacao
+		if (!(0 < mVelocidadeLinear.mZ) && !(0 < mPosicao.mZ))
+		{
+			mVelocidadeLinear.mZ = 0.0;
+			mPosicao.mZ = 0.0;
+		}
 
 		// Atualizar Tempo
 		mTempo += mParametros.mPasso;
@@ -239,11 +295,6 @@ namespace AQC
 		Float resultado = -mParametros.mGravidade
 			+ cos(rotacao.mX) * cos(rotacao.mY) * U1 / mParametros.mMassa
 			- mArrasto.mZ * velocidadeLinear.mZ;
-
-		if (resultado < 0.0 && mSobreposicao)
-		{
-			resultado = 0.0;
-		}
 
 		return resultado;
 	}
@@ -397,5 +448,15 @@ namespace AQC
 		return mRotacaoMotor;
 	}
 
+	Vetor3D
+	Modelo::AceleracaoLinear() const
+	{
+		return mAceleracaoLinear;
+	}
 
+	Vetor3D
+	Modelo::AceleracaoAngular() const
+	{
+		return mAceleracaoAngular;
+	}
 }

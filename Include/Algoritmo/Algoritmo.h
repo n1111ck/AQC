@@ -25,10 +25,21 @@ namespace AQC
 			ePrevencaoColisao
 		};
 
+		struct ParametrosAlgoritmo
+		{
+			Float mAltitudeVoo;
+			Float mArfagemAvanco;
+			Float mToleranciaEntrega;
+			Float mToleranciaPouso;
+			Float mToleranciaColisao;
+			Float mConstanteEquilibrio;
+		};
+
 		Algoritmo();
 		Algoritmo(
-			Controlador& pControlador,
-			GerenciadorSensores& pGerSensores
+			Controlador& controlador,
+			GerenciadorSensores& gerSensores,
+			const ParametrosAlgoritmo& parametrosAlgoritmo 
 		);
 		~Algoritmo();
 

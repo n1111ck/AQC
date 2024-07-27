@@ -1,0 +1,52 @@
+\documentclass[../../main.tex]{subfiles}
+\graphicspath{{\subfix{img/}}}
+
+\begin{document}
+
+\chapter{Ambiente de Simulação}\label{sec:simulacao}
+
+Esta seção apresenta o ambiente de simulação do sistema quadricóptero, bem como a verificação do comportamento do modelo com base em um projeto de referência.
+
+\section{Desenvolvimento}
+
+%%% Estrutura OOP descrito
+A implementação do sistema utiliza a linguagem C++ com programação orientada a objetos, visando à modularização de cada componente, similar aos diagramas de blocos apresentados em capítulos anteriores. Essa abordagem permite que os componentes de Modelagem, Controle e Algoritmo interajam de maneira adequada e equivalente à aplicação real. Adicionalmente, dois componentes extras, o Acoplador e o Sensor, integram o sinal de controle e o sensoriamento dos estados, proporcionando versatilidade para implementação em diferentes plataformas. A interação entre cada um dos componentes e suas respectivas classes é apresentada no diagrama UML (\textit{Unified Modeling Language}) da Figura \ref{label}.
+
+\textcolor{red}{Diagrama UML}
+
+%%% Diagrama de fluxo de dados
+Além da estrutura de cada classe, é fundamental compreender o fluxo de dados, desde o sinal de referência até sua recepção pelo modelo. Esse fluxo pode se originar de três componentes distintos: do Acoplador para o Modelo, representando sinais de tensão aplicados aos atuadores em malha aberta; do Controlador para o Modelo, representando sinais de referência a serem controlados, com realimentação proveniente do componente Sensor, em malha fechada; e do Algoritmo para o Modelo, representando a manipulação das referências do Controlador pelo Algoritmo. A Figura \ref{} ilustra esse comportamento, indicando os métodos e classes correspondentes.
+
+\textcolor{red}{Diagrama de fluxo de dados}
+
+%%% Método de integração do modelo
+A simulação do modelo emprega o método de integração explícito de Runge-Kutta de quarta ordem \textcolor{red}{(REFERENCIA)}. A escolha por este método se baseia em sua boa precisão de integração e na facilidade de implementação em código para sistemas multivariáveis. A Equação \ref{label} representa a aplicação desse algoritmo na simulação.
+
+\textcolor{red}{Equação Runge-Kutta}
+
+%%% Implementação de cada controlador
+Considerando que os controladores calculados apresentam características derivativas, torna-se necessário realizar uma aproximação por meio de uma equação de diferenças \textcolor{red}{(REFERENCIA)}. Essa abordagem, em conjunto com a frequência de controle, assemelha-se a uma derivação contínua sujeita a um filtro passa-baixas.
+
+%%% Integração como biblioteca
+O código desenvolvido está disponível no repositório denominado AQC \textcolor{red}{(REFERENCIA)} no Github. A implementação é realizada em formato de uma biblioteca, o que confere versatilidade ao projeto, permitindo sua utilização em diferentes plataformas.
+
+\section{Verificação}
+
+%%% Garantir uma simulação confiável
+A fim de assegurar a confiabilidade da simulação, faz-se imprescindível a validação dos resultados obtidos. Para tanto, será realizada uma comparação com um trabalho de referência já estabelecido, buscando verificar a correspondência entre os resultados e validar a precisão do modelo desenvolvido. Os dados serão comparados com aqueles obtidos por \textcolor{red}{NOME DO AUTOR (CITAÇÃO)} intitulado \textcolor{red}{TÍTULO DO TRABALHO}, o qual possui uma implementação em MATLAB utilizada como referência e está disponível em um repositório Github \textcolor{red}{(LINK DO REPOSITÓRIO)}.
+
+%%% Como comparar os resultados
+
+%%% Comparação independente
+
+%%% Comparação simultânea
+
+\section{Visualização tridimensional}
+
+%%% Apresentar simulacao
+
+%%% Interação do ambiente com a biblioteca
+
+%%% Referenciar github
+
+\end{document}

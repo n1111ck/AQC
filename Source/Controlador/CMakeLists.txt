@@ -10,11 +10,11 @@ target_include_directories(Controlador
 # Include Files
 target_sources(Controlador
     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/PID.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/RNL.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/CascataPD.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/LRE.cpp
     PUBLIC
-        ${CMAKE_SOURCE_DIR}/Include/Controlador/PID.h
-        ${CMAKE_SOURCE_DIR}/Include/Controlador/RNL.h
+        ${CMAKE_SOURCE_DIR}/Include/Controlador/CascataPD.h
+        ${CMAKE_SOURCE_DIR}/Include/Controlador/LRE.h
         ${CMAKE_SOURCE_DIR}/Include/Controlador/IControlador.h
 )
 
