@@ -29,7 +29,7 @@ int main()
 	parametros.mMassa = 1.023;
 	parametros.mRaio = 0.22225;
 	parametros.mInercia = { 0.0094999, 0.0094999, 0.018576 };
-	parametros.mPasso = 1.000e-4;
+	parametros.mPasso = 1.000e-3;
 	parametros.mGravidade = 9.810;
 	parametros.mInerciaRotacao = 3.788222486039875e-06;
 	parametros.mRelacaoVelocidade = 78.841758300339833;
@@ -52,15 +52,15 @@ int main()
 	gerSensores.Simulacao(modelo);
 #endif
 
-	AQC::LRE controlador(
+	AQC::CascataPD controlador(
 		gerAcopladores,
 		gerSensores,
 		parametros,
-		0.5,
+		0.7,
 		1/parametros.mPasso
 	);
 
-	AQC::Algoritmo<AQC::LRE>::ParametrosAlgoritmo parametrosAlgo;
+	AQC::Algoritmo<AQC::CascataPD>::ParametrosAlgoritmo parametrosAlgo;
 	parametrosAlgo.mAltitudeVoo = 30.0;
 	parametrosAlgo.mArfagemAvanco = 5.0;
 	parametrosAlgo.mToleranciaEntrega = 10.0;
@@ -69,7 +69,7 @@ int main()
 	parametrosAlgo.mConstanteEquilibrio = 0.1;
 
 
-	AQC::Algoritmo<AQC::LRE> algoritmo(
+	AQC::Algoritmo<AQC::CascataPD> algoritmo(
 		controlador,
 		gerSensores,
 		parametrosAlgo
@@ -89,7 +89,7 @@ int main()
 	AQC::Vetor4D sinal = {};
 
 	// Aplicacao de chao
-	modelo.Arrasto({1.0, 1.0, 0.5});
+	//modelo.Arrasto({1.0, 1.0, 0.5});
 	algoritmo.NovaEntrega(-100.0, -200.0);
 	AQC::Float ultimoControle = 0.0;
 	AQC::Float tempoAcomodacao = 0.0;
@@ -128,29 +128,61 @@ int main()
 		csvExport << controlador.ReferenciaVelocidade().mY << ",";
 		csvExport << controlador.ReferenciaVelocidade().mZ << std::endl;
 
-		if (i * parametros.mPasso > 0.398)
+		if (i * parametros.mPasso > 0)
 		{
-			//gerAcopladores.Aplicar(AQC::Vetor4D({ 6.0, 6.0, 6.0, 6.0 }));
+			//gerAcopladores.Aplicar(AQC::Vetor4D({ 5.998, 5.999, 6.000, 6.001 }));
 
-			if (i < static_cast<AQC::UInt32>(2.0 / parametros.mPasso))
+			if (i < static_cast<AQC::UInt32>(1.0 / parametros.mPasso))
 			{
 				controlador.Aplicar({ 1.0, 0.0, 0.0, 0.0 });
 			}
+			else if (i < static_cast<AQC::UInt32>(2.0 / parametros.mPasso))
+			{
+				controlador.Aplicar({ 1.0, 0.0, 0.100, 0.0 });
+			}
+			else if (i < static_cast<AQC::UInt32>(3.0 / parametros.mPasso))
+			{
+				controlador.Aplicar({ 1.0, 0.100, 0.100, 0.0 });
+			}
+			else if (i < static_cast<AQC::UInt32>(4.0 / parametros.mPasso))
+			{
+				controlador.Aplicar({ 1.0, 0.100, 0.100, 0.100 });
+			}
+			else if (i < static_cast<AQC::UInt32>(5.0 / parametros.mPasso))
+			{
+				controlador.Aplicar({ 2.0, 0.200, 0.200, 0.200 });
+			}
+			else if (i < static_cast<AQC::UInt32>(6.0 / parametros.mPasso))
+			{
+				controlador.Aplicar({ 2.0, 0.300, 0.300, 0.300 });
+			}
+			else if (i < static_cast<AQC::UInt32>(7.0 / parametros.mPasso))
+			{
+				controlador.Aplicar({ 1.0, 0.150, 0.150, 0.150 });
+			}
+			else if (i < static_cast<AQC::UInt32>(8.0 / parametros.mPasso))
+			{
+				controlador.Aplicar({ 1.0, 0.0, 0.0, 0.150 });
+			}
+			else if (i < static_cast<AQC::UInt32>(9.0 / parametros.mPasso))
+			{
+				controlador.Aplicar({ 1.0, 0.150, 0.0, 0.0 });
+			}
 			else
 			{
-				controlador.Aplicar({ 1.0, 0.0, 0.174, 0.0 });
+				controlador.Aplicar({ 0.0, 0.000, 0.000, 0.000 });
 			}
 
 			//algoritmo.Atualizar();
 
-			modelo.Sobreposicao(modelo.Posicao().mZ < 0.0);
+			//modelo.Sobreposicao(modelo.Posicao().mZ < 0.0);
 		}
 		modelo.Simular();
 
-		if (fabsf(0.174 - modelo.Rotacao().mY) > 0.02)
-		{
-			tempoAcomodacao = i * parametros.mPasso - 2.0;
-		}
+		//if (fabsf(0.174 - modelo.Rotacao().mY) > 0.02)
+		//{
+		//	tempoAcomodacao = i * parametros.mPasso - 2.0;
+		//}
 	}
 
 	csvExport.close();

@@ -59,7 +59,6 @@ namespace AQC
 		// Memoria do sinal
 		Vetor4D mUltimaReferenciaVelocidade;
 		Vetor4D mUltimaReferenciaPosicao;
-		Vetor4D mUltimoSinal;
 
 		// Captura dados
 		Void Capturar();
