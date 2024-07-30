@@ -5,41 +5,68 @@
 
 \chapter{Ambiente de Simulação}\label{sec:simulacao}
 
-Esta seção apresenta o ambiente de simulação do sistema quadricóptero, bem como a verificação do comportamento do modelo com base em um projeto de referência.
+Este capítulo descreve o ambiente de simulação desenvolvido para implementar e validar o sistema de controle. Inicialmente, será apresentado como a modelagem matemática, o controlador projetado e o algoritmo de planejamento de trajetória foram traduzidos em código, detalhando o diagrama de classes, o diagrama de fluxo de dados e o método de integração numérica utilizado. Adicionalmente, será apresentado um ambiente de visualização tridimensional, desenvolvido com o intuito de proporcionar uma representação gráfica intuitiva dos dados gerados pela simulação, facilitando a análise e validação do sistema como um todo.
 
 \section{Desenvolvimento}
 
-%%% Estrutura OOP descrito
-A implementação do sistema utiliza a linguagem C++ com programação orientada a objetos, visando à modularização de cada componente, similar aos diagramas de blocos apresentados em capítulos anteriores. Essa abordagem permite que os componentes de Modelagem, Controle e Algoritmo interajam de maneira adequada e equivalente à aplicação real. Adicionalmente, dois componentes extras, o Acoplador e o Sensor, integram o sinal de controle e o sensoriamento dos estados, proporcionando versatilidade para implementação em diferentes plataformas. A interação entre cada um dos componentes e suas respectivas classes é apresentada no diagrama UML (\textit{Unified Modeling Language}) da Figura \ref{label}.
+\begin{figure}[!b]
+	\centering
+	\caption{Diagrama UML para a código desenvolvido.}
+	\includegraphics[width=0.8\textwidth]{img/uml.png}
+	\label{fig:uml}
+\end{figure}
 
-\textcolor{red}{Diagrama UML}
+%%% Estrutura OOP descrito
+A implementação do sistema utiliza a linguagem C++ com programação orientada a objetos, visando à modularização de cada componente, similar aos diagramas de blocos apresentados em capítulos anteriores. Essa abordagem permite que os componentes de Modelagem, Controle e Algoritmo interajam de maneira adequada e equivalente à aplicação real. Adicionalmente, dois componentes extras, o Atuador e o Sensor, integram o sinal de controle e o sensoriamento dos estados, proporcionando versatilidade para implementação em diferentes plataformas. A interação entre cada um dos componentes e suas respectivas classes é apresentada no diagrama UML (\textit{Unified Modeling Language}) da Figura \ref{fig:uml}. Denota-se que, neste caso, foram evidenciadas apenas as partes mais importantes ao entendimento do código.
 
 %%% Diagrama de fluxo de dados
-Além da estrutura de cada classe, é fundamental compreender o fluxo de dados, desde o sinal de referência até sua recepção pelo modelo. Esse fluxo pode se originar de três componentes distintos: do Acoplador para o Modelo, representando sinais de tensão aplicados aos atuadores em malha aberta; do Controlador para o Modelo, representando sinais de referência a serem controlados, com realimentação proveniente do componente Sensor, em malha fechada; e do Algoritmo para o Modelo, representando a manipulação das referências do Controlador pelo Algoritmo. A Figura \ref{} ilustra esse comportamento, indicando os métodos e classes correspondentes.
+Além da estrutura de cada classe, é fundamental compreender o fluxo de dados, desde o sinal de referência até sua recepção pelo modelo. Esse fluxo pode se originar de três componentes distintos: do Atuador para o Modelo, representando sinais de tensão aplicados aos atuadores em malha aberta; do Controlador para o Modelo, representando sinais de referência a serem controlados, com realimentação proveniente do componente Sensor, em malha fechada; e do Algoritmo para o Modelo, representando a manipulação das referências do Controlador pelo Algoritmo. A Figura \ref{fig:data_flow} ilustra esse comportamento, indicando os métodos e classes correspondentes.
 
-\textcolor{red}{Diagrama de fluxo de dados}
+\begin{figure}[!h]
+	\centering
+	\caption{Diagrama de fluxo de dados para a código desenvolvido.}
+	\includegraphics[width=1.0\textwidth]{img/data_flow.png}
+	\label{fig:data_flow}
+\end{figure}
 
 %%% Método de integração do modelo
-A simulação do modelo emprega o método de integração explícito de Runge-Kutta de quarta ordem \textcolor{red}{(REFERENCIA)}. A escolha por este método se baseia em sua boa precisão de integração e na facilidade de implementação em código para sistemas multivariáveis. A Equação \ref{label} representa a aplicação desse algoritmo na simulação.
+A simulação do modelo emprega o método de integração explícito de Runge-Kutta de quarta ordem \cite{integracao_numerica}. A escolha por este método se baseia em sua boa precisão de integração e na facilidade de implementação em código para sistemas multivariáveis. A Equação \ref{eq:constantes_rk4} demonstra o processo iterativo do algoritmo na simulação a exemplo da rotação angular dos rotores e velocidade linear de altitude, com $k$'s representando as constantes do método e $\Delta t$ o passo de integração. Assim, o método deve sempre calcular todos os $k$'s de mesmo índice para só então prosseguir ao próximo $k$ até chegar no quarto índice. 
 
-\textcolor{red}{Equação Runge-Kutta}
+\begin{equation}\label{eq:constantes_rk4}
+	\begin{matrix}
+		k_{\omega_j1} = \Delta t\dot{\omega}(V_j, \omega_j) & k_{\dot{z}1} = \Delta t\ddot{z}(\omega_j)\\
+		k_{\omega_j2} = \Delta t\dot{\omega}(V_j, \omega_j + 0,5k_{\omega_j1}) & k_{\dot{z}2} = \Delta t\ddot{z}(\omega_j + 0,5k_{\omega_j1})\\
+		k_{\omega_j3} = \Delta t\dot{\omega}(V_j, \omega_j + 0,5k_{\omega_j2}) & k_{\dot{z}3} = \Delta t\ddot{z}(\omega_j + 0,5k_{\omega_j2}) \\
+		k_{\omega_j4} = \Delta t\dot{\omega}(V_j, \omega_j + 0,5k_{\omega_j3}) & k_{\dot{z}4} = \Delta t\ddot{z}(\omega_j + 0,5k_{\omega_j3})\\
+	\end{matrix}
+\end{equation}
+
+Ao final do cálculo de todas as contantes, o valor simulado para a variável é encontrado como uma combinação de todas estas, conforme exemplificado na Equação \ref{eq:rk4_final}.
+
+\begin{equation}\label{eq:rk4_final}
+	\begin{split}
+		\omega_{j_1} &= \omega_{j_0} + \frac{1}{6}(k_{\omega_j1} + 2k_{\omega_j2} + 2k_{\omega_j3} + k_{\omega_j4})\\
+		\dot{z}_{1} &= \dot{z}_{0} + \frac{1}{6}(k_{\dot{z}1} + 2k_{\dot{z}2} + 2k_{\dot{z}3} + k_{\dot{z}4})
+	\end{split}
+\end{equation}
+
+
 
 %%% Implementação de cada controlador
-Considerando que os controladores calculados apresentam características derivativas, torna-se necessário realizar uma aproximação por meio de uma equação de diferenças \textcolor{red}{(REFERENCIA)}. Essa abordagem, em conjunto com a frequência de controle, assemelha-se a uma derivação contínua sujeita a um filtro passa-baixas.
+Ainda, considerando que os controladores calculados apresentam características derivativas, torna-se necessário realizar uma aproximação por meio de uma equação de diferenças. Essa abordagem, em conjunto com a frequência de controle, assemelha-se a uma derivação contínua sujeita a um filtro passa-baixas. Sua implementação é descrita pela Equação \ref{eq:filtro_derivativo}, com $u$ representando a variável de saída, $e$ a variável de entrada, $f$ a frequência de controle e $d$ a frequência do filtro derivativo.
+
+\begin{equation}\label{eq:filtro_derivativo}
+	\begin{split}
+		U(s) &= k_ds\frac{d}{s + d}E(s)\\
+		U(s) &= k_dsE(s) - d^{-1}sU(s)\\
+		u(t) &= k_d\dot{e}(t) - d^{-1}\dot{u}(t)\\
+		u[j] &= k_df(e[j] - e[j-1]) - fd^{-1}(u[j] - u[j-1])\\
+		u[j] &= (1 + fd^{-1})(k_df(e[j] - e[j-1]) - u[j-1]fd^{-1})\\
+	\end{split}
+\end{equation}
 
 %%% Integração como biblioteca
-O código desenvolvido está disponível no repositório denominado AQC \textcolor{red}{(REFERENCIA)} no Github. A implementação é realizada em formato de uma biblioteca, o que confere versatilidade ao projeto, permitindo sua utilização em diferentes plataformas.
-
-\section{Verificação}
-
-%%% Garantir uma simulação confiável
-A fim de assegurar a confiabilidade da simulação, faz-se imprescindível a validação dos resultados obtidos. Para tanto, será realizada uma comparação com um trabalho de referência já estabelecido, buscando verificar a correspondência entre os resultados e validar a precisão do modelo desenvolvido. Os dados serão comparados com aqueles obtidos por \textcolor{red}{NOME DO AUTOR (CITAÇÃO)} intitulado \textcolor{red}{TÍTULO DO TRABALHO}, o qual possui uma implementação em MATLAB utilizada como referência e está disponível em um repositório Github \textcolor{red}{(LINK DO REPOSITÓRIO)}.
-
-%%% Como comparar os resultados
-
-%%% Comparação independente
-
-%%% Comparação simultânea
+O código desenvolvido está disponível no repositório denominado AQC \cite{repo_aqc} no Github. A implementação é realizada em formato de uma biblioteca, o que confere versatilidade ao projeto, permitindo sua utilização em diferentes plataformas.
 
 \section{Visualização tridimensional}
 

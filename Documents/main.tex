@@ -105,47 +105,47 @@
 
 \begin{document}
 % IMPORTAR DOCUMENTOS INICIAIS
-%\maketitle
-%\notoc\chapter{Agradecimentos}
-%
-%\`{A} Universidade Federal do Rio Grande do Sul, UFRGS, pela
-%oportunidade de realização de estudos.
-%
-%Aos colegas de curso pelo seu auxílio nas tarefas desenvolvidas durante o
-%curso e apoio na revisão deste trabalho.
-%
-%Agradeço ao \LaTeX\ por não ter vírus de macro\ldots
-%\begin{abstract}
-%
-%No âmbito deste trabalho, busca-se o desenvolvimento de um sistema embarcado destinado a quadricópteros, visando controlar sua dinâmica com base em trajetórias predefinidas para operações autônomas de entrega. O sistema é modelado, empregando-se malhas de controle digital para gerenciar os estados que influenciam os motores da aeronave não tripulada (UAV, \textit{unmanned aerial vehicle}), utilizando o \textit{feedback} proveniente de uma unidade de medição inercial (IMU, \textit{inertial measurement unit}) e um sistema de posicionamento global (GPS, \textit{global positioning system}). Para determinar a configuração ideal do controlador para essa finalidade, são avaliadas distintas abordagens, como o controlador PID, realimentação de estados e linearização via realimentação de estados. Opta-se pela aplicação da técnica de linearização via realimentação de estados, validada por meio do \textit{software} Simulink do MATLAB. As próximas etapas desse estudo envolvem a definição do gerador de trajetória, a elaboração do código do controlador, simulações utilizando o ambiente de \textit{software} ROS e a realização de testes em um protótipo real a ser desenvolvido.
-%
-%\end{abstract}
-%\begin{otherabstract}{Project, UAV, Autonomous Delivery, Automation and Control, Flight Dynamics}
-%
-%Within the scope of this work, the development of an embedded system intended for quadcopters is pursued, aiming to control their dynamics based on predefined trajectories for autonomous delivery operations. The system is modeled, employing digital control loops to manage the states influencing the motors of the unmanned aerial vehicle (UAV), utilizing feedback from an inertial measurement unit (IMU) and a global positioning system (GPS). To determine the optimal controller configuration for this purpose, various approaches are evaluated, such as the PID controller, state feedback, and linearization through state feedback. The choice is made to apply the state feedback-based linearization technique, validated through the Simulink software of MATLAB. The forthcoming stages of this study encompass trajectory generator definition, controller code development, simulations using the ROS software environment, and testing on a real prototype to be developed.
-%\end{otherabstract}
-%\setcounter{tocdepth}{3}
-%\listoffigures
-%\listoftables
-%\begin{listofabbrv}{PPGEE}
-%\item[UAV] Unmanned Aerial Vehicle (Veículo Aéreo Não-tripulado)
-%\item[IMU] Inertial Measurement Unit (Unidade de Mensuração Inercial)
-%\item[GPS] Global Positioning System (Sistema de Posicionamento Global)
-%\item[VTOL] Vertical Take-Off and Landing (Decolagem e Aterrisagem Verticais)
-%\item[PID] Controlador proporcional, integral e derivativo
-%\item[LRE] Linearização por Realimentação de Estados
-%\end{listofabbrv}
-%\tableofcontents
+\maketitle
+\notoc\chapter{Agradecimentos}
+
+\`{A} Universidade Federal do Rio Grande do Sul, UFRGS, pela
+oportunidade de realização de estudos.
+
+Aos colegas de curso pelo seu auxílio nas tarefas desenvolvidas durante o
+curso e apoio na revisão deste trabalho.
+
+Agradeço ao \LaTeX\ por não ter vírus de macro\ldots
+\begin{abstract}
+
+No âmbito deste trabalho, busca-se o desenvolvimento de um sistema embarcado destinado a quadricópteros, visando controlar sua dinâmica com base em trajetórias predefinidas para operações autônomas de entrega. O sistema é modelado, empregando-se malhas de controle digital para gerenciar os estados que influenciam os motores da aeronave não tripulada (UAV, \textit{unmanned aerial vehicle}), utilizando o \textit{feedback} proveniente de uma unidade de medição inercial (IMU, \textit{inertial measurement unit}) e um sistema de posicionamento global (GPS, \textit{global positioning system}). Para determinar a configuração ideal do controlador para essa finalidade, são avaliadas distintas abordagens, como o controlador PID, realimentação de estados e linearização via realimentação de estados. Opta-se pela aplicação da técnica de linearização via realimentação de estados, validada por meio do \textit{software} Simulink do MATLAB. As próximas etapas desse estudo envolvem a definição do gerador de trajetória, a elaboração do código do controlador, simulações utilizando o ambiente de \textit{software} ROS e a realização de testes em um protótipo real a ser desenvolvido.
+
+\end{abstract}
+\begin{otherabstract}{Project, UAV, Autonomous Delivery, Automation and Control, Flight Dynamics}
+
+Within the scope of this work, the development of an embedded system intended for quadcopters is pursued, aiming to control their dynamics based on predefined trajectories for autonomous delivery operations. The system is modeled, employing digital control loops to manage the states influencing the motors of the unmanned aerial vehicle (UAV), utilizing feedback from an inertial measurement unit (IMU) and a global positioning system (GPS). To determine the optimal controller configuration for this purpose, various approaches are evaluated, such as the PID controller, state feedback, and linearization through state feedback. The choice is made to apply the state feedback-based linearization technique, validated through the Simulink software of MATLAB. The forthcoming stages of this study encompass trajectory generator definition, controller code development, simulations using the ROS software environment, and testing on a real prototype to be developed.
+\end{otherabstract}
+\setcounter{tocdepth}{3}
+\listoffigures
+\listoftables
+\begin{listofabbrv}{PPGEE}
+\item[UAV] Unmanned Aerial Vehicle (Veículo Aéreo Não-tripulado)
+\item[IMU] Inertial Measurement Unit (Unidade de Mensuração Inercial)
+\item[GPS] Global Positioning System (Sistema de Posicionamento Global)
+\item[VTOL] Vertical Take-Off and Landing (Decolagem e Aterrisagem Verticais)
+\item[PID] Controlador proporcional, integral e derivativo
+\item[LRE] Linearização por Realimentação de Estados
+\end{listofabbrv}
+\tableofcontents
 
 % IMPORTAR DOCUMENTOS PRINCIPAIS
-%\subfile{capitulos/introducao/}
+\subfile{capitulos/introducao/}
 \subfile{capitulos/descricao/}
 \subfile{capitulos/modelagem/}
 \subfile{capitulos/controle_atitude/}
 \subfile{capitulos/algoritmo_voo/}
 \subfile{capitulos/ambiente_simulacao/}
-%\subfile{capitulos/analise/}
-%\subfile{capitulos/conclusao/}
+\subfile{capitulos/analise/}
+\subfile{capitulos/conclusao/}
 
 \printbibliography
 \end{document}

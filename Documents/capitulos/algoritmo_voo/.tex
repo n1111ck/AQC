@@ -5,7 +5,7 @@
 
 \chapter{Algoritmo de voo}\label{cap:controle_voo}
 
-Enfim, para concluir a implementação do quadricóptero no contexto de entregas, deve-se determinar como as referências ao controlador devem ser aplicadas, a fim de alcançar o comportamento desejado. Logo, nessa seção, especificam-se as regras de voo que o veículo deve seguir, assim como especificações de como ele irá alcançar essas características.
+Este capítulo detalha o algoritmo desenvolvido, responsável por gerar as referências para o controlador, garantindo que o quadricóptero siga a rota planejada e execute as tarefas de entrega com sucesso. As regras de voo e os métodos para o cumprimento de cada etapa da missão serão abordados em detalhes nas seções subsequentes. Os desenvolvimento foram baseados em condições geométricas presentes na rota e no trabalho do autor Kareem \cite{planejamento_rota}.
 
 \section{Decolagem}
 
@@ -13,27 +13,34 @@ A decolagem deve acontecer logo após a inicialização e imposição do destino
 
 \begin{itemize}
 	\item a altitude incremente até a sua altitude de cruzeiro $z_c$, considerada para um voo seguro;
-	\item o deslocamento seja nulo para evitar possíveis colisões com estruturas baixas, pelo \textit{drone} ainda não estar voando numa altitude adequada;
+	\item o quadricóptero permaneça na mesma posição planar (em x e y), de forma que seu deslocamento seja nulo para evitar possíveis colisões com estruturas baixas, pelo \textit{drone} ainda não estar voando numa altitude considerada adequada;
 	\item o veículo já se oriente para a posição de destino;
 \end{itemize}
 
-Tanto a altitude quanto a orientação da guinada são diretamente acessíveis pelas referências do controlador. No entanto, o deslocamento nulo deve ser alcançado a partir de uma função que equilibre as referências de arfagem e rolamento para manter o deslocamento nulo.
+Tanto a altitude quanto a orientação da guinada são diretamente acessíveis pelas referências do controlador. No entanto, o deslocamento nulo deve ser alcançado a partir de uma função que equilibre as referências de arfagem e rolamento.
 
-Esta função deve possuir sempre a ação contrária do desvio aparente para evitar seu crescimento, assim como em um laço de controle. Uma função simples que possui essa característica é a própria função afim, quando passa pela origem e inverte o sinal da entrada, conforme representado na Equação \ref{eq:equilibrio}. Na equação, $\lambda_+$ e $\lambda_-$ representam os limites de operação superior e inferior da ação, e $k_l$ representa o ganho entre o desvio e a ação executada. 
+Esta função deve possuir sempre a ação contrária do desvio aparente para evitar seu crescimento, assim como em um laço de controle. Uma função simples que possui essa característica é a própria função afim, quando passa pela origem e inverte o sinal da entrada, conforme representado na Equação \ref{eq:equilibrio}. Na equação, $\lambda$ representa o limite de operação superior e inferior da ação em módulo, e $k_l$ representa o ganho entre o desvio e a ação executada. 
 
 \begin{equation}\label{eq:equilibrio}
-	h_{(d)} = \begin{cases}
-		-\lambda_- & d < k_l^{-1}\lambda_-\\
-		-k_ld & \lambda_- \leq x \leq \lambda_+\\
-		-\lambda_+ & d > k_l^{-1}\lambda_+\\
+	h(d) = \begin{cases}
+		\lambda & d < -k_l^{-1}\lambda\\
+		-k_ld & -k_l^{-1}\lambda \leq d \leq k_l^{-1}\lambda\\
+		-\lambda & d > k_l^{-1}\lambda\\
 	\end{cases}
 \end{equation}
 
 Na equação, ainda são determinados limites de atuação para impedir que o veículo se distancie muito do seu ponto de equilíbrio, que também viria a causar oscilações.
 
-Para que a guinada esteja corretamente orientada, é necessário calcular o ângulo de abertura entre a latitude e o trajeto. O trajeto escolhido é uma reta entre a origem e o destino, representando a menor distância entre esses dois pontos. Assim, basta utilizar a função do arco-tangente para encontrar essa orientação. Detalha-se que essa operação deve ser acompanhada por uma avaliação dos sinais da variação latitudinal e longitudinal, para determinar corretamente em qual quadrante o ângulo estará.
+Para que a guinada esteja corretamente orientada, é necessário calcular o ângulo de abertura entre a latitude e o trajeto, conforme ilustrado na Figura \ref{fig:guinada_decolagem}. O trajeto escolhido é uma reta entre a origem e o destino, representando a menor distância entre esses dois pontos. Assim, basta utilizar a função do arco-tangente para encontrar essa orientação. Detalha-se que essa operação deve ser acompanhada por uma avaliação dos sinais da variação latitudinal e longitudinal, para determinar corretamente em qual quadrante o ângulo estará.
 
-Logo, este estado deve possuir as referências apresentadas na Tabela \ref{tab:ref_decolagem}, em que $\Delta x_\eta$ e $\Delta y_\eta$ representam as variações entre o ciclo de processamento atual e o anterior da latitude e longitude.
+\begin{figure}[!h]
+	\centering
+	\caption{Orientação da guinada para seguimento da rota planejada.}
+	\includegraphics[width=0.8\textwidth]{imgs/orientacao_decolagem.png}
+	\label{fig:guinada_decolagem}
+\end{figure}
+
+Logo, este estado deve possuir as referências apresentadas na Tabela \ref{tab:ref_decolagem}. Na tabela, $\Delta x_\eta$ e $\Delta y_\eta$ representam os desvios com relação à posição fixada no início do estado, que devem ser equilibrados para manter a posição planar do veículo constante. 
 
 \begin{table}[!h]
 	\centering
@@ -41,14 +48,14 @@ Logo, este estado deve possuir as referências apresentadas na Tabela \ref{tab:r
 	\begin{tabular}{|c|c|c|c|c|}
 		\cline{2-5}
 		\multicolumn{1}{c|}{} & $z$  & $\phi$ & $\theta$ & $\psi$ \\\hline
-		Decolagem & $z_c$ & $h_{(\Delta x_\eta)}$ & $h_{(\Delta y_\eta)}$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\hline
+		Decolagem & $z_c$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\hline
 	\end{tabular}
 	\label{tab:ref_decolagem}
 \end{table}
 
-\section{Translocamento}
+\section{Transporte}
 
-O translocamento deve ocorrer logo após o veículo alcançar um percentual praticamente igual à altitude de cruzeiro. As características para o estado do translocamento devem ser tais que:
+O transporte deve ocorrer logo após o veículo alcançar uma altitude viável para o deslocamento planar, entendida como um percentual da altitude de cruzeiro pretendida. As características para o estado do transporte devem ser tais que:
 
 \begin{itemize}
 	\item a altitude mantenha-se na altitude de cruzeiro $z_c$;
@@ -57,34 +64,41 @@ O translocamento deve ocorrer logo após o veículo alcançar um percentual prat
 	\item a guinada mantenha a direção $x_\eta$ do quadricóptero apontando para o destino geodeticamente;
 \end{itemize} 
 
-A fim de minimizar o gasto energético do veículo, a trajetória deve possuir a menor distância possível. Logo, a trajetória do veículo deve ser retilínea e representada conforme a Equação \ref{eq:trajetoria}. Na equação, $x_o$ e $y_o$ representam a latitude e longitude de origem, e $x_d$ e $y_d$ representam a latitude e longitude de destino.
+A fim de minimizar o gasto energético do veículo, a trajetória deve possuir a menor distância possível. No deslocamento aéreo para longas distâncias, a menor distância é representada pelo arco de círculo máximo entre os dois pontos pretendidos, por considerar a curvatura da Terra. Contudo, para esta aplicação, as distâncias de voo serão inferiores a 111 km, o que corresponde a um arco de aproximadamente um grau de curvatura terrestre. Dessa forma, a trajetória pode ser aproximada por uma reta sem perda significativa de precisão. Logo, a trajetória do veículo deve ser retilínea e representada conforme a Equação \ref{eq:trajetoria}. Na equação, $x_o$ e $y_o$ representam a latitude e longitude de origem, e $x_d$ e $y_d$ representam a latitude e longitude de destino.
 
 \begin{equation}\label{eq:trajetoria}
-	y_{p(x)} = \frac{y_{d} - y_{o}}{x_{d} - x_{o}}x + y_{o}
+	y_p(x) = \frac{y_{d} - y_{o}}{x_{d} - x_{o}}x + y_{o}
 \end{equation}
 
-O equilíbrio do rolamento deve ser tal que a função $h$ receba o desvio da posição global do quadricóptero com relação à trajetória. Essa determinação é equivalente à distância de um ponto a uma reta e possui a forma apresentada na Equação \ref{eq:desvio_trajetoria}.
+\begin{figure}[!h]
+	\centering
+	\caption{Distância entre o quadricóptero e a rota planejada para um desvio anômalo.}
+	\includegraphics[width=0.8\textwidth]{imgs/distancia_rota.png}
+	\label{fig:distancia_rota}
+\end{figure}
+
+O equilíbrio do rolamento deve ser tal que a função $h$ receba o desvio da posição global do quadricóptero com relação à trajetória, conforme ilustrado na Figura \ref{fig:distancia_rota}. Essa determinação é equivalente à distância de um ponto a uma reta e possui a forma apresentada na Equação \ref{eq:desvio_trajetoria}.
 
 \begin{equation}\label{eq:desvio_trajetoria}
-	d_{t(x, y)} = \text{sgn}(y - y_{p(x)})\left|\frac{y_{d} - y_{o}}{x_{d} - x_{o}}x_{o} + 2\cdot y_{o}\right|\left[\left(\frac{y_{d} - y_{o}}{x_{d} - x_{o}}\right) + 1\right]^{-0.5}
+	d_{t}(x, y) = \text{sgn}(y - y_p(x))\left|\frac{y_{d} - y_{o}}{x_{d} - x_{o}}x_{o} + 2\cdot y_{o}\right|\left[\left(\frac{y_{d} - y_{o}}{x_{d} - x_{o}}\right) + 1\right]^{-0.5}
 \end{equation}
 
-Por fim, os estados para o translocamento são apresentados na Tabela \ref{tab:ref_translocamento}.
+Por fim, os estados para o transporte são apresentados na Tabela \ref{tab:ref_transporte}.
 
 \begin{table}[!h]
 	\centering
-	\caption{Referências do controlador para o translocamento.}
+	\caption{Referências do controlador para o transporte.}
 	\begin{tabular}{|c|c|c|c|c|}
 		\cline{2-5}
 		\multicolumn{1}{c|}{} & $z$  & $\phi$ & $\theta$ & $\psi$ \\\hline
-		Translocamento & $z_c$ & $\phi_{max}$ & $h_{(d_{t(x,y)})}$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\hline
+		Transporte & $z_c$ & $\phi_{max}$ & $h(d_t(x,y))$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\hline
 	\end{tabular}
-	\label{tab:ref_translocamento}
+	\label{tab:ref_transporte}
 \end{table}
 
 \section{Prevenção de colisões}
 
-Enquanto em um estado de translocamento, o sensor frontal do quadricóptero pode detectar um empecilho em sua rota, neste caso o estado mudará para o estado de prevenção de colisão. Este estado deve possuir as características de:
+Enquanto em um estado de transporte, o sensor frontal do quadricóptero pode detectar um empecilho em sua rota, neste caso o estado mudará para o estado de prevenção de colisão. Este estado deve possuir as características de:
 
 \begin{itemize}
 	\item elevar o valor de $z$ gradualmente até que o sensor frontal não detecte mais nenhum obstáculo, atualizando o valor de $z_c$ no fim do estado;
@@ -96,18 +110,18 @@ Logo, para este estado, o importante é manter o veículo parado e gradualmente 
 
 \begin{table}[!h]
 	\centering
-	\caption{Referências do controlador para o translocamento.}
+	\caption{Referências do controlador para a prevenção de colisões.}
 	\begin{tabular}{|c|c|c|c|c|}
 		\cline{2-5}
 		\multicolumn{1}{c|}{} & $z$  & $\phi$ & $\theta$ & $\psi$ \\\hline
-		Colisão & $z_c^*$ & $h_{(\Delta x_\eta)}$ & $h_{(\Delta y_\eta)}$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\hline
+		Colisão & $z_c^*$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\hline
 	\end{tabular}
 	\label{tab:ref_colisao}
 \end{table}
 
 \section{Pouso}
 
-O pouso deve ocorrer após o translocamento ter atingido um determinado percentual de completude da trajetória ao destino. Este estado possui as seguintes características:
+O pouso deve ocorrer após o transporte chegar na posição pretendida, entendido como um valor de distância determinado pelo projetista. Este estado possui as seguintes características:
 
 \begin{itemize}
 	\item descender gradualmente até que o sensor de distância na parte inferior do veículo detecte o solo;
@@ -123,11 +137,11 @@ Na Tabela \ref{tab:ref_pouso}, são representados os estados para o pouso, em qu
 
 \begin{table}[!h]
 	\centering
-	\caption{Referências do controlador para o translocamento.}
+	\caption{Referências do controlador para o pouso.}
 	\begin{tabular}{|c|c|c|c|c|}
 		\cline{2-5}
 		\multicolumn{1}{c|}{} & $z$  & $\phi$ & $\theta$ & $\psi$ \\\hline
-		Pouso & $z_d^*$ & $h_{(\Delta x_\eta)}$ & $h_{(\Delta y_\eta)}$ & atan$\left(\frac{y_{d} - y_o}{x_{d} - x_o}\right)$\\\hline
+		Pouso & $z_d^*$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{d} - y_o}{x_{d} - x_o}\right)$\\\hline
 	\end{tabular}
 	\label{tab:ref_pouso}
 \end{table}
@@ -142,7 +156,7 @@ Na etapa de retorno, o que acontece é uma reutilização do processo todo, mas 
 
 \section{Máquina de estados}
 
-Por fim, a sequência de passos e suas referências é demonstrada na Tabela \ref{tab:algoritmo_final}. Na tabela, $d_{t(x, y)}^*$ representa a função $d_{t(x, y)}$ invertendo destino e origem.
+Por fim, a sequência de passos e suas referências é demonstrada na Tabela \ref{tab:algoritmo_final}. Na tabela, $d_t(x, y)^*$ representa a função $d_t(x, y)$ invertendo destino e origem.
 
 \begin{table}[!h]
 	\centering
@@ -150,14 +164,14 @@ Por fim, a sequência de passos e suas referências é demonstrada na Tabela \re
 	\begin{tabular}{|c|c|c|c|c|c|c|}
 		\cline{3-7}
 		\multicolumn{2}{c|}{} & Símbolo & $z$  & $\phi$ & $\theta$ & $\psi$ \\\hline
-		\multirow{5}{*}{Entregando} & Decolagem & D & $z_c$ & $h_{(\Delta x_\eta)}$ & $h_{(\Delta y_\eta)}$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\cline{2-7}
-		 & Translocamento & T & $z_c$ & $\phi_{max}$ & $h_{(d_{t(x,y)})}$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\cline{2-7}
-		 & Colisão & C & $z_c^*$ & $h_{(\Delta x_\eta)}$ & $h_{(\Delta y_\eta)}$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\cline{2-7}
-		 & Pouso & P & $z_d^*$ & $h_{(\Delta x_\eta)}$ & $h_{(\Delta y_\eta)}$ & atan$\left(\frac{y_{d} - y_o}{x_{d} - x_o}\right)$\\\hline
-		\multirow{5}{*}{Retornando} & Decolagem & D & $z_c$ & $h_{(\Delta x_\eta)}$ & $h_{(\Delta y_\eta)}$ & atan$\left(\frac{y_{o} - y}{x_{o} - x}\right)$\\\cline{2-7}
-		& Translocamento & T & $z_c$ & $\phi_{max}$ & $h_{(d^*_{t(x,y)})}$ & atan$\left(\frac{y_{o} - y}{x_{o} - x}\right)$\\\cline{2-7}
-		& Colisão & C & $z_c^*$ & $h_{(\Delta x_\eta)}$ & $h_{(\Delta y_\eta)}$ & atan$\left(\frac{y_{o} - y}{x_{o} - x}\right)$\\\cline{2-7}
-		& Pouso & P & $z_d^*$ & $h_{(\Delta x_\eta)}$ & $h_{(\Delta y_\eta)}$ & atan$\left(\frac{y_{o} - y_d}{x_{o} - x_d}\right)$\\\hline
+		\multirow{5}{*}{Entregando} & Decolagem & D & $z_c$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\cline{2-7}
+		 & Transporte & T & $z_c$ & $\phi_{max}$ & $h(d_t(x,y))$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\cline{2-7}
+		 & Colisão & C & $z_c^*$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\cline{2-7}
+		 & Pouso & P & $z_d^*$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{d} - y_o}{x_{d} - x_o}\right)$\\\hline
+		\multirow{5}{*}{Retornando} & Decolagem & D & $z_c$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{o} - y}{x_{o} - x}\right)$\\\cline{2-7}
+		& Transporte & T & $z_c$ & $\phi_{max}$ & $h(d^*_t(x,y))$ & atan$\left(\frac{y_{o} - y}{x_{o} - x}\right)$\\\cline{2-7}
+		& Colisão & C & $z_c^*$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{o} - y}{x_{o} - x}\right)$\\\cline{2-7}
+		& Pouso & P & $z_d^*$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{o} - y_d}{x_{o} - x_d}\right)$\\\hline
 	\end{tabular}
 	\label{tab:algoritmo_final}
 \end{table}
@@ -172,6 +186,6 @@ As informações listadas na tabela já compõem o algoritmo, porém, usualmente
 \end{figure}
 \newpage
 
-Neste diagrama em específico, não foram detalhadas as formas de transição para não causar uma poluição visual, mas essa máquina se trata de uma máquina de Moore \cite{moore} pela saída ser determinada pelo estado, e não pela transição. Ainda, os estados I, F e E representam respectivamente os estados de inicialização, finalização e entrega.
+Neste diagrama em específico, não foram detalhadas as formas de transição para melhor clareza. A máquina em questão é do tipo Moore \cite{moore}, pois a saída é determinada pelo estado, e não pela transição. Os estados I, F e E representam, respectivamente, os estados de inicialização, finalização e entrega.
 
 \end{document}
