@@ -49,7 +49,7 @@ namespace AQC
 			const Float& z
 		);
 		Float Element(const UInt8& index) const;
-		Void Saturar(const Float& inferior);
+		UInt32 Saturar(const Float& inferior);
 		Void Saturar(const Float& inferior, const Float& superior);
 		Void Saturar(const Vetor4D& inferior, const Vetor4D& superior);
 		Void Raiz();

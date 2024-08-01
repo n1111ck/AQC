@@ -9,6 +9,13 @@ namespace AQC
 	class Modelo
 	{
 	public:
+
+		enum eSensorDistancia
+		{
+			eFrente = 0,
+			eBaixo
+		};
+
 		Modelo();
 		Modelo(const ParametrosModelo& parametros);
 		~Modelo();
@@ -35,6 +42,8 @@ namespace AQC
 
 		Void Arrasto(const Vetor3D& arrasto);
 
+		Void Distancia(const eSensorDistancia& index, const Float& distancia);
+		Float Distancia(const eSensorDistancia& index);
 	private:
 		ParametrosModelo mParametros;
 		Vetor4D mUltimoSinal;
@@ -64,6 +73,10 @@ namespace AQC
 		Float AceleracaoGuinada(const Float& U2, const Vetor3D& velocidadeAngular) const;
 
 		Void AtualizarRotores();
+
+		// Sensor de distancia
+		Float mFrente;
+		Float mBaixo;
 	};
 }
 

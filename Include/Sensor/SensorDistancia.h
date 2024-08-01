@@ -15,7 +15,7 @@ namespace AQC
 	class SensorDistancia : ISensor
 	{
 	public:
-		SensorDistancia();
+		SensorDistancia(const Modelo::eSensorDistancia& index);
 		~SensorDistancia();
 
 		Int32 Iniciar();
@@ -27,6 +27,7 @@ namespace AQC
 		Void Simulacao(Modelo& modelo);
 	private:
 		Float mDistancia;
+		Modelo::eSensorDistancia mIndex;
 	};
 }
 

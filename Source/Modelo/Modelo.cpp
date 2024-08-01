@@ -21,7 +21,9 @@ namespace AQC
 		mUltimoSinal({}),
 		mVelocidadeAngularRotor{ 0.0, 0.0, 0.0, 0.0 },
 		mSobreposicao(false),
-		mArrasto({})
+		mArrasto({}),
+		mFrente(4.0),
+		mBaixo(4.0)
 	{
 	}
 
@@ -458,5 +460,37 @@ namespace AQC
 	Modelo::AceleracaoAngular() const
 	{
 		return mAceleracaoAngular;
+	}
+
+	Void
+	Modelo::Distancia(const eSensorDistancia& index, const Float& distancia)
+	{
+		switch (index)
+		{
+		case eFrente:
+			mFrente = distancia;
+			break;
+		case eBaixo:
+			mBaixo = distancia;
+			break;
+		}
+	}
+
+	Float
+	Modelo::Distancia(const eSensorDistancia& index)
+	{
+		Float distancia = 0.0;
+
+		switch (index)
+		{
+		case eFrente:
+			distancia = mFrente;
+			break;
+		case eBaixo:
+			distancia = mBaixo;
+			break;
+		}
+
+		return distancia;
 	}
 }

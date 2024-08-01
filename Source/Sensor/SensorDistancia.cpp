@@ -2,8 +2,9 @@
 
 namespace AQC
 {
-	SensorDistancia::SensorDistancia() :
-		mDistancia(4.0)
+	SensorDistancia::SensorDistancia(const Modelo::eSensorDistancia& index) :
+		mDistancia(4.0),
+		mIndex(index)
 	{
 		ISensor::mpModelo = nullptr;
 	}
@@ -60,6 +61,7 @@ namespace AQC
 		else
 		{
 			// Implementacao simulada
+			mDistancia = mpModelo->Distancia(mIndex);
 		}
 	}
 

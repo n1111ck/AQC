@@ -96,10 +96,10 @@ namespace AQC
 	Void
 	LRE::CalcularParametrosPosicao(const Float& tempoAcomodacao)
 	{
-		mProporcionalPosicao.mW = 5.0 * 1 / tempoAcomodacao;
-		mProporcionalPosicao.mX = 5.0 * 1 / tempoAcomodacao;
-		mProporcionalPosicao.mY = 5.0 * 1 / tempoAcomodacao;
-		mProporcionalPosicao.mZ = 5.0 * 1 / tempoAcomodacao;
+		mProporcionalPosicao.mW = 4.0 * 1 / tempoAcomodacao;
+		mProporcionalPosicao.mX = 4.0 * 1 / tempoAcomodacao;
+		mProporcionalPosicao.mY = 4.0 * 1 / tempoAcomodacao;
+		mProporcionalPosicao.mZ = 4.0 * 1 / tempoAcomodacao;
 
 		mDerivativoPosicao.mW = 1.0;
 		mDerivativoPosicao.mX = 1.0;
@@ -110,10 +110,10 @@ namespace AQC
 	Void
 	LRE::CalcularParametrosVelocidade(const Float& tempoAcomodacao)
 	{
-		mProporcionalVelocidade.mW = 5.0 * 1 / tempoAcomodacao;
-		mProporcionalVelocidade.mX = 5.0 * 1 / tempoAcomodacao;
-		mProporcionalVelocidade.mY = 5.0 * 1 / tempoAcomodacao;
-		mProporcionalVelocidade.mZ = 5.0 * 1 / tempoAcomodacao;
+		mProporcionalVelocidade.mW = 4.0 * 1 / tempoAcomodacao;
+		mProporcionalVelocidade.mX = 4.0 * 1 / tempoAcomodacao;
+		mProporcionalVelocidade.mY = 4.0 * 1 / tempoAcomodacao;
+		mProporcionalVelocidade.mZ = 4.0 * 1 / tempoAcomodacao;
 	}
 
 	Vetor4D 
@@ -141,7 +141,7 @@ namespace AQC
 		) * (1 / (1 + mFrequencia / mFiltro));
 		sinal = mProporcionalPosicao * erro + mUltimoSinalDerivativoPosicao;
 		mUltimoErroPosicao = erro;
-		//sinal.Saturar({ -1.0, -10.0, -10.0, -10.0 }, { 5.0, 10.0, 10.0, 10.0 });
+		sinal.Saturar({ -1.0, -10.0, -10.0, -10.0 }, { 5.0, 10.0, 10.0, 10.0 });
 		mUltimaReferenciaVelocidade = sinal;
 
 		//

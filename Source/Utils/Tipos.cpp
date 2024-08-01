@@ -83,28 +83,36 @@ namespace AQC
 			);
 	}
 
-	Void
+	UInt32
 	Vetor4D::Saturar(const Float& inferior)
 	{
+		UInt32 resultado = 0;
+
 		if (mW < inferior)
 		{
 			mW = inferior;
+			resultado = 1;
 		}
 
 		if (mX < inferior)
 		{
+			resultado = 1;
 			mX = inferior;
 		}
 
 		if (mY < inferior)
 		{
+			resultado = 1;
 			mY = inferior;
 		}
 
 		if (mZ < inferior)
 		{
+			resultado = 1;
 			mZ = inferior;
 		}
+
+		return resultado;
 	}
 
 	Void

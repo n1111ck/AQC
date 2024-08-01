@@ -17,9 +17,7 @@ A decolagem deve acontecer logo após a inicialização e imposição do destino
 	\item o veículo já se oriente para a posição de destino;
 \end{itemize}
 
-Tanto a altitude quanto a orientação da guinada são diretamente acessíveis pelas referências do controlador. No entanto, o deslocamento nulo deve ser alcançado a partir de uma função que equilibre as referências de arfagem e rolamento.
-
-Esta função deve possuir sempre a ação contrária do desvio aparente para evitar seu crescimento, assim como em um laço de controle. Uma função simples que possui essa característica é a própria função afim, quando passa pela origem e inverte o sinal da entrada, conforme representado na Equação \ref{eq:equilibrio}. Na equação, $\lambda$ representa o limite de operação superior e inferior da ação em módulo, e $k_l$ representa o ganho entre o desvio e a ação executada. 
+Tanto a altitude quanto a orientação da guinada são diretamente acessíveis pelas referências do controlador. No entanto, o deslocamento nulo deve ser alcançado a partir de uma função que equilibre as referências de arfagem e rolamento. Esta função deve possuir sempre a ação contrária do desvio aparente para evitar seu crescimento, assim como em um laço de controle. Uma função simples que possui essa característica é a própria função afim, quando passa pela origem e inverte o sinal da entrada, conforme representado na Equação \ref{eq:equilibrio}. Na equação, $\lambda$ representa o limite de operação superior e inferior da ação em módulo, e $k_l$ representa o ganho entre o desvio e a ação executada.
 
 \begin{equation}\label{eq:equilibrio}
 	h(d) = \begin{cases}
@@ -29,14 +27,12 @@ Esta função deve possuir sempre a ação contrária do desvio aparente para ev
 	\end{cases}
 \end{equation}
 
-Na equação, ainda são determinados limites de atuação para impedir que o veículo se distancie muito do seu ponto de equilíbrio, que também viria a causar oscilações.
-
 Para que a guinada esteja corretamente orientada, é necessário calcular o ângulo de abertura entre a latitude e o trajeto, conforme ilustrado na Figura \ref{fig:guinada_decolagem}. O trajeto escolhido é uma reta entre a origem e o destino, representando a menor distância entre esses dois pontos. Assim, basta utilizar a função do arco-tangente para encontrar essa orientação. Detalha-se que essa operação deve ser acompanhada por uma avaliação dos sinais da variação latitudinal e longitudinal, para determinar corretamente em qual quadrante o ângulo estará.
 
 \begin{figure}[!h]
 	\centering
 	\caption{Orientação da guinada para seguimento da rota planejada.}
-	\includegraphics[width=0.8\textwidth]{imgs/orientacao_decolagem.png}
+	\includegraphics[width=0.9\textwidth]{imgs/orientacao_decolagem.png}
 	\label{fig:guinada_decolagem}
 \end{figure}
 
@@ -73,7 +69,7 @@ A fim de minimizar o gasto energético do veículo, a trajetória deve possuir a
 \begin{figure}[!h]
 	\centering
 	\caption{Distância entre o quadricóptero e a rota planejada para um desvio anômalo.}
-	\includegraphics[width=0.8\textwidth]{imgs/distancia_rota.png}
+	\includegraphics[width=0.9\textwidth]{imgs/distancia_rota.png}
 	\label{fig:distancia_rota}
 \end{figure}
 
@@ -129,11 +125,7 @@ O pouso deve ocorrer após o transporte chegar na posição pretendida, entendid
 	\item manter a guinada;
 \end{itemize}
 
-De maneira análoga à situação de prevenção em colisões, este estado deve receber o sinal do sensor de distância para concluir a sua ação. Nesse caso, a altitude inicial será representada por $z_d = z_c$ e será gradualmente reduzida até que o solo seja detectado. 
-
-Ainda, para evitar que a guinada instabilize, seu cálculo agora pode ser aproximado pelos valores da origem, de forma a evitar a divisão por zero.
-
-Na Tabela \ref{tab:ref_pouso}, são representados os estados para o pouso, em que $z_d^*$ representa a altitude de descendência que está sendo constantemente atualizada.
+De maneira análoga à situação de prevenção em colisões, este estado deve receber o sinal do sensor de distância para concluir a sua ação. Nesse caso, a altitude inicial será representada por $z_d = z_c$ e será gradualmente reduzida até que o solo seja detectado. Ainda, para evitar que a guinada instabilize, seu cálculo agora pode ser aproximado pelos valores da origem, de forma a evitar a divisão por zero. Na Tabela \ref{tab:ref_pouso}, são representados os estados para o pouso, em que $z_d^*$ representa a altitude de descendência que está sendo constantemente atualizada.
 
 \begin{table}[!h]
 	\centering
@@ -156,7 +148,7 @@ Na etapa de retorno, o que acontece é uma reutilização do processo todo, mas 
 
 \section{Máquina de estados}
 
-Por fim, a sequência de passos e suas referências é demonstrada na Tabela \ref{tab:algoritmo_final}. Na tabela, $d_t(x, y)^*$ representa a função $d_t(x, y)$ invertendo destino e origem.
+Por fim, a sequência de passos e suas referências são demonstrados na Tabela \ref{tab:algoritmo_final} e representados na Figura \ref{fig:maquina_estados} por uma máquina de estados de Moore \cite{moore}. Na tabela, $d_t(x, y)^*$ representa a função $d_t(x, y)$ invertendo destino e origem.
 
 \begin{table}[!h]
 	\centering
@@ -181,10 +173,9 @@ As informações listadas na tabela já compõem o algoritmo, porém, usualmente
 \begin{figure}[!h]
 	\centering
 	\caption{Máquina de estados para o algoritmo de entregas autônomas.}
-	\includegraphics[width=0.5\textwidth]{imgs/maquina_estados.png}
+	\includegraphics[width=0.45\textwidth]{imgs/maquina_estados.png}
 	\label{fig:maquina_estados}
 \end{figure}
-\newpage
 
 Neste diagrama em específico, não foram detalhadas as formas de transição para melhor clareza. A máquina em questão é do tipo Moore \cite{moore}, pois a saída é determinada pelo estado, e não pela transição. Os estados I, F e E representam, respectivamente, os estados de inicialização, finalização e entrega.
 

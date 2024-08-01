@@ -45,7 +45,7 @@ namespace AQC
 
 		Void EsperarConfirmacao(Boolean valor);
 		Void NovaEntrega(const Float& latitude, const Float& longitude);
-		Void Atualizar();
+		Void Atualizar(const Float& tempo);
 		Void Resetar();
 	private:
 		Controlador* mpControlador;
@@ -69,6 +69,16 @@ namespace AQC
 		Float mConstanteEquilibrio;
 
 		Vetor4D mReferencia;
+		Float mTempo;
+
+		// Decolagem
+		Float mTempoDecolagem;
+		Float mLatitudeDecolagem;
+		Float mLongitudeDecolagem;
+
+		// Entrega
+		Float mTempoEntrega;
+		Float mAltitudeEntrega;
 
 		Void MaquinaEstados();
 		Float Equilibrio(const Float& valor) const;

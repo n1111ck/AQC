@@ -11,14 +11,14 @@ Neste capítulos, são abordadas duas metodologias de controle para o sistema do
 
 \section{Controle PID}\label{sec:controle_pid}
 
-O controlador proporcional, integral e derivativo (PID) é caracterizado por operações lineares aplicadas ao erro da variável de processo \cite{pid_generico_citation}. Em sua versão monovariável, ele possui o equacionamento conforme a Equação \ref{eq:pid_tempo} e ilustrado na Figura \ref{fig:pid_monovariavel}, na qual $t$ representa o tempo, $\gamma$ o sinal de controle, $e$ o desvio da referência com relação à saída, $K_p$ o ganho proporcional, $K_i$ o ganho integral e $K_d$ o ganho derivativo.
-
-\begin{figure}[!h]
-	\centering
-	\caption{Diagrama de blocos de um controlador PID monovariável em malha fechada.}
-	\includegraphics[width=0.9\textwidth]{imgs/pid_monovariavel.png}
-	\label{fig:pid_monovariavel}
-\end{figure}
+O controlador proporcional, integral e derivativo (PID) é caracterizado por operações lineares aplicadas ao erro da variável de processo \cite{pid_generico_citation}. Em sua versão monovariável, ele possui o equacionamento conforme a Equação \ref{eq:pid_tempo}, na qual $t$ representa o tempo, $\gamma$ o sinal de controle, $e$ o desvio da referência com relação à saída, $K_p$ o ganho proporcional, $K_i$ o ganho integral e $K_d$ o ganho derivativo.
+%
+%\begin{figure}[!h]
+%	\centering
+%	\caption{Diagrama de blocos de um controlador PID monovariável em malha fechada.}
+%	\includegraphics[width=0.9\textwidth]{imgs/pid_monovariavel.png}
+%	\label{fig:pid_monovariavel}
+%\end{figure}
 
 \begin{equation}\label{eq:pid_tempo}
 	\gamma(t) = K_pe(t) + K_d\dot{e}(t) + K_i\int_0^t e(\tau) d\tau
@@ -36,14 +36,14 @@ Além disso, como a frequência de corte da ação derivativa está relacionada 
 	C_{PID}(s) \approx \frac{\Gamma(s)}{E(s)} = \frac{1}{s}(K_ds^2 + K_ps + K_i)\hspace{0.4cm},\hspace{0.4cm} s << d
 \end{equation}
 
-Já a abordagem multivariável consiste em um conjunto de PID's monovariáveis atuando de maneira simultânea \cite{multivariavel}. Sua forma geral é representada na Figura \ref{fig:pid_multivariavel} e apresentado seu equacionamento na Equação \ref{eq:controlador_multivariavel}, na qual $C_{j,k}$ representa um controlador PID com subscritos $j$ e $k$ indicando o erro de seguimento da referência $j$ com relação ao sinal de controle $k$ para o respectivo controlador monovariável, e $N$ o número total de referências e sinais de controle. 
+Já a abordagem multivariável consiste em um conjunto de PID's monovariáveis atuando de maneira simultânea \cite{multivariavel}. Sua forma geral é apresentada na Equação \ref{eq:controlador_multivariavel}, na qual $C_{j,k}$ representa um controlador PID com subscritos $j$ e $k$ indicando o erro de seguimento da referência $j$ com relação ao sinal de controle $k$ para o respectivo controlador monovariável, e $N$ o número total de referências e sinais de controle. 
 
-\begin{figure}[!h]
-	\centering
-	\caption{Diagrama de blocos de um controlador PID multivariável em malha fechada.}
-	\includegraphics[width=0.8\textwidth]{imgs/pid_multivariavel.png}
-	\label{fig:pid_multivariavel}
-\end{figure}
+%\begin{figure}[!h]
+%	\centering
+%	\caption{Diagrama de blocos de um controlador PID multivariável em malha fechada.}
+%	\includegraphics[width=0.7\textwidth]{imgs/pid_multivariavel.png}
+%	\label{fig:pid_multivariavel}
+%\end{figure}
 
 \begin{equation}\label{eq:controlador_multivariavel}
 	\boldsymbol{C_{PID}(s)} = \begin{bmatrix}
@@ -55,17 +55,17 @@ Já a abordagem multivariável consiste em um conjunto de PID's monovariáveis a
 	\end{bmatrix}\hspace{0.4cm},\hspace{0.4cm}\boldsymbol{\vec{\Gamma}(s)} = \boldsymbol{C_{PID}(s)}\boldsymbol{\vec{E}(s)}
 \end{equation} 
 
-Ainda, quando um sistema não possui correlações entre estados e entradas da planta, esse controlador é simplificado com termos apenas na diagonal principal, conforme apresentado na Equação \ref{eq:controlador_multivariavel_simplificado}.
-
-\begin{equation}\label{eq:controlador_multivariavel_simplificado}
-	\boldsymbol{C_{PID}(s)} = \begin{bmatrix}
-		C_{1,1} & 0 	  & 0 		& \hdots & 0\\ 
-		0		& C_{2,2} & 0 		& \hdots & 0\\ 
-		0 		& 0 	  & C_{3,3} & \hdots & 0\\ 
-		\vdots 	& \vdots  & \vdots  & \ddots & \vdots\\
-		0 		& 0 	  & 0 		& \hdots & C_{N,N}\\ 
-	\end{bmatrix}
-\end{equation}
+%Ainda, quando um sistema não possui correlações entre estados e entradas da planta, esse controlador é simplificado com termos apenas na diagonal principal, conforme apresentado na Equação \ref{eq:controlador_multivariavel_simplificado}.
+%
+%\begin{equation}\label{eq:controlador_multivariavel_simplificado}
+%	\boldsymbol{C_{PID}(s)} = \begin{bmatrix}
+%		C_{1,1} & 0 	  & 0 		& \hdots & 0\\ 
+%		0		& C_{2,2} & 0 		& \hdots & 0\\ 
+%		0 		& 0 	  & C_{3,3} & \hdots & 0\\ 
+%		\vdots 	& \vdots  & \vdots  & \ddots & \vdots\\
+%		0 		& 0 	  & 0 		& \hdots & C_{N,N}\\ 
+%	\end{bmatrix}
+%\end{equation}
 
 Essa topologia foi implementada em diversos outros trabalhos no âmbito do controle de quadricópteros, como no apresentado por Nengsheng em 2017 \cite{controle:pid} e por Fernando H.C.T.E em  \cite{controle:pid_modelagem_basica} em 2013. Ainda, para melhorar a técnica, foram introduzidos estudos baseados em aprendizado de máquina, conforme Koch \cite{controle:pid-aprendizado-maquina} em 2019, para manipulação dinâmica dos parâmetros do PID que pode vir a estabilizar trepidações e melhorar o voo durante diferentes condições.
 
@@ -142,7 +142,7 @@ Ainda, como o cálculo do controlador é baseado em forças e momentos, e como e
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-A partir da nova equação da planta, observa-se que as dinâmicas são todas semelhantes entre si, portanto, para calcular o controlador, basta considerar o cálculo para uma versão equivalente a esta dinâmica e substituí-la posteriormente. Considera-se então uma constante dimensional $\alpha$, um sinal de controle $\Gamma_e$ e saída $Y_e$ para a planta genérica unidimensional representada na Equação \ref{eq:planta_generica_simplificada} no domínio da frequência.
+A partir da nova equação da planta, observa-se que as dinâmicas são todas semelhantes entre si, portanto, para calcular o controlador, basta considerar o cálculo para uma versão equivalente a esta dinâmica e substituí-la posteriormente. Considera-se então um termo de ganho $\alpha$, um sinal de controle $\Gamma_e$ e saída $Y_e$ para a planta genérica unidimensional representada na Equação \ref{eq:planta_generica_simplificada} no domínio da frequência.
 
 \begin{equation}\label{eq:planta_generica_simplificada}
 	\Delta Y_{e}(s) = \alpha^{-1}\frac{1}{s^2}\frac{T_m^{-1}}{s + T_m^{-1}}\Delta \Gamma_{e}(s)\hspace{0.4cm},\hspace{0.4cm} \begin{matrix}
@@ -152,36 +152,36 @@ A partir da nova equação da planta, observa-se que as dinâmicas são todas se
 	\end{matrix}
 \end{equation}
 
-Ao considerar o controlador para a planta equivalente, observa-se que sua aplicação direta, seja por PID, PI, PD ou mesmo P, não é encorajada, visto que o lugar das raízes dessas malhas fechadas tende à instabilização. A aplicação é ilustrada na Figura \ref{fig:lugar_raizes_ruim}, com a premissa de que, caso o controlador possua um zero, o mesmo deve cancelar o polo eletromecânico a fim de remover essa limitação.
-
 \begin{figure}[!h]
 	\centering
 	\caption{Lugar das raízes da malha fechada do sistema completo com um controlador PID, PI, PD e P.}
-	\includegraphics[width=0.8\textwidth]{imgs/lugar_raizes_ruim.png}
+	\includegraphics[width=0.7\textwidth]{imgs/lugar_raizes_ruim.png}
 	\label{fig:lugar_raizes_ruim}
 \end{figure}
+
+Ao considerar o controlador para a planta equivalente, observa-se que sua aplicação direta, seja por PID, PI, PD ou mesmo P, não é encorajada, visto que o lugar das raízes dessas malhas fechadas tende à instabilização. A aplicação é ilustrada na Figura \ref{fig:lugar_raizes_ruim}, com a premissa de que, caso o controlador possua um zero, o mesmo deve cancelar o polo eletromecânico a fim de remover essa limitação.
 
 Esse comportamento em grande parte está ligado ao fato da planta possuir um integrador duplo. Assim, ao invés de considerar apenas um controlador PID diretamente associado ao erro das variáveis odométricas, deve-se considerar dois PID's em cascata que objetivam controlar a velocidade e a posição em dois laços de controle distintos, representados na Figura \ref{fig:controlador_cascata_pid}. 
 
 \begin{figure}[!h]
 	\centering
 	\caption{Diagrama de blocos da malha fechada do quadricóptero com dois controladores PID em cascata, $\boldsymbol{C_o}$ para a odometria e $\boldsymbol{C_v}$ para a velocidade.}
-	\includegraphics[width=1\textwidth]{imgs/controlador_cascata_pid.png}
+	\includegraphics[width=0.7\textwidth]{imgs/controlador_cascata_pid.png}
 	\label{fig:controlador_cascata_pid}
 \end{figure}
 
-Com essa nova configuração, pondera-se novamente sobre qual configuração de PID deve ser considerada, entre PID, PI, PD e P. Logo, novamente, são traçados os lugares das raízes de cada configuração com a mesma premissa para ambas as malhas e o resultado é ilustrado na Figura \ref{fig:lugar_raizes_bom}. Cabe observar que 
+Com essa nova configuração, pondera-se novamente sobre qual configuração de PID deve ser considerada, entre PID, PI, PD e P. Logo, novamente, são traçados os lugares das raízes de cada configuração com a mesma premissa para ambas as malhas e o resultado é ilustrado na Figura \ref{fig:lugar_raizes_bom}.
 
 \begin{figure}[!h]
 	\centering
 	\caption{Lugar das raízes para o laço de velocidade com um controlador PID, PI, PD e P.}
-	\includegraphics[width=0.8\textwidth]{imgs/lugar_raizes_bom.png}
+	\includegraphics[width=0.7\textwidth]{imgs/lugar_raizes_bom.png}
 	\label{fig:lugar_raizes_bom}
 \end{figure}
 
 A aplicação de dois PD's em cascata é a opção desejada, por não possuir sobrepasso e ter um tempo de acomodação $T_a$ limitado apenas pelo filtro derivativo. É importante destacar que, no laço de posição, a característica do controlador PD é análoga à do laço de velocidade. 
 
-Os ganhos são determinados pela teoria do lugar das raízes \cite{controle_ufrgs} em função do tempo de acomodação desejado. No geral, o tempo de acomodação é aproximado por quatro vezes a constante de tempo da função de laço, porém, como existem não-linearidades entre a referência e o estado, considera-se que a acomodação ocorrerá apenas após cinco constantes de tempo, a fim de obter um projeto mais conservador. Na Tabela \ref{tab:controlador_pd} são apresentados os ganhos e com a premissa de que o zero de cada PD cancelará o polo de seu respectivo laço.
+Os ganhos são determinados pela teoria do lugar das raízes \cite{controle_ufrgs} em função do tempo de acomodação desejado. No geral, o tempo de acomodação é aproximado por quatro vezes a constante de tempo da função de laço para alcançar a referência com uma tolerância de 2\%. Na Tabela \ref{tab:controlador_pd} são apresentados os ganhos e com a premissa de que o zero de cada PD cancelará o polo de seu respectivo laço.
 
 \begin{table}[!h]
 	\centering
@@ -189,14 +189,16 @@ Os ganhos são determinados pela teoria do lugar das raízes \cite{controle_ufrg
 	\begin{tabular}{|c|c|c|}
 		\cline{2-3}
 		\multicolumn{1}{c|}{} & $K_p$  & $K_d$ \\\hline
-		$C_{ve}$ & $5\cdot \alpha T_a^{-1}$ & $5 \cdot\alpha T_a^{-1}T_m$ \\\hline
-		$C_{oe}$ & $5\cdot T_a^{-1}$ & $1$ \\\hline
+		$C_{ve}$ & $4\cdot \alpha T_a^{-1}$ & $4 \cdot\alpha T_a^{-1}T_m$ \\\hline
+		$C_{oe}$ & $4\cdot T_a^{-1}$ & $1$ \\\hline
 	\end{tabular}
 	\label{tab:controlador_pd}
 \end{table}
 
 
-Por fim, a escolha de $T_a$ fica apenas limitada à saturação dos atuadores, visto que, em um caso real, o tempo de acomodação não é ilimitado. O controlador final, em sua maneira multivariável, é apresentado na Equação \ref{eq:pid_multivariavel}. Decide-se nessa representação ignorar a parcela do corte da ação derivativa para legibilidade.
+Por fim, a escolha de $T_a$ fica apenas limitada à saturação dos atuadores, visto que, em um caso real, o tempo de acomodação não é ilimitado. O controlador final, em sua maneira multivariável, é apresentado na Equação \ref{eq:pid_multivariavel}. Ainda, determina-se que a frequência do filtro da ação derivativa é alta o suficiente para que seu comportamento seja considerado desprezível.
+
+%Decide-se nessa representação ignorar a parcela do corte da ação derivativa para legibilidade.
 
 \begin{equation}\label{eq:pid_multivariavel}
 	\begin{matrix}
@@ -215,11 +217,11 @@ Por fim, a escolha de $T_a$ fica apenas limitada à saturação dos atuadores, v
 			\end{bmatrix}\hspace{1cm}
 		\end{split}&
 		\begin{split}
-			&C_{vZ} = 5\cdot m T_a^{-1}(s + T_m^{-1})\\
-			&C_{v\Phi} = 5\cdot I_{xx} T_a^{-1}(s + T_m^{-1})\\
-			&C_{v\Theta} = 5\cdot I_{yy} T_a^{-1}(s + T_m^{-1})\\
-			&C_{v\Psi} = 5\cdot I_{zz} T_a^{-1}(s + T_m^{-1})\\
-			&C_{oe} = s + 5\cdot{T_a^{-1}}\\
+			&C_{vZ} = 4\cdot m T_a^{-1}(s + T_m^{-1})\\
+			&C_{v\Phi} = 4\cdot I_{xx} T_a^{-1}(s + T_m^{-1})\\
+			&C_{v\Theta} = 4\cdot I_{yy} T_a^{-1}(s + T_m^{-1})\\
+			&C_{v\Psi} = 4\cdot I_{zz} T_a^{-1}(s + T_m^{-1})\\
+			&C_{oe} = s + 4\cdot{T_a^{-1}}\\
 		\end{split}
 		
 	\end{matrix}
@@ -229,7 +231,7 @@ Por fim, a escolha de $T_a$ fica apenas limitada à saturação dos atuadores, v
 
 Apesar da técnica de aproximação do modelo pela matriz Jacobiana ser amplamente utilizada pela simplicidade de implementação e projeto, explora-se também uma segunda alternativa de metodologia para possibilitar a comparação dos métodos. Assim, considera-se um novo controlador baseado na Linearização por Realimentação de Estados \cite{slotine}. Essa técnica é baseada no cancelamento das parcelas não lineares do sistema algebricamente, a partir de suas variáveis de estado, de forma a obter um macro-sistema que apresente características lineares. 
 
-De maneira usual, seu cálculo é efetuado a partir das derivadas de Lie \cite{lie_derivative}. Porém, caso o sistema seja afim com relação a controle/entrada (ou seja, caso o estado possua uma relação linear com a entrada), como demonstrado na Equação \ref{eq:sistema_afim}, a função de controle pode ser determinada apenas isolando o valor do controle efetivamente aplicado \cite{mario_2009}, conforme a Equação \ref{eq:funcao_controle_rnl}. Nas equações, $x^{(n)}_j$ representa a enésima derivação do estado $j$, $f(\boldsymbol{\vec{x}})$ e $b(\boldsymbol{\vec{x}})$ são funções não lineares dos estados, $\nu$ é o sinal de controle linear desejado e $u$ é o sinal de controle efetivamente aplicado. Ainda, na Figura \ref{fig:exemplo_rnl}, é ilustrado o diagrama de blocos com esta condição.
+De maneira usual, seu cálculo é efetuado a partir das derivadas de Lie \cite{lie_derivative}. Porém, caso o sistema seja afim com relação a controle/entrada (ou seja, caso a ação de controle multiplique a função dos estados), como demonstrado na Equação \ref{eq:sistema_afim}, a função de controle pode ser determinada apenas isolando o valor do controle efetivamente aplicado \cite{mario_2009}, conforme a Equação \ref{eq:funcao_controle_rnl}. Nas equações, $x^{(n)}_j$ representa a enésima derivação do estado $j$, $f(\boldsymbol{\vec{x}})$ e $b(\boldsymbol{\vec{x}})$ são funções não lineares dos estados, $\nu$ é o sinal de controle linear desejado e $u$ é o sinal de controle efetivamente aplicado. Ainda, na Figura \ref{fig:exemplo_rnl}, é ilustrado o diagrama de blocos com esta condição.
 
 \begin{equation}\label{eq:sistema_afim}
 	x^{(n)}_j = f(\boldsymbol{\vec{x}}) + b(\boldsymbol{\vec{x}})u
@@ -242,7 +244,7 @@ De maneira usual, seu cálculo é efetuado a partir das derivadas de Lie \cite{l
 \begin{figure}[!h]
 	\centering
 	\caption{Diagrama de blocos da linearização por realimentação de estados para um sistema na forma canônica controlável.}
-	\includegraphics[width=1\textwidth]{imgs/exemplo_rnl.png}
+	\includegraphics[width=0.8\textwidth]{imgs/exemplo_rnl.png}
 	\label{fig:exemplo_rnl}
 \end{figure}
 
@@ -285,7 +287,7 @@ O cálculo efetuado até então considera um sistema capaz de atuar diretamente 
 \begin{figure}[!h]
 	\centering
 	\caption{Diagrama de blocos da relação entre o sinal aplicado e o sinal aerodinâmico.}
-	\includegraphics[width=1\textwidth]{imgs/algebra_blocos.png}
+	\includegraphics[width=0.85\textwidth]{imgs/algebra_blocos.png}
 	\label{fig:algebra_blocos}
 \end{figure}
 
@@ -303,22 +305,23 @@ O cálculo efetuado até então considera um sistema capaz de atuar diretamente 
 	\end{matrix}
 \end{equation}
 
-\begin{figure}[!b]
-	\centering
-	\caption{Diagrama de blocos da relação entre o sinal aplicado e o sinal aerodinâmico.}
-	\includegraphics[width=1\textwidth]{imgs/conversao_delta.png}
-	\label{fig:conversao_delta}
-\end{figure}
-
-Assim, de maneira equivalente ao realizado no controle linear pela aproximação Jacobiana, obtém-se uma relação de conversão entre o sinal aplicado e o sinal aerodinâmico. A conversão do sinal é simbolizada pela operação $\delta$, que é representada na Figura \ref{fig:conversao_delta}. É importante observar que a operação de compensação da dinâmica do rotor, inicialmente não causal, requer a introdução de um filtro derivativo para garantir a causalidade, a exemplo do filtro utilizado na ação derivativa de um controlador PID. A nova malha de linearização por realimentação de estados é apresentada na Figura \ref{fig:lre_quad} com a conversão $\delta$ e os operadores $f(\boldsymbol{\vec{x}})$ e $b(\boldsymbol{\vec{x}})^{-1}$ da Equação \ref{eq:f_b_inicial}.
+Assim, de maneira equivalente ao realizado no controle linear pela aproximação Jacobiana, obtém-se uma relação de conversão entre o sinal aplicado e o sinal aerodinâmico. A conversão do sinal é simbolizada pela operação $\delta$, que é representada na Figura \ref{fig:conversao_delta}. 
 
 \begin{figure}[!h]
 	\centering
-	\caption{Diagrama de blocos da linearização por realimentação de estados para o qaudricóptero.}
-	\includegraphics[width=1\textwidth]{imgs/lre_quad.png}
-	\label{fig:lre_quad}
+	\caption{Diagrama de blocos da relação entre o sinal aplicado e o sinal aerodinâmico.}
+	\includegraphics[width=0.85\textwidth]{imgs/conversao_delta.png}
+	\label{fig:conversao_delta}
 \end{figure}
 
+É importante observar que a operação de compensação da dinâmica do rotor, inicialmente não causal, requer a introdução de um filtro derivativo para garantir a causalidade, a exemplo do filtro utilizado na ação derivativa de um controlador PID. % A nova malha de linearização por realimentação de estados é apresentada na Figura \ref{fig:lre_quad} com a conversão $\delta$ e os operadores $f(\boldsymbol{\vec{x}})$ e $b(\boldsymbol{\vec{x}})^{-1}$ da Equação \ref{eq:f_b_inicial}.
+
+%\begin{figure}[!h]
+%	\centering
+%	\caption{Diagrama de blocos da linearização por realimentação de estados para o qaudricóptero.}
+%	\includegraphics[width=0.75\textwidth]{imgs/lre_quad.png}
+%	\label{fig:lre_quad}
+%\end{figure}
 
 Por fim, com uma malha linearizada pela realimentação de estados, deve-se calcular a nova configuração PID que atende este caso, visto que a dinâmica do motor foi agora inclusa no bloco de conversão. A nova planta linear apresenta uma dinâmica equivalente à aerodinâmica apenas, conforme apresentada na Equação \ref{eq:lre_linear}.
 
@@ -344,8 +347,8 @@ De maneira análoga ao cálculo para o controlador linear, percebe-se que a melh
 	\begin{tabular}{|c|c|c|}
 		\cline{2-3}
 		\multicolumn{1}{c|}{} & $K_p$  & $K_d$ \\\hline
-		$C_{ve}$ & $5\cdot T_a^{-1}$ & - \\\hline
-		$C_{oe}$ & $5\cdot T_a^{-1}$ & $1$ \\\hline
+		$C_{ve}$ & $4\cdot T_a^{-1}$ & - \\\hline
+		$C_{oe}$ & $4\cdot T_a^{-1}$ & $1$ \\\hline
 	\end{tabular}
 	\label{tab:controlador_lre_linear}
 \end{table}
@@ -353,18 +356,20 @@ De maneira análoga ao cálculo para o controlador linear, percebe-se que a melh
 \begin{equation}\label{eq:lre_multivariavel}
 	\begin{split}
 		&\boldsymbol{C_{v}(s)} = \begin{bmatrix}
-			5T_a^{-1} & 0 & 0 & 0\\
-			0 & 5T_a^{-1} & 0 & 0\\
-			0 & 0 & 5T_a^{-1} & 0\\
-			0 & 0 & 0 & 5T_a^{-1}\\
+			4T_a^{-1} & 0 & 0 & 0\\
+			0 & 4T_a^{-1} & 0 & 0\\
+			0 & 0 & 4T_a^{-1} & 0\\
+			0 & 0 & 0 & 4T_a^{-1}\\
 		\end{bmatrix}\\
 		&\boldsymbol{C_{o}(s)} = \begin{bmatrix}
-			s + 5T_a^{-1} & 0 & 0 & 0\\
-			0 & s + 5T_a^{-1} & 0 & 0\\
-			0 & 0 & s + 5T_a^{-1} & 0\\
-			0 & 0 & 0 & s + 5T_a^{-1}\\
+			s + 4T_a^{-1} & 0 & 0 & 0\\
+			0 & s + 4T_a^{-1} & 0 & 0\\
+			0 & 0 & s + 4T_a^{-1} & 0\\
+			0 & 0 & 0 & s + 4T_a^{-1}\\
 		\end{bmatrix}\hspace{1cm}
 	\end{split}
 \end{equation}
+
+Ainda, como o quadricóptero possui uma limitação física de atuação, nem todas as ações de controle podem ser realizadas de forma ideal. Esse fator é ainda mais crítico por se tratar de um sistema multivariável, com interdependências entre suas variáveis de estado. Durante manobras bruscas, como em mudanças rápidas de altitude, a limitação da referência de velocidade se torna crucial para evitar a saturação dos atuadores. Assim, tanto no controlador linear quanto no não linear, as referências de velocidade calculadas são limitadas por um valor máximo para cada estado, garantindo que o quadricóptero opere dentro de seus limites físicos. Essa estratégia garante um comportamento mais estável e previsível do quadricóptero, evitando oscilações e até mesmo a perda de controle.
 
 \end{document}

@@ -117,12 +117,12 @@ curso e apoio na revisão deste trabalho.
 Agradeço ao \LaTeX\ por não ter vírus de macro\ldots
 \begin{abstract}
 
-No âmbito deste trabalho, busca-se o desenvolvimento de um sistema embarcado destinado a quadricópteros, visando controlar sua dinâmica com base em trajetórias predefinidas para operações autônomas de entrega. O sistema é modelado, empregando-se malhas de controle digital para gerenciar os estados que influenciam os motores da aeronave não tripulada (UAV, \textit{unmanned aerial vehicle}), utilizando o \textit{feedback} proveniente de uma unidade de medição inercial (IMU, \textit{inertial measurement unit}) e um sistema de posicionamento global (GPS, \textit{global positioning system}). Para determinar a configuração ideal do controlador para essa finalidade, são avaliadas distintas abordagens, como o controlador PID, realimentação de estados e linearização via realimentação de estados. Opta-se pela aplicação da técnica de linearização via realimentação de estados, validada por meio do \textit{software} Simulink do MATLAB. As próximas etapas desse estudo envolvem a definição do gerador de trajetória, a elaboração do código do controlador, simulações utilizando o ambiente de \textit{software} ROS e a realização de testes em um protótipo real a ser desenvolvido.
+No âmbito deste trabalho, busca-se o desenvolvimento de um sistema embarcado destinado a quadricópteros, visando controlar sua dinâmica com base em trajetórias predefinidas para operações autônomas de entrega. O sistema é modelado, empregando-se malhas de controle digital para gerenciar os estados que influenciam os motores da aeronave não tripulada (UAV, \textit{unmanned aerial vehicle}), utilizando o \textit{feedback} proveniente de uma unidade de medição inercial (IMU, \textit{inertial measurement unit}), um sistema de posicionamento global (GPS, \textit{global positioning system}) e demais sensores. Para determinar a configuração ideal do controlador para essa finalidade, são avaliadas duas abordagens distintas, o controlador PID e a linearização via realimentação de estados. Também é desenvolvido um algoritmo de voo que alimenta os controladores calculados para realização de entregas autônomas e posterior comparação. Ambas as técnicas são implementadas em um ambiente de simulação desenvolvido pelo autor, baseado na linguagem C++. Os resultados mostram que ambas as técnicas obtiveram bom comportamento para a aplicação vigente tanto para o algoritmo de controle quanto para o algoritmo de voo.
 
 \end{abstract}
-\begin{otherabstract}{Project, UAV, Autonomous Delivery, Automation and Control, Flight Dynamics}
+\begin{otherabstract}{Project, UAV, Autonomous Delivery, Automation and Control, Flight Dynamics, Quadcopters, Feedback linearization}
 
-Within the scope of this work, the development of an embedded system intended for quadcopters is pursued, aiming to control their dynamics based on predefined trajectories for autonomous delivery operations. The system is modeled, employing digital control loops to manage the states influencing the motors of the unmanned aerial vehicle (UAV), utilizing feedback from an inertial measurement unit (IMU) and a global positioning system (GPS). To determine the optimal controller configuration for this purpose, various approaches are evaluated, such as the PID controller, state feedback, and linearization through state feedback. The choice is made to apply the state feedback-based linearization technique, validated through the Simulink software of MATLAB. The forthcoming stages of this study encompass trajectory generator definition, controller code development, simulations using the ROS software environment, and testing on a real prototype to be developed.
+Within the scope of this work, the development of an embedded system intended for quadcopters is pursued, aiming to control their dynamics based on predefined trajectories for autonomous delivery operations. The system is modeled, employing digital control loops to manage the states influencing the motors of the unmanned aerial vehicle (UAV), utilizing feedback from an inertial measurement unit (IMU) and a global positioning system (GPS). To determine the optimal controller configuration for this purpose, two distinct approaches are evaluated: the PID controller and state feedback linearization. Additionally, a flight algorithm is developed to supply the computed controllers for performing autonomous deliveries and subsequent comparison. Both techniques are implemented in a simulation environment developed by the author, based on the C++ language. The results show that both techniques achieved good performance for the current application in both the control algorithm and the flight algorithm.
 \end{otherabstract}
 \setcounter{tocdepth}{3}
 \listoffigures
@@ -143,10 +143,15 @@ Within the scope of this work, the development of an embedded system intended fo
 \subfile{capitulos/modelagem/}
 \subfile{capitulos/controle_atitude/}
 \subfile{capitulos/algoritmo_voo/}
-\subfile{capitulos/ambiente_simulacao/}
 \subfile{capitulos/analise/}
 \subfile{capitulos/conclusao/}
 
+
 \printbibliography
+
+\appendix
+\subfile{capitulos/ambiente_simulacao/}
+
+
 \end{document}
 

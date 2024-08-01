@@ -79,22 +79,22 @@ namespace AQC
 	Void
 	CascataPD::CalcularParametrosPosicao(const Float& tempoAcomodacao)
 	{
-		mProporcionalPosicao = 5.0 / tempoAcomodacao;
+		mProporcionalPosicao = 4.0 / tempoAcomodacao;
 		mDerivativoPosicao = 1.0;
 	}
 
 	Void
 	CascataPD::CalcularParametrosVelocidade(const Float& tempoAcomodacao)
 	{
-		mProporcionalVelocidade.mW = 5.0 / tempoAcomodacao * mParametros.mMassa;
-		mProporcionalVelocidade.mX = 5.0 / tempoAcomodacao * mParametros.mInercia.mX;
-		mProporcionalVelocidade.mY = 5.0 / tempoAcomodacao * mParametros.mInercia.mY;
-		mProporcionalVelocidade.mZ = 5.0 / tempoAcomodacao * mParametros.mInercia.mZ;
+		mProporcionalVelocidade.mW = 4.0 / tempoAcomodacao * mParametros.mMassa;
+		mProporcionalVelocidade.mX = 4.0 / tempoAcomodacao * mParametros.mInercia.mX;
+		mProporcionalVelocidade.mY = 4.0 / tempoAcomodacao * mParametros.mInercia.mY;
+		mProporcionalVelocidade.mZ = 4.0 / tempoAcomodacao * mParametros.mInercia.mZ;
 
-		mDerivativoVelocidade.mW = 5.0 / tempoAcomodacao * mParametros.mMassa * mParametros.mConstanteTempo;
-		mDerivativoVelocidade.mX = 5.0 / tempoAcomodacao * mParametros.mInercia.mX * mParametros.mConstanteTempo;
-		mDerivativoVelocidade.mY = 5.0 / tempoAcomodacao * mParametros.mInercia.mY * mParametros.mConstanteTempo;
-		mDerivativoVelocidade.mZ = 5.0 / tempoAcomodacao * mParametros.mInercia.mZ * mParametros.mConstanteTempo;
+		mDerivativoVelocidade.mW = 4.0 / tempoAcomodacao * mParametros.mMassa * mParametros.mConstanteTempo;
+		mDerivativoVelocidade.mX = 4.0 / tempoAcomodacao * mParametros.mInercia.mX * mParametros.mConstanteTempo;
+		mDerivativoVelocidade.mY = 4.0 / tempoAcomodacao * mParametros.mInercia.mY * mParametros.mConstanteTempo;
+		mDerivativoVelocidade.mZ = 4.0 / tempoAcomodacao * mParametros.mInercia.mZ * mParametros.mConstanteTempo;
 	}
 
 	Vetor4D
@@ -122,7 +122,7 @@ namespace AQC
 			) * (1 / (1 + mFrequencia / mFiltro));
 		sinal = erro * mProporcionalPosicao + mUltimoSinalDerivativoPosicao;
 		mUltimoErroPosicao = erro;
-		//sinal.Saturar({ -1.0, -10.0, -10.0, -10.0 }, { 5.0, 10.0, 10.0, 10.0 });
+		sinal.Saturar({ -1.0, -10.0, -10.0, -10.0 }, { 5.0, 10.0, 10.0, 10.0 });
 		mUltimaReferenciaVelocidade = sinal;
 
 		//

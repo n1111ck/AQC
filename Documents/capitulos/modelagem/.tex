@@ -269,6 +269,16 @@ Logo, ao combinar as equações elétricas e mecânicas, obtêm-se as Equações
 	\tau_j = k_t \cdot (k_v \cdot V_j - T_m\dot{\omega_j})^2
 \end{equation}
 
+É importante destacar que os atuadores em aplicações reais não possuem atuação infinita, existindo uma região de saturação na qual o controle é aplicável. Os valores de tensão $V_j$ são, portanto, descritos pela Equação \ref{eq:vmax}, onde $V_{max}$ representa o valor máximo de tensão possível. 
+
+\begin{equation}\label{eq:vmax}
+	V_j(x, 0, V_{max}) = \begin{cases}
+		V_{max} & x > V_{max}\\
+		x & 0 \geq x \geq V_{max}\\
+		0 & x < 0
+	\end{cases}
+\end{equation}
+
 \section{Sistema completo}\label{sec:sistema_completo}
 
 Embora a combinação entre as dinâmicas rotacionais e translacionais já esteja completa, suas relações possuem interdependência entre diferentes motores, o que pode tornar a metodologia de controle mais complexa. Assim, os efeitos individuais dos motores devem ser substituídos por variáveis auxiliares linearmente dependentes da velocidade angular ao quadrado. Essa relação é apresentada na Equação \ref{eq:conversao_U_omega}, na qual $\boldsymbol{\sigma}$ representa a matriz de conversão.

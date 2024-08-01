@@ -11,11 +11,11 @@ Esse cenário tem gerado uma crescente necessidade de aprimorar os sistemas de l
 
 Alguns empreendimentos, como a Zipline, já são exemplos práticos dessa nova aplicação de UAV's, com aeronaves VTOL (\textit{Vertical Take-Off and Landing}, ou, decolagem e aterrisagem verticais) que já efetuaram mais de 5 milhões de entregas \cite{zipline:drone}. Além disso, a Amazon e o iFood já possuem planos de implementação de aeronaves não tripuladas, como o octacóptero MK4 \cite{amazon:drone} e um hexacóptero em colaboração com a empresa Speedbird \cite{ifood:drone}, respectivamente.
 
-Tendo em vista o crescimento expressivo do uso de UAVs em serviços de entrega este trabalho tem como objetivo projetar e desenvolver um controlador eficiente e seguro para quadricópteros utilizados em entregas autônomas. A proposta é explorar as principais técnicas de controle e navegação, aliadas às mais recentes tecnologias em sensores e sistemas de posicionamento, para garantir a eficácia, precisão e confiabilidade nas operações de entrega. A implementação bem-sucedida do controlador exige um estudo aprofundado da dinâmica de voo dessas aeronaves, bem como a integração inteligente de algoritmos de controle e sistemas de navegação. A segurança é uma preocupação primordial, considerando-se a interação dos quadricópteros com o espaço aéreo e com ambientes urbanos densamente povoados. Portanto, este trabalho \textcolor{att}{também} se compromete a abordar as estratégias necessárias para evitar colisões e garantir que as entregas ocorram sem incidentes.
+Tendo em vista o crescimento expressivo do uso de UAVs em serviços de entrega este trabalho tem como objetivo projetar e desenvolver um controlador eficiente e seguro para quadricópteros utilizados em entregas autônomas. A proposta é explorar as principais técnicas de controle e navegação, aliadas às mais recentes tecnologias em sensores e sistemas de posicionamento, para garantir a eficácia, precisão e confiabilidade nas operações de entrega. A implementação bem-sucedida do controlador exige um estudo aprofundado da dinâmica de voo dessas aeronaves, bem como a integração inteligente de algoritmos de controle e sistemas de navegação. A segurança é uma preocupação primordial, considerando-se a interação dos quadricópteros com o espaço aéreo e com ambientes urbanos densamente povoados. Portanto, este trabalho também se compromete a abordar as estratégias necessárias para evitar colisões e garantir que as entregas ocorram sem incidentes.
 
 \section{Objetivo Geral}
 
-O objetivo geral dessa tese consiste em desenvolver um controlador para um quadricóptero que utilize um gerador de trajetórias para efetuar entregas autônomas, para isso devem-se considerar suas diferentes configurações e implementações e determinar a mais viável. \textcolor{att}{Procura-se, ao fim deste documento, desenvolver um controlador, testá-lo em um ambiente simulado, e implementá-lo em um sistema real para análise do projeto.}
+O objetivo geral deste trabalho consiste em desenvolver um controlador para um quadricóptero que utilize um gerador de trajetórias para efetuar entregas autônomas, para isso devem-se considerar suas diferentes configurações e implementações e determinar a mais viável. Procura-se, ao fim deste documento, desenvolver um controlador, e testá-lo em um ambiente simulado.
 
 \section{Objetivos Específicos}
 
@@ -23,12 +23,11 @@ Com a finalidade geral definida, deve-se determinar as etapas necessárias para 
 
 \begin{itemize}
     \item Modelagem da dinâmica do quadricóptero;
-    \item \textcolor{att}{Pesquisa de controladores comumente utilizados em quadricópteros;}
+    \item Pesquisa de controladores comumente utilizados em quadricópteros;
     \item Seleção do controlador baseado em características desejáveis;
-    \item \textcolor{att}{Desenvolvimento de um gerador de trajetória que servirá de referência para o controlador;}
-    \item \textcolor{att}{Desenvolvimento de código que integrará o sistema gerador com o controlador;}
+    \item Desenvolvimento de um gerador de trajetória que servirá de referência para o controlador;
+    \item Desenvolvimento de código que integrará o sistema gerador com o controlador;
     \item Simulação do quadricóptero controlado;
-    \item Implementação real do controlador em um protótipo.
 \end{itemize}
 
  Ao final deste trabalho, espera-se oferecer uma base sólida de conhecimento e uma proposta viável de controlador para quadricópteros em entregas autônomas, a fim de impulsionar o avanço e a aplicação dessa tecnologia inovadora no campo logístico, considerando suas potencialidades e as demandas cada vez mais presentes na sociedade contemporânea.

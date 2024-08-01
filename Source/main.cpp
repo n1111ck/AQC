@@ -52,15 +52,15 @@ int main()
 	gerSensores.Simulacao(modelo);
 #endif
 
-	AQC::CascataPD controlador(
+	AQC::LRE controlador(
 		gerAcopladores,
 		gerSensores,
 		parametros,
 		0.7,
-		1/parametros.mPasso
+		1 / parametros.mPasso
 	);
 
-	AQC::Algoritmo<AQC::CascataPD>::ParametrosAlgoritmo parametrosAlgo;
+	AQC::Algoritmo<AQC::LRE>::ParametrosAlgoritmo parametrosAlgo;
 	parametrosAlgo.mAltitudeVoo = 30.0;
 	parametrosAlgo.mArfagemAvanco = 5.0;
 	parametrosAlgo.mToleranciaEntrega = 10.0;
@@ -69,7 +69,7 @@ int main()
 	parametrosAlgo.mConstanteEquilibrio = 0.1;
 
 
-	AQC::Algoritmo<AQC::CascataPD> algoritmo(
+	AQC::Algoritmo<AQC::LRE> algoritmo(
 		controlador,
 		gerSensores,
 		parametrosAlgo
@@ -84,17 +84,18 @@ int main()
 	csvExport << "ddRoll[rad/s2],ddPitch[rad/s2],ddYaw[rad/s2],";
 	csvExport << "M1[V],M2[V],M3[V],M4[V],";
 	csvExport << "ReferenciaZ[m],ReferenciaRoll[rad],ReferenciaPitch[rad],ReferenciaYaw[rad],";
-	csvExport << "ReferenciadZ[m/s],ReferenciadRoll[rad/s],ReferenciadPitch[rad/s],ReferenciadYaw[rad/s]" << std::endl;
+	csvExport << "ReferenciadZ[m/s],ReferenciadRoll[rad/s],ReferenciadPitch[rad/s],ReferenciadYaw[rad/s]" << ",";
+	csvExport << "ReferenciaM1[V],ReferenciaM2[V],ReferenciaM3[V],ReferenciaM4[V]" << std::endl;
 
 	AQC::Vetor4D sinal = {};
 
 	// Aplicacao de chao
-	//modelo.Arrasto({1.0, 1.0, 0.5});
+	modelo.Arrasto({1.0, 1.0, 0.5});
 	algoritmo.NovaEntrega(-100.0, -200.0);
 	AQC::Float ultimoControle = 0.0;
 	AQC::Float tempoAcomodacao = 0.0;
 
-	for (AQC::UInt32 i = 0; i < static_cast<AQC::UInt32>(10.0 / parametros.mPasso); i++)
+	for (AQC::UInt32 i = 0; i < static_cast<AQC::UInt32>(580.0 / parametros.mPasso); i++)
 	{
 		csvExport << i * parametros.mPasso << ",";
 		csvExport << modelo.Posicao().mX << ",";
@@ -126,13 +127,39 @@ int main()
 		csvExport << controlador.ReferenciaVelocidade().mW << ",";
 		csvExport << controlador.ReferenciaVelocidade().mX << ",";
 		csvExport << controlador.ReferenciaVelocidade().mY << ",";
-		csvExport << controlador.ReferenciaVelocidade().mZ << std::endl;
+		csvExport << controlador.ReferenciaVelocidade().mZ << ",";
+		csvExport << gerAcopladores.Tensao().mW << ",";
+		csvExport << gerAcopladores.Tensao().mX << ",";
+		csvExport << gerAcopladores.Tensao().mY << ",";
+		csvExport << gerAcopladores.Tensao().mZ << std::endl;
 
-		if (i * parametros.mPasso > 0)
+		if (i >= 0)
 		{
 			//gerAcopladores.Aplicar(AQC::Vetor4D({ 5.998, 5.999, 6.000, 6.001 }));
 
-			if (i < static_cast<AQC::UInt32>(1.0 / parametros.mPasso))
+
+			/*if (i < static_cast<AQC::UInt32>(1.0 / parametros.mPasso))
+			{
+				gerAcopladores.Aplicar(AQC::Vetor4D({ 6.0000, 6.0000, 6.0000, 6.0000 }));
+			}
+			else if (i < static_cast<AQC::UInt32>(2.0 / parametros.mPasso))
+			{
+				gerAcopladores.Aplicar(AQC::Vetor4D({ 6.0000, 6.0010, 6.0000, 5.9990 }));
+			}
+			else if (i < static_cast<AQC::UInt32>(3.0 / parametros.mPasso))
+			{
+				gerAcopladores.Aplicar(AQC::Vetor4D({ 5.9990, 6.0000, 6.0010, 6.0000 }));
+			}
+			else if (i < static_cast<AQC::UInt32>(4.0 / parametros.mPasso))
+			{
+				gerAcopladores.Aplicar(AQC::Vetor4D({ 5.9990, 6.0010, 5.9990, 6.0010 }));
+			}
+			else if (i < static_cast<AQC::UInt32>(5.0 / parametros.mPasso))
+			{
+				gerAcopladores.Aplicar(AQC::Vetor4D({ 5.9980, 5.9990, 6.0000, 6.0010 }));
+			}*/
+
+			/*if (i < static_cast<AQC::UInt32>(1.0 / parametros.mPasso))
 			{
 				controlador.Aplicar({ 1.0, 0.0, 0.0, 0.0 });
 			}
@@ -170,19 +197,26 @@ int main()
 			}
 			else
 			{
-				controlador.Aplicar({ 0.0, 0.000, 0.000, 0.000 });
-			}
+				controlador.Aplicar({ 0.0, 0.000, 0.0, 0.000 });
+			}*/
 
-			//algoritmo.Atualizar();
+			algoritmo.Atualizar(parametros.mPasso * i);
+
 
 			//modelo.Sobreposicao(modelo.Posicao().mZ < 0.0);
 		}
 		modelo.Simular();
 
-		//if (fabsf(0.174 - modelo.Rotacao().mY) > 0.02)
-		//{
-		//	tempoAcomodacao = i * parametros.mPasso - 2.0;
-		//}
+		if (i > static_cast<AQC::UInt32>(100.0 / parametros.mPasso) && modelo.Posicao().mZ < 4.0)
+		{
+			modelo.Distancia(AQC::Modelo::eBaixo, modelo.Posicao().mZ);
+		}
+
+		if (fabsf(0.174 - modelo.Rotacao().mY) > 0.02 * 0.174)
+		{
+			tempoAcomodacao = i * parametros.mPasso - 1.0;
+		}
+
 	}
 
 	csvExport.close();

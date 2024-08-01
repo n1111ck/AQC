@@ -5,14 +5,15 @@
 
 \chapter{Análise}\label{sec:analise}
 
-Este capítulo apresenta uma análise do sistema de controle desenvolvido para um quadricóptero em aplicações de entregas autônomas. Inicialmente, a modelagem dinâmica do quadricóptero será comparada com um modelo de referência existente na literatura, elucidando as semelhanças, diferenças e eventuais simplificações adotadas. Em seguida, os controladores propostos são analisados em detalhe, considerando diferentes tipos de referências de atitude e avaliando o desempenho do sistema em termos de precisão e estabilidade. Por fim, o algoritmo de controle de trajetória, responsável por gerar a rota de entrega e evitar obstáculos, será explorado, destacando suas características e limitações.
+Este capítulo apresenta uma análise do sistema de controle desenvolvido para um quadricóptero em aplicações de entregas autônomas. Inicialmente, a modelagem dinâmica do quadricóptero será comparada com um modelo de referência existente na literatura, elucidando as semelhanças ou diferenças. Em seguida, os controladores propostos são analisados em detalhe, considerando diferentes tipos de referências de atitude e avaliando o desempenho do sistema em termos de precisão e estabilidade. Por fim, o algoritmo de controle de trajetória será explorado, destacando suas características e limitações.
+
+\section{Simulação}
+
+O ambiente de simulação desenvolvido foi realizado em linguagem C++ e está documentado no Apêndice \ref{sec:simulacao}. Nele, consta a implementação do modelo em sua forma não linear, conforme as definições da Seção \ref{sec:sistema_completo} e consideração do arrasto, e todas as constatações de saturação determinadas. Essa simulação será utilizada tanto para analisar os algoritmos de controle desenvolvidos, quanto para analisar o algoritmo de voo em si. Para garantir que o modelo desenvolvido neste trabalho está adequado, além de garantir que a implementação em código também está adequada, será feita uma comparação com o modelo proposto e um segundo de trabalho de referência na seção seguinte.
 
 \section{Modelagem}
 
-%%% Garantir uma simulação confiável
-A fim de assegurar a confiabilidade da simulação, faz-se imprescindível a validação dos resultados obtidos. Para tanto, será realizada uma comparação com um trabalho de referência já estabelecido, buscando verificar a correspondência entre os resultados e validar a precisão do modelo desenvolvido. Os dados serão comparados com aqueles obtidos por David C. H. realizado durante o evento \textit{IEEE CSS Video Clip Contest} 2014 \cite{IEEE_contest}, o qual possui uma implementação em MATLAB utilizada como referência e está disponível em um repositório Github \cite{repo_david}. Os parâmetros adotados para essa comparação e demais simulações são apresentados na Tabela \ref{tab:parametros_adotados}.
-
-\begin{table}[!h]
+\begin{table}[!b]
 	\centering
 	\caption{Parâmetros do modelo adotados para a simulação de dados.}
 	\begin{tabular}{|c|c|c|c|c|c|}
@@ -25,56 +26,51 @@ A fim de assegurar a confiabilidade da simulação, faz-se imprescindível a val
 	\label{tab:parametros_adotados}
 \end{table}
 
-\begin{table}[!b]
+%%% Garantir uma simulação confiável
+A fim de assegurar a confiabilidade da simulação, faz-se imprescindível a validação dos resultados obtidos. Para tanto, será realizada uma comparação com um trabalho de referência já estabelecido, buscando verificar a correspondência entre os resultados e validar a precisão do modelo desenvolvido. Os dados serão comparados com aqueles obtidos por David C. H. realizado durante o evento \textit{IEEE CSS Video Clip Contest} 2014 \cite{IEEE_contest}, o qual possui uma implementação em MATLAB utilizada como referência e está disponível em um repositório Github \cite{repo_david}. Os parâmetros adotados para essa comparação e demais simulações são apresentados na Tabela \ref{tab:parametros_adotados}. Ainda, como o modelo de referência não propõe termo de arrasto, para este ensaio a força de arrasto será nula.
+
+Para validar a modelagem dinâmica do quadricóptero, foram realizados cinco ensaios variando os valores de tensão dos rotores. Os ensaios são separados por efeitos observados nas variáveis de estado e foram realizados com um passo de integração de 1 milissegundo. Para garantir a consistência da comparação, o método de integração utilizado no modelo de referência foi o de Runge-Kutta de quarta ordem, o mesmo utilizado no modelo proposto. Em cada ensaio, um sinal de tensão em degrau foi aplicado ao sistema, conforme apresentado na Tabela \ref{tab:degraus_modelagem}, e as respostas obtidas no ambiente de simulação proposto (em azul na Figura \ref{fig:modelagem}) foram comparadas com as simulações realizadas no modelo de referência (em vermelho).
+
+\begin{table}[!h]
 	\centering
 	\caption{Degraus de tensão aplicados aos ensaios de modelagem independentes.}
 	\begin{tabular}{|c|c|c|c|c|}
 		\cline{2-5}
-		\multicolumn{1}{c|}{} & Tensão M1 [V] & Tensão M2 [V] & Tensão M3 [V] & Tensão M4 [V]\\\hline
+		\multicolumn{1}{c|}{} & Motor 1 [V] & Motor 2 [V]& Motor 3 [V]& Motor 4 [V]\\\hline
 		Altitude & 6,000 & 6,000 & 6,000 & 6,000 \\\hline
 		Rolamento & 6,000 & 6,001 & 6,000 & 5,999 \\\hline
 		Arfagem & 5,999 & 6,000 & 6,001 & 6,000 \\\hline
 		Guinada & 5,999 & 6,001 & 5,999 & 6,001 \\\hline
+		Múltiplo & 5,998 & 5,999 & 6,000 & 6,001 \\\hline
 	\end{tabular}
 	\label{tab:degraus_modelagem}
 \end{table}
 
-Para validar a modelagem dinâmica do quadricóptero, foram realizados quatro ensaios independentes, cada um impactando uma variável de estado específica: altitude, rolamento, arfagem e guinada. Os ensaios foram realizados com um passo de integração de 100 microssegundos. Para garantir a consistência da comparação, o método de integração utilizado no MATLAB também foi o de Runge-Kutta de quarta ordem. Em cada ensaio, um sinal de tensão em degrau foi aplicado ao sistema, conforme apresentado na Tabela \ref{tab:degraus_modelagem}, e as respostas obtidas no ambiente de simulação desenvolvido (em azul na Figura \ref{fig:modelagem_independente}) foram comparadas com as simulações realizadas no MATLAB (em vermelho). Observa-se que existe alta semelhança entre os dois resultados com visivelmente nenhum erro.
-
 \begin{figure}[!h]
 	\centering
 	\caption{Ensaios de modelagem para variações de estado independentes.}
-	\includegraphics[width=1.0\textwidth]{img/modelagem_independente.png}
-	\label{fig:modelagem_independente}
+	\includegraphics[width=1.0\textwidth]{img/modelagem.png}
+	\label{fig:modelagem}
 \end{figure}
 
-Além da validação individual de cada variável de estado, ensaios adicionais foram conduzidos aplicando sinais de tensão que impactam múltiplos estados simultaneamente. O objetivo foi analisar a coerência da correlação entre as variáveis no modelo desenvolvido. A Figura \ref{fig:modelagem_conjunta} ilustra os resultados obtidos nesse cenário ao aplicar um sinal de tensão de $\boldsymbol{\vec{V}} = [5,998; 5,999; 6,000; 6,001 ]^T$ V, comparando o comportamento do modelo implementado com as simulações no MATLAB. Apesar da alta similaridade geral, observou-se um pequeno desvio nos ângulos de arfagem e rolamento ao final do ensaio, com o ambiente desenvolvido apresentando valores ligeiramente maiores em relação ao MATLAB. Essa diferença, embora sutil, sugere uma possível divergência na implementação do método de Runge-Kutta entre os dois ambientes. Logo, não representa característica que invalide a similaridade entre as implementações.
+A fim de quantificar a discrepância entre o modelo desenvolvido e o ambiente de referência, foi calculada a diferença entre as respostas obtidas em cada simulação. Os erros relativos obtidos foram então plotados no histograma apresentado na Figura \ref{fig:histograma_modelagem}. 
 
 \begin{figure}[!h]
 	\centering
-	\caption{Ensaios de modelagem para variações de estado simultâneas.}
-	\includegraphics[width=1.0\textwidth]{img/modelagem_conjunta.png}
-	\label{fig:modelagem_conjunta}
+	\caption{Histograma dos erros relativos do modelo proposto com relação ao modelo de referência.}
+	\includegraphics[width=1.0\textwidth]{img/histograma_modelagem.png}
+	\label{fig:histograma_modelagem}
 \end{figure}
 
-A fim de quantificar a discrepância entre o modelo desenvolvido e o ambiente de referência, foi calculada a diferença entre as respostas obtidas em cada simulação. Os erros calculados foram então plotados no histograma apresentado na Figura \ref{fig:histograma_conjunto}, permitindo visualizar a distribuição dos erros e avaliar a precisão do modelo. 
-
-\begin{figure}[!h]
-	\centering
-	\caption{Histograma dos erros relativos contabilizando todos os ensaios realizados.}
-	\includegraphics[width=1.0\textwidth]{img/histograma_conjunto.png}
-	\label{fig:histograma_conjunto}
-\end{figure}
-
-Observa-se que a maior parte dos dados possui erros muito próximos de zero, representando um erro relativo de 0,410 \% $\pm$ 1,352 \%, indicando uma alta concordância entre o modelo implementado e o ambiente de referência.
+Observa-se que a maior parte dos dados possui erros muito próximos de zero, representando um erro relativo de $1,114 \times 10^{-2}$  \% $\pm$ $4,554 \times 10^{-1}$ \%, indicando uma alta concordância entre o modelo proposto e o ambiente de referência.
 
 \section{Avaliação do controlador}
 
-Para a avaliação do controlador, similarmente à validação do modelo, foram considerados cenários de aplicação independentes e simultâneas. Denota-se, também, a necessidade de evitar sinais de saturação no controlador, com o objetivo de minimizar potenciais não linearidades durante a análise. O tempo de acomodação escolhido deve representar o tempo suficiente para que o quadricóptero consiga reagir a um obstáculo detectado evitando sua colisão. Assim, considera-se o valor de 700 milissegundos de acomodação suficiente.
+Para a avaliação do controlador, similarmente à validação do modelo, foram considerados cenários de aplicação de referências independentes e simultâneas. Denota-se, também, a necessidade de evitar sinais de saturação no controlador, com o objetivo de minimizar potenciais não linearidades durante a análise. O tempo de acomodação escolhido deve representar o tempo suficiente para que o quadricóptero consiga reagir a um obstáculo detectado evitando sua colisão. Assim, considera-se o valor de 500 milissegundos de acomodação suficiente. O coeficiente de arrasto para este ensaio também será negligenciado, dado que o objetivo é avaliar apenas o modelo formulado, e não as perturbações envolvidas no momento.
 
 \subsection{Controlador PD em cascata}
 
-Os valores resultantes do cálculo dos parâmetros do controlador PD em cascata, realizado por meio da Tabela \ref{tab:controlador_pd}, são exibidos na Tabela \ref{tab:cascatapd_parametros} para a aplicação de 700 milissegundos. Na Figura \ref{fig:referencia_cascata}, são apresentados os ensaios.
+Os valores resultantes do cálculo dos parâmetros do controlador PD em cascata, realizado por meio da Tabela \ref{tab:controlador_pd}, são exibidos na Tabela \ref{tab:cascatapd_parametros} para a aplicação de 500 milissegundos. Na Figura \ref{fig:referencia_cascata}, são apresentados os ensaios.
 
 \begin{table}[!h]
 	\centering
@@ -83,10 +79,10 @@ Os valores resultantes do cálculo dos parâmetros do controlador PD em cascata,
 		\cline{2-5}
 		\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{Posição} & \multicolumn{2}{c|}{Velocidade}\\\cline{2-5}
 		\multicolumn{1}{c|}{} & $K_p$ & $K_d$ & $K_p$ & $K_d$ \\\hline
-		Altitude & 7,143 s$^{-1}$ & 1,000 & 7,307 $\times 10^{1}$ kg/s & 5,553 $\times 10^{-1}$ kg\\\hline
-		Rolamento & 7,143 s$^{-1}$ & 1,000 & 6,786 $\times 10^{-2}$ kg.m$^2$/s & 5,157 $\times 10^{-3}$ kg.m$^2$\\\hline
-		Arfagem & 7,143 s$^{-1}$ & 1,000 & 6,786 $\times 10^{-2} $kg.m$^2$/s & 5,157 $\times 10^{-3}$ kg.m$^2$\\\hline
-		Guinada & 7,143 s$^{-1}$ & 1,000 & 1,327 $\times 10^{-1}$ kg.m$^2$/s & 1,008 $\times 10^{-2}$ kg.m$^2$\\\hline
+		Altitude & 8,000 s$^{-1}$ & 1,000 & 8,184 $\times 10^{1}$ kg/s & 6,220 $\times 10^{-1}$ kg\\\hline
+		Rolamento & 8,000 s$^{-1}$ & 1,000 & 7,600 $\times 10^{-2}$ kg.m$^2$/s & 5,776 $\times 10^{-3}$ kg.m$^2$\\\hline
+		Arfagem & 8,000 s$^{-1}$ & 1,000 & 7,600 $\times 10^{-2}$ kg.m$^2$/s & 5,776 $\times 10^{-3}$ kg.m$^2$\\\hline
+		Guinada & 8,000 s$^{-1}$ & 1,000 & 1,486 $\times 10^{-1}$ kg.m$^2$/s & 1,129 $\times 10^{-2}$ kg.m$^2$\\\hline
 	\end{tabular}
 	\label{tab:cascatapd_parametros}
 \end{table}
@@ -98,15 +94,15 @@ Os valores resultantes do cálculo dos parâmetros do controlador PD em cascata,
 	\label{fig:referencia_cascata}
 \end{figure}
 
-Observou-se no ensaio que houve uma discrepância com relação à teoria para o erro de seguimento do controlador. A presença do erro de seguimento está relacionada às não linearidades do sistema, simplificadas durante a linearização do modelo. Estas não linearidades introduzem erros na integração da planta linearizada que, na ausência de um integrador no controlador, ocasionam os erros de referência. Para evitar a necessidade de recalcular um PID, pode-se optar por implementar uma integração eventual do erro de referência após um tempo de permanência em uma dada condição, com o objetivo de retomar o seguimento. Para a aplicação, este erro é muito ínfimo, visto que a altitude desejada não precisa ser criticamente precisa.
+Observou-se no ensaio que houve uma discrepância com relação à teoria para o erro de seguimento do controlador, visto que o polo na origem da planta deveria ter sido capaz de integrar o erro da referência. Essa característica pode ser advinda ou da presença de uma perturbação na entrada do sistema, ou a características não modeladas. No caso do modelo aproximado pela matriz Jacobiana, as não linearidades presentes no modelo proposto não são consideradas pelo sinal de controle, de forma que elas também são integradas pela planta. Assim, sem a integração explícita do sinal de erro, o controlador não é capaz de atingir referências com erro nulo, sempre existirá uma parcela de erro constante, que é mais evidente para o caso da altitude. Para a aplicação, este erro é pequeno o suficiente para não invalidar seu uso, visto que as altitudes desejadas são da ordem de dezenas de metros, enquanto o erro de seguimento é da ordem de centímetros.
 
 O ensaio também revelou um comportamento importante do sistema: o efeito da saturação negativa nos instantes 6 s e 9 s. Esse efeito se manifesta como um atraso na resposta do controlador. Isso ocorre porque, embora o modelo linear exija um valor negativo de propulsão para alcançar a dinâmica desejada, na simulação o sistema é limitado a um valor mínimo de propulsão igual a zero.
 
-Nos demais casos, onde não foram observados erros de seguimento ou atrasos devido à saturação do sinal, o tempo de acomodação médio foi de $7,448 \times 10^{-1} \pm 9,460 \times 10^{-3}$ s. Embora ligeiramente superior ao ideal, este valor é considerado adequado para a aplicação. A divergência observada no tempo de acomodação é característica das não linearidades presentes entre a referência e o estado.
+Nos demais casos, onde não foram observados erros de seguimento ou atrasos devido à saturação do sinal, o tempo de acomodação foi de $8,435 \times 10^{-1} \pm 2,436 \times 10^{-2}$ s. Essa discrepância será analisada posteriormente comparando-a ao outro método.
 
 \subsection{Linearização por Realimentação de Estados}
 
-De forma análoga ao controlador PD, inicialmente, definem-se os parâmetros dos controladores lineares empregados pelo método para um tempo de acomodação de 400 milissegundos. Os resultados obtidos são apresentados na Tabela \ref{tab:lre_parametros} e os ensaios apresentados na Figura \ref{fig:referencia_lre}.
+De forma análoga ao controlador PD, inicialmente definem-se os parâmetros dos controladores lineares empregados pelo método para um tempo de acomodação de 500 milissegundos. Os resultados obtidos são apresentados na Tabela \ref{tab:lre_parametros} e os ensaios ilustrados na Figura \ref{fig:referencia_lre}.
 
 \begin{table}[!h]
 	\centering
@@ -115,10 +111,10 @@ De forma análoga ao controlador PD, inicialmente, definem-se os parâmetros dos
 		\cline{2-4}
 		\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{Posição} & Velocidade\\\cline{2-4}
 		\multicolumn{1}{c|}{} & $K_p$ & $K_d$ & $K_p$\\\hline
-		Altitude & 7,143 s$^{-1}$ & 1,000 & 7,143 s$^{-1}$\\\hline
-		Rolamento & 7,143 s$^{-1}$ & 1,000 & 7,143 s$^{-1}$\\\hline
-		Arfagem & 7,143 s$^{-1}$ & 1,000 & 7,143 s$^{-1}$\\\hline
-		Guinada & 7,143 s$^{-1}$ & 1,000 & 7,143 s$^{-1}$\\\hline
+		Altitude & 8,000 s$^{-1}$ & 1,000 & 8,000 s$^{-1}$\\\hline
+		Rolamento & 8,000 s$^{-1}$ & 1,000 & 8,000 s$^{-1}$\\\hline
+		Arfagem & 8,000 s$^{-1}$ & 1,000 & 8,000 s$^{-1}$\\\hline
+		Guinada & 8,000 s$^{-1}$ & 1,000 & 8,000 s$^{-1}$\\\hline
 	\end{tabular}
 	\label{tab:lre_parametros}
 \end{table}
@@ -130,18 +126,43 @@ De forma análoga ao controlador PD, inicialmente, definem-se os parâmetros dos
 	\label{fig:referencia_lre}
 \end{figure}
 
-Este novo ensaio, apesar de ainda apresentar a característica de saturação do sinal, demonstra a eliminação do desvio do erro de seguimento. Esse resultado é atribuído à linearização por realimentação de estados, que, ao cancelar as não linearidades da planta, permite que o integrador atue conforme o modelo teórico. É crucial destacar, no entanto, que em aplicações reais a robustez do método pode ser desafiada por fatores externos e incertezas não modeladas. Portanto, a incorporação de técnicas adicionais para garantir a robustez do sistema em cenários reais se torna essencial.
+Este novo ensaio, apesar de ainda apresentar a característica de saturação do sinal, demonstra a eliminação do desvio do erro de seguimento. Esse resultado é atribuído à linearização por realimentação de estados, que, ao cancelar as não linearidades da planta, permite que o integrador atue conforme o modelo teórico.
 
-Excluindo os ensaios que apresentaram saturação do sinal, o tempo de acomodação obtido com a linearização por realimentação de estados foi de $7,383 \times 10^{-1} \pm 1,241 \times 10^{-2}$ s.
+Excluindo os ensaios que apresentaram saturação do sinal, o tempo de acomodação obtido com a linearização por realimentação de estados foi de $8,289 \times 10^{-1} \pm 1,591 \times 10^{-2}$ s. Essa discrepância será analisada posteriormente comparando-a ao método de controle linear.
 
 \subsection{Comparação dos controladores}
 
-Em ambos os casos, os controladores apresentaram tempos de acomodação semelhantes, embora com certa discrepância em relação aos valores teóricos. No entanto, essas diferenças são consideradas aceitáveis para fins práticos.
+Em ambos os casos, os controladores apresentaram tempos de acomodação semelhantes, no entanto com certa discrepância em relação aos valores teóricos. A fim de obter uma relação entre o valor esperado e o obtido, e assim ter uma forma de determinar os ganhos necessários do controlador, foi realizado uma bateria de testes para ambos os métodos variando o tempo de acomodação teórico e mensurando o simulado. Os resultados destes testes são apresentados na Figura \ref{fig:relacao_teorico_simulado}.
 
-É importante destacar que o controlador PD apresentou erro de seguimento, o que pode ser considerado uma desvantagem em relação ao controlador por linearização. Entretanto, em aplicações reais, as imperfeições dos sensores podem afetar a robustez de ambos os métodos, especialmente no caso da linearização por realimentação de estados, que depende da precisão das medidas para um bom desempenho. 
+\begin{figure}[!h]
+	\centering
+	\caption{Relação do tempo de acomodação teórico com o tempo de acomodação simulado.}
+	\includegraphics[width=1.0\textwidth]{img/relacao_teorico_simulado.png}
+	\label{fig:relacao_teorico_simulado}
+\end{figure}
 
-Assim, determina-se que, para a simulação em ambiente controlado, o método de linearização por realimentação de estados é a melhor opção.
+Observa-se que a relação destes dois termos possui a forma de uma curva linear que não passa pela origem. O valor dessa relação é obtido a partir de uma regressão linear e possui a forma $T_{as}(T_{at}) = 1,234 \cdot T_{at} + 0,184$ [s]. Justifica-se esta característica como efeito de operações não lineares do sinal de controle linear, como na saturação do sinal e na relação quadrática da força e do momento, dado que elas ocorrem em ambos os métodos. Para aplicação final, este tempo de acomodação indevido não é um problema, visto que a acomodação real ainda se enquadra na imposição de reação a um obstáculo. Porém, quando projetado, deve-se manter em mente que o tempo de acomodação informado ao controlador é inferior ao aparente.
+
+Ainda, é importante destacar que o controlador PD apresentou erro de seguimento, o que pode ser considerado uma desvantagem em relação ao controlador por linearização. Assim, determina-se que, para a simulação em ambiente controlado, o método de linearização por realimentação de estados é a melhor opção.
 
 \section{Avaliação do algoritmo}
+
+Para analisar o algoritmo, será considerado um ensaio em que o quadricóptero sairá da posição $X = 0$ m, $Y = 0$ m e $Z = 0$ m, e deverá entregar a encomenda na posição $X = -100$ m, $Y = -200$ m. Os ajustes utilizados para o ensaio consideram uma altitude de cruzeiro de 30 metros, uma arfagem de avanço de 5 graus, uma tolerância de distância para entrega de 10 m, uma tolerância de distância pelo sensor inferior de 2 metros e uma tolerância de distância pelo sensor frontal de 3 metros. A aplicação do algoritmo é ilustrada na Figura \ref{fig:ensaio_algo_voo_posicao}. Além disso, restringe-se a velocidade de ascendência e descendência para que o controlador não sature, permitindo um máximo de 5 m/s em ascendência e 1 m/s em descendência.
+
+\begin{figure}[!h]
+	\centering
+	\caption{Posição do quadricóptero para o ensaio do algoritmo de voo.}
+	\includegraphics[width=0.95\textwidth]{img/algoritmo_sem_colisao.png}
+	\label{fig:ensaio_algo_voo_posicao}
+\end{figure}
+
+O ensaio demonstra a sequência de estados descrita anteriormente. Primeiramente o quadricóptero decola e alcança a altitude de 30 metros, efetuando uma guinada de -2,035 radianos em direção ao destino. A partir de 6 segundos, o quadricóptero transiciona para o estado de transporte, mantendo uma arfagem de 5 graus. Essa fase se estende até o instante 257 segundos, quando o veículo está a uma distância adequada para iniciar a entrega. Mantendo a posição horizontal (X e Y), o veículo inicia a descida para a entrega, concluindo o pouso no instante 287 segundos, quando o sensor inferior detecta o solo. Após aguardar 10 segundos para a estabilização do sistema após o pouso, o \textit{drone} decola novamente, retornando à altitude de cruzeiro. O \textit{drone} então repete o processo em sentido inverso, retornando à base nas coordenadas X = 0 m e Y = 0 m, onde entra em estado inoperante em 575 segundos. Na Figura \ref{fig:ensaio_algo_voo_orientacao}, também são apresentados os resultados da orientação do qudricóptero.
+
+\begin{figure}[!h]
+	\centering
+	\caption{Orientação do quadricóptero para o ensaio do algoritmo de voo.}
+	\includegraphics[width=0.95\textwidth]{img/algoritmo_sem_colisao_orientacao.png}
+	\label{fig:ensaio_algo_voo_orientacao}
+\end{figure}
 
 \end{document}

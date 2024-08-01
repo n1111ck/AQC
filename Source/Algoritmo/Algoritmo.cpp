@@ -38,7 +38,12 @@ namespace AQC
 		mLongitudeDestino(0.0),
 		mToleranciaColisao(parametrosAlgoritmo.mToleranciaColisao),
 		mConstanteEquilibrio(parametrosAlgoritmo.mConstanteEquilibrio),
-		mReferencia({})
+		mReferencia({}),
+		mTempo(0.0),
+		mTempoEntrega(-1.0),
+		mTempoDecolagem(-1.0),
+		mLatitudeDecolagem(0.0),
+		mLongitudeDecolagem(0.0)
 	{
 
 	}
@@ -132,10 +137,18 @@ namespace AQC
 	{
 		Vetor3D posicao = mpGerenciadorSensores->Posicao();
 
+		// Condicoes iniciais
+		if (mTempoDecolagem < 0.0)
+		{
+			mTempoDecolagem = mTempo;
+			mLatitudeDecolagem = posicao.mX;
+			mLongitudeDecolagem = posicao.mY;
+		}
+
 		// Tarefa executada
 		mReferencia.mW = mAltitudeVoo;
-		mReferencia.mX = 0.0;
-		mReferencia.mY = 0.0;
+		mReferencia.mX = 0.1 * Equilibrio(mLatitudeDecolagem - posicao.mX);
+		mReferencia.mY = 0.1 * Equilibrio(mLongitudeDecolagem - posicao.mY);;
 		mReferencia.mZ = atan2f(
 			mLongitudeDestino - posicao.mY,
 			mLatitudeDestino - posicao.mX
@@ -145,6 +158,7 @@ namespace AQC
 		if (!(mpGerenciadorSensores->Posicao().mZ < 0.9 * mAltitudeVoo))
 		{
 			mEstadoAtual = eEmRota;
+			mTempoDecolagem = -1.0;
 		}
 	}
 
@@ -153,33 +167,35 @@ namespace AQC
 	Algoritmo<Controlador>::TarefaEmRota()
 	{
 		Vetor3D posicao = mpGerenciadorSensores->Posicao();
-		Float distanciaAoDestino;
+		Float distanciaAoDestino, desvioDaRota, estimacaoLongitude;
 
-		if (
-			fabs(mLatitudeDestino - mLatitudeBase) > fabs(posicao.mX - mLatitudeBase) ||
-			fabs(mLongitudeDestino - mLongitudeBase) > fabs(posicao.mY - mLongitudeBase)
-			)
+		// Distancia ao destino
+		distanciaAoDestino = pow(pow(mLongitudeDestino - posicao.mY, 2) +
+			pow(mLatitudeDestino - posicao.mX, 2), 0.5);
+
+		// Estimar longitude
+		estimacaoLongitude = (mLongitudeDestino - mLongitudeBase) / (mLatitudeDestino - mLatitudeBase) * posicao.mX + mLongitudeBase;
+
+		// Corrigir desvio da rota
+		if (posicao.mY - estimacaoLongitude > 1.0)
 		{
-			distanciaAoDestino = pow(pow(mLongitudeDestino - posicao.mY, 2) +
-				pow(mLatitudeDestino - posicao.mX, 2), 0.5);
+			Float multiplier = mEntregue ? -1 : 1;
+			desvioDaRota = multiplier * fabsf(posicao.mY - estimacaoLongitude) / (posicao.mY - estimacaoLongitude) *
+				fabsf((mLongitudeDestino - mLongitudeBase) / (mLatitudeDestino - mLatitudeBase) * mLatitudeBase + 2 * mLongitudeBase) *
+				pow((mLongitudeDestino - mLongitudeBase) / (mLatitudeDestino - mLatitudeBase) + 1, 0.5);
 		}
 		else
 		{
-			distanciaAoDestino = -pow(pow(mLongitudeDestino - posicao.mY, 2) +
-				pow(mLatitudeDestino - posicao.mX, 2), 0.5);
+			desvioDaRota = 0.0;
 		}
 
-		// TODO: fazer a correcao por rolamento
-		// 
 		// Tarefa executada
-		mReferencia.mX = 0.0;
-		mReferencia.mY = mArfagemAvanco * Equilibrio(distanciaAoDestino);
+		mReferencia.mX = 0.0;//0.1 * Equilibrio(desvioDaRota);
+		mReferencia.mY = mArfagemAvanco;
 		mReferencia.mZ = atan2f(
 			mLongitudeDestino - posicao.mY,
 			mLatitudeDestino - posicao.mX
 		);;
-
-
 
 		// Condicao de transicao
 		if (distanciaAoDestino < mToleranciaEntrega)
@@ -197,26 +213,11 @@ namespace AQC
 	Algoritmo<Controlador>::TarefaPouso()
 	{
 		Vetor3D posicao = mpGerenciadorSensores->Posicao();
-		Float distanciaAoDestino;
-
-		if (
-			fabs(mLatitudeDestino - mLatitudeBase) > fabs(posicao.mX - mLatitudeBase) ||
-			fabs(mLongitudeDestino - mLongitudeBase) > fabs(posicao.mY - mLongitudeBase)
-			)
-		{
-			distanciaAoDestino = pow(pow(mLongitudeDestino - posicao.mY, 2) +
-				pow(mLatitudeDestino - posicao.mX, 2), 0.5);
-		}
-		else
-		{
-			distanciaAoDestino = -pow(pow(mLongitudeDestino - posicao.mY, 2) +
-				pow(mLatitudeDestino - posicao.mX, 2), 0.5);
-		}
 
 		// Tarefa executada
 		mReferencia.mW = 0.0;
-		mReferencia.mX = 0.0;
-		mReferencia.mY = mArfagemAvanco * Equilibrio(distanciaAoDestino);
+		mReferencia.mX = 0.01 * Equilibrio(-(mLongitudeDestino - posicao.mY));
+		mReferencia.mY = 0.01 * Equilibrio(-(mLatitudeDestino - posicao.mX));
 
 		// Condicao de transicao
 		if (mpGerenciadorSensores->Baixo() < mToleranciaPouso)
@@ -232,6 +233,7 @@ namespace AQC
 			else
 			{
 				// Fim de operacao
+				mReferencia.mW = mpGerenciadorSensores->Posicao().mZ;
 				mEstadoAtual = eDesligamento;
 			}
 		}
@@ -241,20 +243,30 @@ namespace AQC
 	Void
 	Algoritmo<Controlador>::TarefaEntrega()
 	{
-		// TODO: decidir o que fazer na entrega
-		Float latitudeAtual = mLatitudeDestino, longitudeAtual = mLongitudeDestino;
+		Vetor3D posicao = mpGerenciadorSensores->Posicao();
+
+		// Primeira vez no loop
+		if (mTempoEntrega < 0.0)
+		{
+			mTempoEntrega = mTempo;
+			mAltitudeEntrega = mpGerenciadorSensores->Posicao().mZ;
+			mEntregue = true;
+			mLatitudeDestino = mLatitudeBase;
+			mLongitudeDestino = mLongitudeBase;
+			mLatitudeBase = posicao.mX;
+			mLongitudeBase = posicao.mY;
+		}
 
 		// Tarefa executada
-		mEntregue = true;
-		mLatitudeDestino = mLatitudeBase;
-		mLongitudeDestino = mLongitudeBase;
-		mLatitudeBase = latitudeAtual;
-		mLongitudeBase = longitudeAtual;
+		mReferencia.mW = mAltitudeEntrega;
+		mReferencia.mX = 0.1 * Equilibrio(mLongitudeBase - posicao.mY);
+		mReferencia.mY = 0.1 * Equilibrio(mLatitudeBase - posicao.mX);
 
 		// Condicao de transicao
-		if (true)
+		if (mTempo - mTempoEntrega > 10.0)
 		{
 			mEstadoAtual = eDecolagem;
+			mTempoEntrega = -1.0;
 		}
 	}
 
@@ -263,6 +275,8 @@ namespace AQC
 	Algoritmo<Controlador>::TarefaDesligamento()
 	{
 		// Tarefa executada
+		mReferencia.mX = 0.0;
+		mReferencia.mY = 0.0;
 		Resetar();
 
 		// Fim de Operacao
@@ -284,8 +298,9 @@ namespace AQC
 
 	template<typename Controlador>
 	Void
-	Algoritmo<Controlador>::Atualizar()
+	Algoritmo<Controlador>::Atualizar(const Float& tempo)
 	{
+		mTempo = tempo;
 		MaquinaEstados();
 		mpControlador->Aplicar(mReferencia);
 	}
