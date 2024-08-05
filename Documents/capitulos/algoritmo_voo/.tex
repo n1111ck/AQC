@@ -17,13 +17,13 @@ A decolagem deve acontecer logo após a inicialização e imposição do destino
 	\item o veículo já se oriente para a posição de destino;
 \end{itemize}
 
-Tanto a altitude quanto a orientação da guinada são diretamente acessíveis pelas referências do controlador. No entanto, o deslocamento nulo deve ser alcançado a partir de uma função que equilibre as referências de arfagem e rolamento. Esta função deve possuir sempre a ação contrária do desvio aparente para evitar seu crescimento, assim como em um laço de controle. Uma função simples que possui essa característica é a própria função afim, quando passa pela origem e inverte o sinal da entrada, conforme representado na Equação \ref{eq:equilibrio}. Na equação, $\lambda$ representa o limite de operação superior e inferior da ação em módulo, e $k_l$ representa o ganho entre o desvio e a ação executada.
+Tanto a altitude quanto a orientação da guinada são diretamente acessíveis pelas referências do controlador. No entanto, o deslocamento nulo deve ser alcançado a partir de uma função que equilibre as referências de arfagem e rolamento, considerando a influência de ventos. Esta função deve possuir a ação relativa ao desvio aparente para evitar seu crescimento, porém de forma limitada. Uma função simples que possui essa característica é a própria função afim, quando limitada em uma região, conforme representado na Equação \ref{eq:equilibrio}. Na equação, $\lambda$ representa o limite de operação superior e inferior da referência em módulo, e $k_l$ representa o ganho entre o desvio e a referência aplicada.
 
 \begin{equation}\label{eq:equilibrio}
 	h(d) = \begin{cases}
-		\lambda & d < -k_l^{-1}\lambda\\
-		-k_ld & -k_l^{-1}\lambda \leq d \leq k_l^{-1}\lambda\\
-		-\lambda & d > k_l^{-1}\lambda\\
+		-\lambda & d < -k_l^{-1}\lambda\\
+		k_ld & -k_l^{-1}\lambda \leq d \leq k_l^{-1}\lambda\\
+		\lambda & d > k_l^{-1}\lambda\\
 	\end{cases}
 \end{equation}
 
@@ -36,7 +36,7 @@ Para que a guinada esteja corretamente orientada, é necessário calcular o âng
 	\label{fig:guinada_decolagem}
 \end{figure}
 
-Logo, este estado deve possuir as referências apresentadas na Tabela \ref{tab:ref_decolagem}. Na tabela, $\Delta x_\eta$ e $\Delta y_\eta$ representam os desvios com relação à posição fixada no início do estado, que devem ser equilibrados para manter a posição planar do veículo constante. 
+Logo, este estado deve possuir as referências apresentadas na Tabela \ref{tab:ref_decolagem}. Na tabela, $\Delta x_\eta$ e $\Delta y_\eta$ representam os desvios com relação à posição global, fixada no início do estado, e orientada com o \textit{drone}, que devem ser equilibrados para manter a posição planar do veículo constante. A diferença de sinal é relativo à referência que cada estado deve aplicar para corrigir o erro, de forma que um $\phi$ positivo decrementa a posição em $y_{\eta}$, e um $\theta$ positivo incrementa a posição em $x_{\eta}$.
 
 \begin{table}[!h]
 	\centering
@@ -44,7 +44,7 @@ Logo, este estado deve possuir as referências apresentadas na Tabela \ref{tab:r
 	\begin{tabular}{|c|c|c|c|c|}
 		\cline{2-5}
 		\multicolumn{1}{c|}{} & $z$  & $\phi$ & $\theta$ & $\psi$ \\\hline
-		Decolagem & $z_c$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\hline
+		Decolagem & $z_c$ & $h(-\Delta y_\eta)$ & $h(\Delta x_\eta)$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\hline
 	\end{tabular}
 	\label{tab:ref_decolagem}
 \end{table}
@@ -87,7 +87,7 @@ Por fim, os estados para o transporte são apresentados na Tabela \ref{tab:ref_t
 	\begin{tabular}{|c|c|c|c|c|}
 		\cline{2-5}
 		\multicolumn{1}{c|}{} & $z$  & $\phi$ & $\theta$ & $\psi$ \\\hline
-		Transporte & $z_c$ & $\phi_{max}$ & $h(d_t(x,y))$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\hline
+		Transporte & $z_c$ & $h(-d_t(x,y))$ & $\theta_{max}$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\hline
 	\end{tabular}
 	\label{tab:ref_transporte}
 \end{table}
@@ -102,7 +102,7 @@ Enquanto em um estado de transporte, o sensor frontal do quadricóptero pode det
 	\item manter a guinada;
 \end{itemize}
 
-Logo, para este estado, o importante é manter o veículo parado e gradualmente encontrar a altitude de cruzeiro ideal para a rota. Na tabela, $z_c^*$ representa a altitude de cruzeiro que está sendo constantemente atualizada.
+Logo, para este estado, o importante é manter o veículo parado e gradualmente encontrar a altitude de cruzeiro ideal para a rota. Na tabela, $z_c^*$ representa a altitude de cruzeiro que está sendo constantemente incrementada.
 
 \begin{table}[!h]
 	\centering
@@ -110,37 +110,45 @@ Logo, para este estado, o importante é manter o veículo parado e gradualmente 
 	\begin{tabular}{|c|c|c|c|c|}
 		\cline{2-5}
 		\multicolumn{1}{c|}{} & $z$  & $\phi$ & $\theta$ & $\psi$ \\\hline
-		Colisão & $z_c^*$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\hline
+		Colisão & $z_c^*$ & $h(-\Delta y_\eta)$ & $h(\Delta x_\eta)$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\hline
 	\end{tabular}
 	\label{tab:ref_colisao}
 \end{table}
 
 \section{Pouso}
 
-O pouso deve ocorrer após o transporte chegar na posição pretendida, entendido como um valor de distância determinado pelo projetista. Este estado possui as seguintes características:
+O pouso deve ocorrer após o transporte chegar na posição pretendida, entendido como um valor de distância de tolerância determinado pelo projetista. Este estado possui as seguintes características:
 
 \begin{itemize}
-	\item descender gradualmente até que o sensor de distância na parte inferior do veículo detecte o solo;
-	\item manter o deslocamento nulo;
+	\item descender até que o sensor de distância na parte inferior do veículo detecte o solo;
+	\item manter o quadricóptero na posição de destino;
 	\item manter a guinada;
 \end{itemize}
 
-De maneira análoga à situação de prevenção em colisões, este estado deve receber o sinal do sensor de distância para concluir a sua ação. Nesse caso, a altitude inicial será representada por $z_d = z_c$ e será gradualmente reduzida até que o solo seja detectado. Ainda, para evitar que a guinada instabilize, seu cálculo agora pode ser aproximado pelos valores da origem, de forma a evitar a divisão por zero. Na Tabela \ref{tab:ref_pouso}, são representados os estados para o pouso, em que $z_d^*$ representa a altitude de descendência que está sendo constantemente atualizada.
+De maneira análoga à situação de prevenção em colisões, este estado deve receber o sinal do sensor de distância para concluir a sua ação. Nesse caso, a altitude de referência é representada por $z_d$ e deve ser, no mínimo, inferior à altitude de destino, para que o veículo consiga chegar próximo do solo e detectá-lo por meio do sensor de distância. 
+
+Para manter o veículo na posição de destino, a sua referência de arfagem deve estar relacionada à distância restante, enquanto o rolamento controla possíveis desvios equivalente ao transporte. A distância com relação ao destino é representada por $d_d$ e é apresentada na Equação \ref{eq:distancia_destino}.
+
+\begin{equation}\label{eq:distancia_destino}
+	d_d = \text{sgn}(y_d - y) \sqrt{(y_d - y)^2 + (x_d - x)^2}
+\end{equation}
+
+Ainda, para evitar que a guinada instabilize, seu cálculo agora pode ser aproximado pelos valores da origem, de forma a evitar a divisão por zero. Na Tabela \ref{tab:ref_pouso}, são representados os estados para o pouso.
 
 \begin{table}[!h]
 	\centering
 	\caption{Referências do controlador para o pouso.}
 	\begin{tabular}{|c|c|c|c|c|}
 		\cline{2-5}
-		\multicolumn{1}{c|}{} & $z$  & $\phi$ & $\theta$ & $\psi$ \\\hline
-		Pouso & $z_d^*$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{d} - y_o}{x_{d} - x_o}\right)$\\\hline
+		\multicolumn{1}{c|}{} & $z$ & $\phi$ & $\theta$ & $\psi$ \\\hline
+		Pouso & $z_d$ & $h(-d_t(x,y))$ & $h(d_d)$ & atan$\left(\frac{y_{d} - y_o}{x_{d} - x_o}\right)$\\\hline
 	\end{tabular}
 	\label{tab:ref_pouso}
 \end{table}
  
 \section{Entrega}
 
-Esta etapa deve ocorrer logo após a detecção do solo pelo pouso, se a entrega não já tiver sido efetuada. A entrega, efetivamente, não possui nenhuma diferença com relação ao seu estado anterior de pouso pelas referências não variarem. Neste caso, o que importa para o algoritmo é apenas o ato de liberar a entrega e possuir a informação de que a entrega foi efetuada. Após isso, a massa $m$ e as inércias $I_{xx}$, $I_{yy}$ e $I_{zz}$ devem ser atualizadas.
+Esta etapa deve ocorrer logo após a detecção do solo pelo pouso, se a entrega não já tiver sido efetuada. Durante a entrega, o veículo deve manter sua altitude e aplicar as demais referências como aplicado durante o estado de pouso. Neste caso, o que importa para o algoritmo é o ato de liberar a entrega e possuir a informação de que a entrega foi efetuada. Após isso, a massa $m$ e as inércias $I_{xx}$, $I_{yy}$ e $I_{zz}$ devem ser atualizadas.
 
 \section{Retorno}
 
@@ -148,7 +156,7 @@ Na etapa de retorno, o que acontece é uma reutilização do processo todo, mas 
 
 \section{Máquina de estados}
 
-Por fim, a sequência de passos e suas referências são demonstrados na Tabela \ref{tab:algoritmo_final} e representados na Figura \ref{fig:maquina_estados} por uma máquina de estados de Moore \cite{moore}. Na tabela, $d_t(x, y)^*$ representa a função $d_t(x, y)$ invertendo destino e origem.
+Por fim, a sequência de passos e suas referências são demonstrados na Tabela \ref{tab:algoritmo_final} e representados na Figura \ref{fig:maquina_estados} por uma máquina de estados de Moore \cite{moore}. Na tabela, $d_t(x, y)^*$ representa a função $d_t(x, y)$ invertendo destino e origem, assim como $d_o$, que representa a distância à origem.
 
 \begin{table}[!h]
 	\centering
@@ -156,19 +164,19 @@ Por fim, a sequência de passos e suas referências são demonstrados na Tabela 
 	\begin{tabular}{|c|c|c|c|c|c|c|}
 		\cline{3-7}
 		\multicolumn{2}{c|}{} & Símbolo & $z$  & $\phi$ & $\theta$ & $\psi$ \\\hline
-		\multirow{5}{*}{Entregando} & Decolagem & D & $z_c$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\cline{2-7}
-		 & Transporte & T & $z_c$ & $\phi_{max}$ & $h(d_t(x,y))$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\cline{2-7}
-		 & Colisão & C & $z_c^*$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\cline{2-7}
-		 & Pouso & P & $z_d^*$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{d} - y_o}{x_{d} - x_o}\right)$\\\hline
-		\multirow{5}{*}{Retornando} & Decolagem & D & $z_c$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{o} - y}{x_{o} - x}\right)$\\\cline{2-7}
-		& Transporte & T & $z_c$ & $\phi_{max}$ & $h(d^*_t(x,y))$ & atan$\left(\frac{y_{o} - y}{x_{o} - x}\right)$\\\cline{2-7}
-		& Colisão & C & $z_c^*$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{o} - y}{x_{o} - x}\right)$\\\cline{2-7}
-		& Pouso & P & $z_d^*$ & $h(\Delta x_\eta)$ & $h(\Delta y_\eta)$ & atan$\left(\frac{y_{o} - y_d}{x_{o} - x_d}\right)$\\\hline
+		\multirow{5}{*}{Entregando} & Decolagem & D & $z_c$ & $h(-\Delta y_\eta)$ & $h(\Delta x_\eta)$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\cline{2-7}
+		 & Transporte & T & $z_c$ & $h(-d_t(x,y))$ & $\theta_{max}$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\cline{2-7}
+		 & Colisão & C & $z_c^*$ & $h(-\Delta y_\eta)$ & $h(\Delta x_\eta)$ & atan$\left(\frac{y_{d} - y}{x_{d} - x}\right)$\\\cline{2-7}
+		 & Pouso & P & $z_d$ & $h(-d_t(x,y))$ & $h(d_d)$ & atan$\left(\frac{y_{d} - y_o}{x_{d} - x_o}\right)$\\\hline
+		\multirow{5}{*}{Retornando} & Decolagem & D & $z_c$ & $h(-\Delta y_\eta)$ & $h(\Delta x_\eta)$ & atan$\left(\frac{y_{o} - y}{x_{o} - x}\right)$\\\cline{2-7}
+		& Transporte & T & $z_c$ & $h(-d^*_t(x,y))$ & $\theta_{max}$ & atan$\left(\frac{y_{o} - y}{x_{o} - x}\right)$\\\cline{2-7}
+		& Colisão & C & $z_c^*$ & $h(-\Delta y_\eta)$ & $h(\Delta x_\eta)$ & atan$\left(\frac{y_{o} - y}{x_{o} - x}\right)$\\\cline{2-7}
+		& Pouso & P & $z_d$ & $h(-d_t^*(x,y))$ & $h(d_o)$ & atan$\left(\frac{y_{o} - y_d}{x_{o} - x_d}\right)$\\\hline
 	\end{tabular}
 	\label{tab:algoritmo_final}
 \end{table}
 
-As informações listadas na tabela já compõem o algoritmo, porém, usualmente, são utilizados diagramas para representar cada um dos possíveis estados de maneira clara. Uma forma de representação é a partir de uma máquina de estados, que informa, principalmente, como cada transição se relaciona com outros estados. Assim, com essas informações coletadas, monta-se um diagrama de máquina de estados que representa o algoritmo em ação, apresentado na Figura \ref{fig:maquina_estados}. 
+As informações listadas na tabela já compõem o algoritmo, porém, usualmente, são utilizados diagramas para representar cada um dos possíveis estados de maneira clara. Uma forma de representação é a partir de uma máquina de estados, que informa, principalmente, como cada transição se relaciona com outros estados. Assim, com essas informações coletadas, monta-se um diagrama de máquina de estados que representa o algoritmo em ação, apresentado na Figura \ref{fig:maquina_estados}.
 
 \begin{figure}[!h]
 	\centering

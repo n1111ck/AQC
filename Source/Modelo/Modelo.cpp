@@ -276,27 +276,32 @@ namespace AQC
 	Float
 	Modelo::AceleracaoLatitude(const Float& U1, const Vetor3D& rotacao, const Vetor3D& velocidadeLinear) const
 	{
+		Float sinal = velocidadeLinear.mX > 0.0 ? 1 : -1;
+
 		return U1 / mParametros.mMassa * (
 			sin(rotacao.mZ) * sin(rotacao.mX) +
 			cos(rotacao.mZ) * sin(rotacao.mY) * cos(rotacao.mX)
-			) - mArrasto.mX * velocidadeLinear.mX;
+			) - sinal * mArrasto.mX * pow(velocidadeLinear.mX, 2) / mParametros.mMassa;
 	}
 
 	Float
 	Modelo::AceleracaoLongitude(const Float& U1, const Vetor3D& rotacao, const Vetor3D& velocidadeLinear) const
 	{
+		Float sinal = velocidadeLinear.mY > 0.0 ? 1 : -1;
+
 		return U1 / mParametros.mMassa * (
 			-cos(rotacao.mZ) * sin(rotacao.mX)
 			+ sin(rotacao.mZ) * sin(rotacao.mY) * cos(rotacao.mX)
-			) - mArrasto.mY * velocidadeLinear.mY;
+			) - sinal * mArrasto.mY * pow(velocidadeLinear.mY, 2) / mParametros.mMassa;
 	}
 
 	Float
 	Modelo::AceleracaoAltitude(const Float& U1, const Vetor3D& rotacao, const Vetor3D& velocidadeLinear) const
 	{
+		Float sinal = velocidadeLinear.mZ > 0.0 ? 1 : -1;
 		Float resultado = -mParametros.mGravidade
 			+ cos(rotacao.mX) * cos(rotacao.mY) * U1 / mParametros.mMassa
-			- mArrasto.mZ * velocidadeLinear.mZ;
+			- sinal * mArrasto.mZ * pow(velocidadeLinear.mZ, 2) / mParametros.mMassa;
 
 		return resultado;
 	}

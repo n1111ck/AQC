@@ -63,10 +63,11 @@ int main()
 	AQC::Algoritmo<AQC::LRE>::ParametrosAlgoritmo parametrosAlgo;
 	parametrosAlgo.mAltitudeVoo = 30.0;
 	parametrosAlgo.mArfagemAvanco = 5.0;
-	parametrosAlgo.mToleranciaEntrega = 10.0;
+	parametrosAlgo.mToleranciaEntrega = 2.0;
 	parametrosAlgo.mToleranciaPouso = 2.0;
 	parametrosAlgo.mToleranciaColisao = 3.0;
 	parametrosAlgo.mConstanteEquilibrio = 0.1;
+	parametrosAlgo.mPasso = parametros.mPasso;
 
 
 	AQC::Algoritmo<AQC::LRE> algoritmo(
@@ -90,12 +91,13 @@ int main()
 	AQC::Vetor4D sinal = {};
 
 	// Aplicacao de chao
-	modelo.Arrasto({1.0, 1.0, 0.5});
+	modelo.Arrasto({1.2, 1.2, 1.2});
 	algoritmo.NovaEntrega(-100.0, -200.0);
 	AQC::Float ultimoControle = 0.0;
 	AQC::Float tempoAcomodacao = 0.0;
+	AQC::Boolean mColisao = false;
 
-	for (AQC::UInt32 i = 0; i < static_cast<AQC::UInt32>(580.0 / parametros.mPasso); i++)
+	for (AQC::UInt32 i = 0; i < static_cast<AQC::UInt32>(800.0 / parametros.mPasso); i++)
 	{
 		csvExport << i * parametros.mPasso << ",";
 		csvExport << modelo.Posicao().mX << ",";
@@ -206,6 +208,16 @@ int main()
 			//modelo.Sobreposicao(modelo.Posicao().mZ < 0.0);
 		}
 		modelo.Simular();
+
+		if (i > static_cast<AQC::UInt32>(100.0 / parametros.mPasso) && !mColisao && modelo.Posicao().mZ < 50.0)
+		{
+			modelo.Distancia(AQC::Modelo::eFrente, 2);
+		}
+		else if (i > static_cast<AQC::UInt32>(100.0 / parametros.mPasso))
+		{
+			mColisao = true;
+			modelo.Distancia(AQC::Modelo::eFrente, 4);
+		}
 
 		if (i > static_cast<AQC::UInt32>(100.0 / parametros.mPasso) && modelo.Posicao().mZ < 4.0)
 		{

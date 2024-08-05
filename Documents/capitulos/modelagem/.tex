@@ -77,7 +77,7 @@ Porém, neste sistema de coordenadas, o \textit{drone} está sob constante rota�
 Além da atuação e força gravitacional, existe ainda a componente de arrasto \cite{drag} $\boldsymbol{\vec{D_i}}$, que aparece sempre na direção contrária ao movimento, retardando-o. Seu equacionamento é apresentado na Equação \ref{eq:arrasto}, com $C_d$ representando o coeficiente de arrasto, $\rho$ a massa específica do fluido, $A_d$ a área da seção perpendicular ao movimento e $\boldsymbol{\vec{v_r}}$ a velocidade relativa entre o movimento e o vento.
 
 \begin{equation}\label{eq:arrasto}
-	\boldsymbol{\vec{D_i}} = -\frac{1}{2}C_d\rho A_dv_r\boldsymbol{\vec{v_r}}
+	\boldsymbol{\vec{D_i}} = -\frac{1}{2}C_d\rho A_dv_r^2\boldsymbol{\hat{v_r}}
 \end{equation}
 
 Apesar da translação incluir a força de arrasto, ela será desconsiderada para a demonstração do sistema completo e para o cálculo dos controladores por ser de difícil medição. Ao invés disso, ela será incorporada no controle como uma perturbação não modelada. Assim, realiza-se o somatório de forças do sistema inercial conforme a Equação \ref{eq:dinamica_translacao_balanco}.

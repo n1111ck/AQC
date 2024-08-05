@@ -43,7 +43,10 @@ namespace AQC
 		mTempoEntrega(-1.0),
 		mTempoDecolagem(-1.0),
 		mLatitudeDecolagem(0.0),
-		mLongitudeDecolagem(0.0)
+		mLongitudeDecolagem(0.0),
+		mTempoColisao(-1.0),
+		mPasso(parametrosAlgoritmo.mPasso),
+		mTempoPouso(-1.0)
 	{
 
 	}
@@ -214,16 +217,28 @@ namespace AQC
 	{
 		Vetor3D posicao = mpGerenciadorSensores->Posicao();
 
+		if (mTempoPouso < 0.0)
+		{
+			mTempoPouso = mTempo;
+			mSinalPouso = mLongitudeDestino - posicao.mY > 0.0 ? 1 : -1;
+		}
+
+		// Calcular distancia que resta
+		Float sinalDistancia = mLongitudeDestino - posicao.mY > 0.0 ? 1 : -1;
+		Float distanciaAoDestino = sinalDistancia * mSinalPouso * pow(pow(mLongitudeDestino - posicao.mY, 2) +
+			pow(mLatitudeDestino - posicao.mX, 2), 0.5);
+
 		// Tarefa executada
 		mReferencia.mW = 0.0;
-		mReferencia.mX = 0.01 * Equilibrio(-(mLongitudeDestino - posicao.mY));
-		mReferencia.mY = 0.01 * Equilibrio(-(mLatitudeDestino - posicao.mX));
+		mReferencia.mX = 0.0;
+		mReferencia.mY = mArfagemAvanco * Equilibrio(distanciaAoDestino);
 
 		// Condicao de transicao
 		if (mpGerenciadorSensores->Baixo() < mToleranciaPouso)
 		{
 			// Atualizar altitude para hover
 			mReferencia.mW = mpGerenciadorSensores->Posicao().mZ;
+			mTempoPouso = -1.0;
 
 			if (!mEntregue)
 			{
@@ -234,6 +249,8 @@ namespace AQC
 			{
 				// Fim de operacao
 				mReferencia.mW = mpGerenciadorSensores->Posicao().mZ;
+				mReferencia.mX = 0.0;
+				mReferencia.mY = 0.0;
 				mEstadoAtual = eDesligamento;
 			}
 		}
@@ -255,12 +272,18 @@ namespace AQC
 			mLongitudeDestino = mLongitudeBase;
 			mLatitudeBase = posicao.mX;
 			mLongitudeBase = posicao.mY;
+			mSinalEntrega = mLongitudeBase - posicao.mY > 0.0 ? 1 : -1;
 		}
+
+		// Calcular distancia que resta
+		Float sinalDistancia = mLongitudeBase - posicao.mY > 0.0 ? 1 : -1;
+		Float distanciaAoDestino = sinalDistancia * mSinalEntrega * pow(pow(mLongitudeBase - posicao.mY, 2) +
+			pow(mLatitudeBase - posicao.mX, 2), 0.5);
 
 		// Tarefa executada
 		mReferencia.mW = mAltitudeEntrega;
-		mReferencia.mX = 0.1 * Equilibrio(mLongitudeBase - posicao.mY);
-		mReferencia.mY = 0.1 * Equilibrio(mLatitudeBase - posicao.mX);
+		mReferencia.mX = 0.0;
+		mReferencia.mY = mArfagemAvanco * Equilibrio(distanciaAoDestino);
 
 		// Condicao de transicao
 		if (mTempo - mTempoEntrega > 10.0)
@@ -286,13 +309,36 @@ namespace AQC
 	Void
 	Algoritmo<Controlador>::TarefaPrevencaoColisao()
 	{
+		Vetor3D posicao = mpGerenciadorSensores->Posicao();
+
+		// Condicoes iniciais
+		if (mTempoColisao < 0.0)
+		{
+			mTempoColisao = mTempo;
+			mLatitudeColisao = posicao.mX;
+			mLongitudeColisao = posicao.mY;
+		}
+
+		// Distancia ao fixado
+		Float sinalRota = mLongitudeDestino - mLongitudeBase > 0 ? 1 : -1;
+		Float sinalFixado = mLongitudeColisao - posicao.mY > 0 ? 1 : -1;
+		Float distanciaAoFixado = sinalRota * sinalFixado *
+			pow(
+				pow(mLongitudeColisao - posicao.mY, 2) +
+				pow(mLatitudeColisao - posicao.mX, 2), 0.5
+			);
+
 		// Tarefa executada
-		// TODO: pensar num algoritmo
+		mReferencia.mW += mPasso * (mTempo - mTempoColisao);
+		mReferencia.mX = 0.0;
+		mReferencia.mY = mArfagemAvanco * Equilibrio(distanciaAoFixado);
 
 		// Condicao de transicao
 		if (!(mpGerenciadorSensores->Frente() < mToleranciaColisao))
 		{
 			mEstadoAtual = eEmRota;
+			mAltitudeVoo = mReferencia.mW;
+			mTempoColisao = -1.0;
 		}
 	}
 

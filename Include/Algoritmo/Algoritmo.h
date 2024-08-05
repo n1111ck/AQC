@@ -33,6 +33,7 @@ namespace AQC
 			Float mToleranciaPouso;
 			Float mToleranciaColisao;
 			Float mConstanteEquilibrio;
+			Float mPasso;
 		};
 
 		Algoritmo();
@@ -50,6 +51,7 @@ namespace AQC
 	private:
 		Controlador* mpControlador;
 		GerenciadorSensores* mpGerenciadorSensores;
+		Float mPasso;
 
 		Boolean mEsperarConfirmacao;
 		Boolean mIniciar;
@@ -78,7 +80,17 @@ namespace AQC
 
 		// Entrega
 		Float mTempoEntrega;
+		Float mSinalEntrega;
 		Float mAltitudeEntrega;
+
+		// Colisao
+		Float mTempoColisao;
+		Float mLatitudeColisao;
+		Float mLongitudeColisao;
+
+		// Pouso
+		Float mTempoPouso;
+		Float mSinalPouso;
 
 		Void MaquinaEstados();
 		Float Equilibrio(const Float& valor) const;
